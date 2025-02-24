@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 require('dotenv').config();
 const session = require('express-session');
 const connectFlash = require('connect-flash');
+const passport = require('passport');
 
 const app = express();
 app.use(morgan('dev'));
@@ -22,6 +23,16 @@ app.use(session({
         httpOnly: true
     }
 }));
+
+//passport js auth
+app.use(passport.initialize());
+app.use(passport.session());
+require('./utils/passport.auth');
+
+app.use((req, res, next) => {
+    res.locals.user = req.user;
+    next();
+});
 
 app.use(connectFlash());
 app.use((req, res, next) => {
