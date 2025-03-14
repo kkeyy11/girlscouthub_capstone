@@ -1,0 +1,26 @@
+<%- include('./layouts/header') %>
+
+<h1>All Appointments</h1>
+
+<table border="1">
+    <thead>
+        <tr>
+            <th>User</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% appointments.forEach(appointment => { %>
+            <tr>
+                <td><%= appointment.user.email %></td>
+                <td><%= appointment.date.toDateString() %></td>
+                <td><%= appointment.time %></td>
+                <td><%= appointment.description %></td>
+            </tr>
+        <% }); %>
+    </tbody>
+</table>
+
+<%- include('./layouts/footer') %>

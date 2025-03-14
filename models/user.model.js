@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const createHttpError = require('http-errors');
-const {roles} = require('../utils/constants');
+const { roles } = require('../utils/constants');
 
 const UserSchema = new mongoose.Schema({
     email: {
@@ -16,14 +16,14 @@ const UserSchema = new mongoose.Schema({
     },
     role: {
         type: String,
-        enum: [roles.admin, roles.troopleader, roles.scout],
+        enum: [roles.admin, roles.scout],
         default: roles.scout
     }
 });
 
-UserSchema.pre('save', async function (next){
+UserSchema.pre('save', async function (next) {
     try {
-        if (this.isNew){
+        if (this.isNew) {
             const salt = await bcrypt.genSalt(10);
             const hashedPassword = await bcrypt.hash(this.password, salt);
             this.password = hashedPassword;
@@ -31,18 +31,19 @@ UserSchema.pre('save', async function (next){
                 this.role = roles.admin;
             }
         }
-        next();      
+        next();
     } catch (error) {
         next(error);
     }
 });
 
-UserSchema.methods.isValidPassword = async function (password){
+UserSchema.methods.isValidPassword = async function (password) {
     try {
-        return await bcrypt.compare(password, this.password)
+        return await bcrypt.compare(password, this.password);
     } catch (error) {
         throw createHttpError.InternalServerError(error.message);
     }
-}
-const User = mongoose.model('user', UserSchema);
+};
+
+const User = mongoose.model('User', UserSchema);
 module.exports = User;

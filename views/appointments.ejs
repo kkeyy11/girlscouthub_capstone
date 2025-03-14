@@ -1,0 +1,43 @@
+<%- include('./layouts/header') %>
+
+<h1>My Appointments</h1>
+
+<ul>
+    <% appointments.forEach(appointment => { %>
+        <li>
+            <strong><%= appointment.date.toDateString() %> - <%= appointment.time %></strong>
+            <p><%= appointment.description %></p>
+            <form action="/user/appointments/delete/<%= appointment._id %>" method="POST">
+                <button type="submit">Delete</button>
+            </form>
+        </li>
+    <% }); %>
+</ul>
+
+<% if (appointments.length === 0) { %> 
+    <!-- Only show form if user has no appointment -->
+    <h2>Book a New Appointment</h2>
+    <form action="/user/appointments" method="POST">
+        <label>Date: <input type="date" name="date" required></label><br>
+
+        <label>Time: 
+            <select name="time" required>
+                <option value="08:00 AM">08:00 AM</option>
+                <option value="09:00 AM">09:00 AM</option>
+                <option value="10:00 AM">10:00 AM</option>
+                <option value="11:00 AM">11:00 AM</option>
+                <option value="01:00 PM">01:00 PM</option>
+                <option value="02:00 PM">02:00 PM</option>
+                <option value="03:00 PM">03:00 PM</option>
+                <option value="04:00 PM">04:00 PM</option>
+            </select>
+        </label><br>
+
+        <label>Description: <textarea name="description" required></textarea></label><br>
+        <button type="submit">Add Appointment</button>
+    </form>
+<% } else { %>
+    <p>You already have an appointment today. Delete it if you want to book a new one.</p>
+<% } %>
+
+<%- include('./layouts/footer') %>
