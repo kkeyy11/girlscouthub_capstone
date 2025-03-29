@@ -4,7 +4,22 @@
         <li><a href="/">Home</a></li>
         <% if (user) { %>
             <li><a href="/user/profile">Profile</a></li>
+<<<<<<< Updated upstream
             <li><a href="/admin/users">Manage users</a></li>  
+=======
+
+            <% if (user.role && user.role.toLowerCase() === "admin") { %>
+                <!-- Admin-only links -->
+                <li><a href="/admin/appointments-list">Appointments</a></li>
+                <li><a href="/admin/users">Manage users</a></li>  
+            <% } else { %>
+                <!-- Regular user links -->
+                <li><a href="/user/appointments">Appointments</a></li>
+                <li><a href="/user/Badges">Badges</a></li>
+
+            <% } %>
+
+>>>>>>> Stashed changes
             <li><a href="/auth/logout">Logout</a></li>
             
         <% } else { %>

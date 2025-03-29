@@ -6,6 +6,7 @@ require('dotenv').config();
 const session = require('express-session');
 const connectFlash = require('connect-flash');
 const passport = require('passport');
+<<<<<<< Updated upstream
 
 const app = express();
 app.use(morgan('dev'));
@@ -43,8 +44,58 @@ app.use((req, res, next) => {
 app.use('/', require('./routes/index.route'));
 app.use('/auth', require('./routes/auth.route'));
 app.use('/user', require('./routes/user.route'));
+=======
+const MongoStore = require('connect-mongo');
+const connectEnsureLogin = require('connect-ensure-login');
+>>>>>>> Stashed changes
+
+const app = express();
+app.use(morgan('dev'));
+app.set('view engine', 'ejs');
+app.use(express.static('public'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+
+<<<<<<< Updated upstream
+=======
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    store: MongoStore.create({
+        mongoUrl: process.env.MONGO_URI,
+        dbName: process.env.DB_NAME,
+    }),
+    cookie: {
+        httpOnly: true,
+    }
+}));
+
+// Passport authentication
+app.use(passport.initialize());
+app.use(passport.session());
+require('./utils/passport.auth');
+
+app.use((req, res, next) => {
+    res.locals.user = req.user;
+    next();
+});
+
+app.use(connectFlash());
+app.use((req, res, next) => {
+    res.locals.messages = req.flash();
+    next();
+});
+
+// Routes
+app.use('/', require('./routes/index.route'));
+app.use('/auth', require('./routes/auth.route'));
+app.use('/user', connectEnsureLogin.ensureLoggedIn({ redirectTo: "/auth/login" }), require('./routes/user.route'));
+app.use('/admin', connectEnsureLogin.ensureLoggedIn({ redirectTo: "/auth/login" }), ensureAdmin, require('./routes/admin.route'));
 
 
+// Error Handling
+>>>>>>> Stashed changes
 app.use((req, res, next) => {
     next(createHttpErrors.NotFound());
 });
@@ -52,10 +103,17 @@ app.use((req, res, next) => {
 app.use((error, req, res, next) => {
     error.status = error.status || 500;
     res.status(error.status);
+<<<<<<< Updated upstream
     res.render('error_40x', {error})
    
 });
 
+=======
+    res.render('error_40x', { error });
+});
+
+// Database Connection
+>>>>>>> Stashed changes
 const PORT = process.env.PORT || 3000;
 
 mongoose.connect(process.env.MONGO_URI, {
@@ -65,4 +123,16 @@ mongoose.connect(process.env.MONGO_URI, {
     app.listen(PORT, () => console.log(`Running on port ${PORT}`));
 }).catch(err => console.log(err.message));
 
+<<<<<<< Updated upstream
 
+=======
+// Middleware to Ensure Admin Access
+function ensureAdmin(req, res, next) {
+    if (req.user && req.user.role === "ADMIN") {
+        next();
+    } else {
+        req.flash('warning', 'You are not authorized');
+        res.redirect('/');
+    }
+}
+>>>>>>> Stashed changes
