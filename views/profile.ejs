@@ -1,7 +1,6 @@
-<%- include('./layouts/header') %>
 
-<h1><span class="goback" onclick="window.history.back()">←</span> Profile</h1>
 
+<<<<<<< Updated upstream
 <div class="profile">
     <div>
         <p class="title">ID</p>
@@ -13,14 +12,169 @@
     </div>
     <div>
         <p class="title">Role</p>
-        <p class="subtitle"><%= person.role %></p>
+        <p class="subtitle"></p>
     </div>
     <div>
         <p class="title">User object</p>
         <pre class="subtitle"><%= person %></pre>
+=======
+<div class="container">
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar">
+        <div class="logo">Girl Scouts</div>
+        <ul>
+            <li><a href="/">🏠 Home</a></li>
+            <li><a href="/troops">👭 Troops</a></li>
+            <li><a href="/inventory">📦 Inventory</a></li>
+            <li><a href="/user/profile">👤 Profile</a></li>
+            <li><a href="/admin/users">⚙️ Manage Users</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <h1 class="title">User Profile</h1>
+
+        <table class="profile-table">
+            <tr>
+                <th>ID</th>
+                <td><%= person.id %></td>
+            </tr>
+            <tr>
+                <th>Email/Username</th>
+                <td><%= person.email %></td>
+            </tr>
+            <tr>
+                <th>Role</th>
+                <td><%= person.role %></td>
+            </tr>
+        </table>
+>>>>>>> Stashed changes
     </div>
 </div>
 
 
 
-<%- include('./layouts/footer') %>
+<style>
+    /* Layout */
+    .container {
+        display: flex;
+        min-height: 100vh;
+        background-color: #f4f4f4;
+    }
+
+    /* Sidebar */
+    .sidebar {
+        width: 220px;
+        height: 100vh;
+        background-color: #2F5233;
+        position: fixed;
+        top: 0;
+        left: 0;
+        padding-top: 30px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .sidebar .logo {
+        font-size: 22px;
+        font-weight: bold;
+        color: #BEEAC5;
+        margin-bottom: 20px;
+        text-transform: uppercase;
+    }
+
+    .sidebar ul {
+        list-style-type: none;
+        padding: 0;
+        width: 100%;
+    }
+
+    .sidebar ul li {
+        width: 100%;
+    }
+
+    .sidebar ul li a {
+        display: block;
+        color: white;
+        text-decoration: none;
+        font-size: 16px;
+        font-weight: bold;
+        padding: 12px 20px;
+        text-align: left;
+        transition: all 0.3s ease;
+        border-left: 5px solid transparent;
+    }
+
+    .sidebar ul li a:hover {
+        background-color: #234026;
+        border-left: 5px solid #76B947;
+    }
+
+    /* Main Content */
+    .main-content {
+        margin-left: 220px;
+        padding: 30px;
+        flex-grow: 1;
+        width: calc(100% - 220px);
+        text-align: center;
+    }
+
+    .title {
+        font-size: 36px;
+        font-weight: bold;
+        color: #2F5233;
+        text-transform: uppercase;
+        margin-bottom: 20px;
+        letter-spacing: 1px;
+    }
+
+    /* Profile Table */
+    .profile-table {
+        width: 50%;
+        margin: 0 auto;
+        border-collapse: collapse;
+        background: white;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .profile-table th, .profile-table td {
+        padding: 12px;
+        border: 1px solid #ddd;
+        text-align: left;
+    }
+
+    .profile-table th {
+        background-color: #2F5233;
+        color: white;
+        text-transform: uppercase;
+        width: 30%;
+    }
+
+    .profile-table td {
+        background-color: #f9f9f9;
+        font-size: 16px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .sidebar {
+            width: 180px;
+        }
+
+        .main-content {
+            margin-left: 180px;
+            width: calc(100% - 180px);
+        }
+
+        .profile-table {
+            width: 80%;
+        }
+
+        .title {
+            font-size: 28px;
+        }
+    }
+</style>
