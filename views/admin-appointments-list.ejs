@@ -1,23 +1,10 @@
+<%- include('./layouts/header') %>
 
+<main>
+    <h1 class="table-title">All Appointments</h1>
 
-<div class="container">
-    <!-- Sidebar Navigation -->
-    <nav class="sidebar">
-        <div class="logo">Girl Scouts</div>
-        <ul>
-            <li><a href="/">🏠 Home</a></li>
-            <li><a href="/troops">👭 Troops</a></li>
-            <li><a href="/inventory">📦 Inventory</a></li>
-            <li><a href="/user/profile">👤 Profile</a></li>
-            <li><a href="/user/appointments" class="active">📅 Appointments</a></li>
-        </ul>
-    </nav>
-
-    <!-- Main Content -->
-    <div class="main-content">
-        <h1 class="title">All Appointments</h1>
-        
-        <table class="appointments-table">
+    <div class="table-container">
+        <table class="table">
             <thead>
                 <tr>
                     <th>User</th>
@@ -38,125 +25,6 @@
             </tbody>
         </table>
     </div>
-</div>
+</main>
 
-
-
-<style>
-    /* Layout */
-    .container {
-        display: flex;
-        min-height: 100vh;
-        background-color: #f4f4f4;
-    }
-
-    /* Sidebar */
-    .sidebar {
-        width: 220px;
-        height: 100vh;
-        background-color: #2F5233;
-        position: fixed;
-        top: 0;
-        left: 0;
-        padding-top: 30px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
-    }
-
-    .sidebar .logo {
-        font-size: 22px;
-        font-weight: bold;
-        color: #BEEAC5;
-        margin-bottom: 20px;
-        text-transform: uppercase;
-    }
-
-    .sidebar ul {
-        list-style-type: none;
-        padding: 0;
-        width: 100%;
-    }
-
-    .sidebar ul li {
-        width: 100%;
-    }
-
-    .sidebar ul li a {
-        display: block;
-        color: white;
-        text-decoration: none;
-        font-size: 16px;
-        font-weight: bold;
-        padding: 12px 20px;
-        text-align: left;
-        transition: all 0.3s ease;
-        border-left: 5px solid transparent;
-    }
-
-    .sidebar ul li a.active, .sidebar ul li a:hover {
-        background-color: #234026;
-        border-left: 5px solid #76B947;
-    }
-
-    /* Main Content */
-    .main-content {
-        margin-left: 220px;
-        padding: 30px;
-        flex-grow: 1;
-        width: calc(100% - 220px);
-        text-align: center;
-    }
-
-    .title {
-        font-size: 36px;
-        font-weight: bold;
-        color: #2F5233;
-        text-transform: uppercase;
-        margin-bottom: 20px;
-        letter-spacing: 1px;
-    }
-
-    /* Appointments Table */
-    .appointments-table {
-        width: 80%;
-        margin: 20px auto;
-        border-collapse: collapse;
-        background: white;
-        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    .appointments-table th, .appointments-table td {
-        padding: 12px;
-        border: 1px solid #ddd;
-        text-align: center;
-    }
-
-    .appointments-table th {
-        background-color: #2F5233;
-        color: white;
-        text-transform: uppercase;
-    }
-
-    .appointments-table td {
-        background-color: #f9f9f9;
-        font-size: 16px;
-    }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-        .sidebar {
-            width: 180px;
-        }
-
-        .main-content {
-            margin-left: 180px;
-            width: calc(100% - 180px);
-        }
-
-        .appointments-table {
-            width: 95%;
-        }
-    }
-</style>
+<%- include('./layouts/footer') %>

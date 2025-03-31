@@ -2,11 +2,9 @@
     <h2>Girl Scout of The Philippines - Oriental Mindoro</h2>
     <ul>
         <li><a href="/">Home</a></li>
+
         <% if (user) { %>
             <li><a href="/user/profile">Profile</a></li>
-<<<<<<< Updated upstream
-            <li><a href="/admin/users">Manage users</a></li>  
-=======
 
             <% if (user.role && user.role.toLowerCase() === "admin") { %>
                 <!-- Admin-only links -->
@@ -15,20 +13,13 @@
             <% } else { %>
                 <!-- Regular user links -->
                 <li><a href="/user/appointments">Appointments</a></li>
-                <li><a href="/user/Badges">Badges</a></li>
-
             <% } %>
 
->>>>>>> Stashed changes
             <li><a href="/auth/logout">Logout</a></li>
-            
         <% } else { %>
             <li><a href="/auth/register">Register</a></li>
             <li><a href="/auth/login">Login</a></li>
-            
-            <% } %>
-        
-        
-        
+        <% } %>
+
     </ul>
 </nav>

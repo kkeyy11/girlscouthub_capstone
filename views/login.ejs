@@ -1,26 +1,148 @@
-<%- include('./layouts/header') %>
+<% if (locals.user) { %>
+    <%- include('./layouts/header') %>
+<% } %>
 
-<h1>Login</h1>
-<form action="/auth/login" method="post" class="lg-form">
-    <div>
-        <label for="email">Email/Username</label>
-        <input type="email" name="email" id="email" />
-    </div>
-    <div>
-        <label for="password">Password</label>
-        <input type="password" name="password" id="password" />
-    </div>
-    <div>
-        <input type="submit" value="Login" />
-    </div>
-</form>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
 
-<div>
-    <p>
-        Don't have an account? <span><a href="/auth/register">Register</a></span>
-    </p>
+    /* Navigation Bar */
+    .navbar {
+        width: 100%;
+        background-color: #007a3d;
+        padding: 10px 0;
+        text-align: center;
+    }
+
+    .navbar ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .navbar ul li {
+        display: inline;
+        margin: 0 20px;
+    }
+
+    .navbar ul li a {
+        color: white;
+        text-decoration: none;
+        font-size: 1.2rem;
+        font-weight: bold;
+        padding: 10px 15px;
+        transition: background 0.3s, border-radius 0.3s;
+    }
+
+    .navbar ul li a:hover {
+        background-color: #005f2d;
+        border-radius: 5px;
+    }
+
+    /* Form Container */
+    .form-container {
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        margin-top: 50px;
+        max-width: 400px;
+        width: 100%;
+    }
+
+    .lg-form div {
+        margin-bottom: 15px;
+        text-align: left;
+    }
+
+    label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 5px;
+        color: #007a3d;
+    }
+
+    input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 1rem;
+    }
+
+    input:focus {
+        border-color: #007a3d;
+        outline: none;
+        box-shadow: 0 0 5px rgba(0, 122, 61, 0.5);
+    }
+
+    input[type="submit"] {
+        background-color: #007a3d;
+        color: white;
+        border: none;
+        padding: 12px;
+        font-size: 1rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background 0.3s;
+        border-radius: 5px;
+    }
+
+    input[type="submit"]:hover {
+        background-color: #005f2d;
+    }
+
+    .register-link {
+        margin-top: 15px;
+    }
+
+    .register-link a {
+        color: #007a3d;
+        font-weight: bold;
+        text-decoration: none;
+    }
+
+    .register-link a:hover {
+        text-decoration: underline;
+    }
+</style>
+
+<!-- Navigation Bar -->
+<nav class="navbar">
+    <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/auth/register">Register</a></li>
+        <li><a href="/auth/login">Login</a></li>
+    </ul>
+</nav>
+
+<!-- Login Form (NO HEADER) -->
+<div class="form-container">
+    <h1>Login</h1>
+    <form action="/auth/login" method="post" class="lg-form">
+        <div>
+            <label for="email">Email/Username</label>
+            <input type="email" name="email" id="email" />
+        </div>
+        <div>
+            <label for="password">Password</label>
+            <input type="password" name="password" id="password" />
+        </div>
+        <div>
+            <input type="submit" value="Login" />
+        </div>
+    </form>
+    <div class="register-link">
+        <p>Don't have an account? <a href="/auth/register">Register</a></p>
+    </div>
 </div>
-<br />
-
 
 <%- include('./layouts/footer') %>

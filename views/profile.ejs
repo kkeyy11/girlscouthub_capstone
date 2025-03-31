@@ -1,153 +1,30 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile Page</title>
-    <style>
-        /* Layout */
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-            display: flex;
-        }
+<%- include('./layouts/header') %>
 
-        /* Sidebar */
-        .sidebar {
-            width: 220px;
-            background-color: #2F5233;
-            color: white;
-            padding: 1rem;
-            height: 100vh;
-            position: fixed;
-            left: 0;
-            top: 0;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
-        }
+<main>
+    <h1>
+        <span class="goback" onclick="window.history.back()">&larr;</span> Profile
+    </h1>
 
-        .sidebar .logo {
-            font-size: 22px;
-            font-weight: bold;
-            text-align: center;
-            margin-bottom: 20px;
-            text-transform: uppercase;
-        }
-
-        .sidebar ul {
-            list-style-type: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .sidebar ul li a {
-            display: block;
-            color: white;
-            text-decoration: none;
-            font-size: 16px;
-            font-weight: bold;
-            padding: 12px 20px;
-            text-align: left;
-            transition: all 0.3s ease;
-            border-left: 5px solid transparent;
-        }
-
-        .sidebar ul li a:hover {
-            background-color: #234026;
-            border-left: 5px solid #76B947;
-        }
-
-        /* Main Content */
-        .main-content {
-            margin-left: 220px;
-            padding: 30px;
-            flex-grow: 1;
-            width: calc(100% - 220px);
-            text-align: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-        }
-
-        .title {
-            font-size: 42px;
-            font-weight: bold;
-            color: #2F5233;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 20px;
-        }
-
-        /* Profile Table */
-        .profile-table {
-            width: 60%;
-            border-collapse: collapse;
-            background: white;
-            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-        .profile-table th, .profile-table td {
-            padding: 15px;
-            border: 1px solid #ddd;
-            text-align: left;
-        }
-
-        .profile-table th {
-            background-color: #2F5233;
-            color: white;
-            text-transform: uppercase;
-            width: 35%;
-        }
-
-        .profile-table td {
-            background-color: #f9f9f9;
-            font-size: 18px;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .sidebar {
-                width: 180px;
-            }
-            .main-content {
-                margin-left: 180px;
-                width: calc(100% - 180px);
-            }
-            .profile-table {
-                width: 90%;
-            }
-            .title {
-                font-size: 32px;
-            }
-        }
-    </style>
-</head>
-<body>
-    <nav class="sidebar">
-        <div class="logo">Girl Scout Hub</div>
-        <ul>
-            <li><a href="/">🏠 Home</a></li>
-            <li><a href="/troops">👭 Troops</a></li>
-            <li><a href="/inventory">📦 Inventory</a></li>
-            <li><a href="/user/profile">👤 Profile</a></li>
-            <li><a href="/admin/users">⚙️ Manage Users</a></li>
-        </ul>
-    </nav>
-
-    <div class="main-content">
-        <h1 class="title">Profile</h1>
+    <div class="table-container">
         <table class="profile-table">
-            <tr><th>ID</th><td><%= person.id %></td></tr>
-            <tr><th>Email/Username</th><td><%= person.email %></td></tr>
-            <tr><th>Role</th><td><%= person.role %></td></tr>
-            <tr><th>User Object</th><td><pre><%= person %></pre></td></tr>
+            <tr>
+                <th>ID</th>
+                <td><%= person.id %></td>
+            </tr>
+            <tr>
+                <th>Email/Username</th>
+                <td><%= person.email %></td>
+            </tr>
+            <tr>
+                <th>Role</th>
+                <td><%= person.role %></td>
+            </tr>
+            <tr>
+                <th>User Object</th>
+                <td><pre><%= JSON.stringify(person, null, 2) %></pre></td>
+            </tr>
         </table>
     </div>
-</body>
-</html>
+</main>
+
+<%- include('./layouts/footer') %>
