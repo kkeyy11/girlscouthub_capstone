@@ -1,0 +1,22 @@
+<%- include('./layouts/header') %>
+
+<main>
+    <h1>Create School</h1>
+    <form action="/school/store" method="POST">
+        <div class="form-group">
+            <label for="schoolName">School Name:</label>
+            <input type="text" id="schoolName" name="name" required>
+        </div>
+        <div class="form-group">
+            <label for="district">District:</label>
+            <select id="district" name="district_id" required>
+                <% districts.forEach(district => { %>
+                    <option value="<%= district.id %>"><%= district.name %></option>
+                <% }); %>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-submit">Save School</button>
+    </form>
+</main>
+
+<%- include('./layouts/footer') %>

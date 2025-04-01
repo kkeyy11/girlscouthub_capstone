@@ -1,0 +1,32 @@
+<%- include('./layouts/header') %>
+
+<main>
+    <h1>School Management</h1>
+    <a href="/school/create" class="btn btn-create">Add New School</a>
+
+    <div class="table-container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>School Name</th>
+                    <th>District</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% schools.forEach(school => { %>
+                    <tr>
+                        <td><%= school.name %></td>
+                        <td><%= school.district_name %></td>
+                        <td>
+                            <a href="/school/edit/<%= school.id %>" class="btn btn-edit">Edit</a>
+                            <a href="/school/delete/<%= school.id %>" class="btn btn-delete">Delete</a>
+                        </td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    </div>
+</main>
+
+<%- include('./layouts/footer') %>

@@ -1,0 +1,22 @@
+<%- include('./layouts/header') %>
+
+<main>
+    <h1>Edit Scout</h1>
+    <form action="/scout/update/<%= scout.id %>" method="POST">
+        <div class="form-group">
+            <label for="scoutName">Scout Name:</label>
+            <input type="text" id="scoutName" name="name" value="<%= scout.name %>" required>
+        </div>
+        <div class="form-group">
+            <label for="school">School:</label>
+            <select id="school" name="school_id" required>
+                <% schools.forEach(school => { %>
+                    <option value="<%= school.id %>" <%= school.id == scout.school_id ? 'selected' : '' %>><%= school.name %></option>
+                <% }); %>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-submit">Update Scout</button>
+    </form>
+</main>
+
+<%- include('./layouts/footer') %>

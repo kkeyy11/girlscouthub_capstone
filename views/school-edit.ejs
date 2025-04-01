@@ -1,0 +1,22 @@
+<%- include('./layouts/header') %>
+
+<main>
+    <h1>Edit School</h1>
+    <form action="/school/update/<%= school.id %>" method="POST">
+        <div class="form-group">
+            <label for="schoolName">School Name:</label>
+            <input type="text" id="schoolName" name="name" value="<%= school.name %>" required>
+        </div>
+        <div class="form-group">
+            <label for="district">District:</label>
+            <select id="district" name="district_id" required>
+                <% districts.forEach(district => { %>
+                    <option value="<%= district.id %>" <%= district.id == school.district_id ? 'selected' : '' %>><%= district.name %></option>
+                <% }); %>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-submit">Update School</button>
+    </form>
+</main>
+
+<%- include('./layouts/footer') %>

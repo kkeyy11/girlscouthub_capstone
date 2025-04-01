@@ -1,0 +1,22 @@
+<%- include('./layouts/header') %>
+
+<main>
+    <h1>Create Scout</h1>
+    <form action="/scout/store" method="POST">
+        <div class="form-group">
+            <label for="scoutName">Scout Name:</label>
+            <input type="text" id="scoutName" name="name" required>
+        </div>
+        <div class="form-group">
+            <label for="school">School:</label>
+            <select id="school" name="school_id" required>
+                <% schools.forEach(school => { %>
+                    <option value="<%= school.id %>"><%= school.name %></option>
+                <% }); %>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-submit">Save Scout</button>
+    </form>
+</main>
+
+<%- include('./layouts/footer') %>
