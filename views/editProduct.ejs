@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Product</title>
+</head>
+<body>
+    <h2>Edit Product</h2>
+    <form action="/admin/edit/<%= product._id %>" method="POST">
+        <label>Product Name:</label>
+        <input type="text" name="name" value="<%= product.name %>" required><br>
+
+        <label>Category:</label>
+        <select name="category">
+            <option <%= product.category === "Uniform" ? "selected" : "" %>>Uniform</option>
+            <option <%= product.category === "Camping Gear" ? "selected" : "" %>>Camping Gear</option>
+            <option <%= product.category === "Accessories" ? "selected" : "" %>>Accessories</option>
+            <option <%= product.category === "Badges" ? "selected" : "" %>>Badges</option>
+        </select><br>
+
+        <label>Description:</label>
+        <textarea name="description"><%= product.description %></textarea><br>
+
+        <label>Quantity:</label>
+        <input type="number" name="quantity" value="<%= product.quantity %>" required><br>
+
+        <label>Price (PHP):</label>
+        <input type="number" name="price" step="0.01" value="<%= product.price %>" required><br>
+
+        <label>Supplier:</label>
+        <input type="text" name="supplier" value="<%= product.supplier %>"><br>
+
+        <label>Date Acquired:</label>
+        <input type="date" name="dateAcquired" value="<%= product.dateAcquired ? product.dateAcquired.toISOString().split('T')[0] : '' %>"><br>
+
+        <button type="submit">Update Product</button>
+    </form>
+</body>
+</html>

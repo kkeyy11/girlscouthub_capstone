@@ -11,22 +11,25 @@ body {
 }
 
 /* Sidebar Navigation */
-    nav {
-        background-color: #2F5233;
-        color: white;
-        width: 220px;
-        height: 100vh;
-        position: fixed;
-        left: 0;
-        top: 0;
-        padding-top: 15px;
-        padding-bottom: 15px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
-        z-index: 1000;
-    }
+    /* Sidebar Navigation */
+nav {
+    background-color: #2F5233;
+    color: white;
+    width: 220px;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    overflow-y: auto; /* Enable vertical scrolling */
+}
+
 
     nav h2 {
         font-size: 22px;

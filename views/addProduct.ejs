@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Product</title>
+</head>
+<body>
+    <h2>Add Product</h2>
+    <form action="/admin/add" method="POST">
+        <label>Product Name:</label>
+        <input type="text" name="name" required><br>
+    
+        <label>Category:</label>
+        <select name="category">
+            <option>Uniform</option>
+            <option>Camping Gear</option>
+            <option>Accessories</option>
+            <option>Badges</option>
+        </select><br>
+    
+        <label>Description:</label>
+        <textarea name="description"></textarea><br>
+    
+        <label>Quantity:</label>
+        <input type="number" name="quantity" required><br>
+    
+        <label>Price (PHP):</label>
+        <input type="number" name="price" step="0.01" required><br> <!-- ADD PRICE INPUT -->
+    
+        <label>Supplier:</label>
+        <input type="text" name="supplier"><br>
+    
+        <label>Date Acquired:</label>
+        <input type="date" name="dateAcquired"><br>
+    
+        <button type="submit">Add Product</button>
+    </form>
+    
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avail Product</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        .container {
+            width: 50%;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #000;
+            box-shadow: 2px 2px 10px gray;
+            background: #fff;
+        }
+        h2 {
+            margin-bottom: 20px;
+        }
+        label, select, input {
+            font-size: 16px;
+            margin: 5px 0;
+        }
+        select, input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 10px;
+            background: blue;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background: darkblue;
+        }
+        .message {
+            color: red;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Avail Product</h2>
+        
+        <% if (message) { %>
+            <p class="message"><%= message %></p>
+        <% } %>
+
+        <form action="/admin/avail" method="POST">
+            <label for="name">Full Name:</label>
+            <input type="text" name="name" id="name" required>
+
+            <label for="address">Address:</label>
+            <input type="text" name="address" id="address" required>
+
+            <label for="contact">Contact Number:</label>
+            <input type="text" name="contact" id="contact" required>
+
+            <label for="product">Select Product:</label>
+            <select name="productId" id="product" required>
+                <% products.forEach(product => { %>
+                    <option value="<%= product._id %>"><%= product.name %> (Available: <%= product.quantity %>)</option>
+                <% }); %>
+            </select>
+
+            <label for="quantity">Enter Quantity:</label>
+            <input type="number" name="quantity" id="quantity" min="1" required>
+
+            <button type="submit">Avail Product</button>
+        </form>
+
+        <br>
+        <a href="/admin">Back to Product List</a>
+    </div>
+
+</body>
+</html>

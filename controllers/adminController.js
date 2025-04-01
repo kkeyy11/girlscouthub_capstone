@@ -22,59 +22,59 @@ const adminController = {
     },
 
     // Get all inventory items
-    getInventory: async (req, res, next) => {
-        try {
-            const inventory = await Inventory.find();  // Fetch all inventory items
-            res.render('inventory', { inventory });
-        } catch (error) {
-            next(error);
-        }
-    },
+    // getInventory: async (req, res, next) => {
+    //     try {
+    //         const inventory = await Inventory.find();  // Fetch all inventory items
+    //         res.render('inventory', { inventory });
+    //     } catch (error) {
+    //         next(error);
+    //     }
+    // },
 
-    // Create a new inventory item
-    createInventory: async (req, res, next) => {
-        const { itemName, quantity, price } = req.body;
-        try {
-            const newInventoryItem = new Inventory({
-                itemName,
-                quantity,
-                price
-            });
-            await newInventoryItem.save();
-            req.flash('success', 'Inventory item added successfully!');
-            res.redirect('/admin/inventory');  // Redirect to the inventory page
-        } catch (error) {
-            next(error);
-        }
-    },
+    // // Create a new inventory item
+    // createInventory: async (req, res, next) => {
+    //     const { itemName, quantity, price } = req.body;
+    //     try {
+    //         const newInventoryItem = new Inventory({
+    //             itemName,
+    //             quantity,
+    //             price
+    //         });
+    //         await newInventoryItem.save();
+    //         req.flash('success', 'Inventory item added successfully!');
+    //         res.redirect('/admin/inventory');  // Redirect to the inventory page
+    //     } catch (error) {
+    //         next(error);
+    //     }
+    // },
 
-    // Update an inventory item
-    updateInventory: async (req, res, next) => {
-        const { itemId, itemName, quantity, price } = req.body;
-        try {
-            await Inventory.findByIdAndUpdate(itemId, {
-                itemName,
-                quantity,
-                price
-            });
-            req.flash('success', 'Inventory item updated successfully!');
-            res.redirect('/admin/inventory');
-        } catch (error) {
-            next(error);
-        }
-    },
+    // // Update an inventory item
+    // updateInventory: async (req, res, next) => {
+    //     const { itemId, itemName, quantity, price } = req.body;
+    //     try {
+    //         await Inventory.findByIdAndUpdate(itemId, {
+    //             itemName,
+    //             quantity,
+    //             price
+    //         });
+    //         req.flash('success', 'Inventory item updated successfully!');
+    //         res.redirect('/admin/inventory');
+    //     } catch (error) {
+    //         next(error);
+    //     }
+    // },
 
-    // Delete an inventory item
-    deleteInventory: async (req, res, next) => {
-        const { itemId } = req.params;
-        try {
-            await Inventory.findByIdAndDelete(itemId);
-            req.flash('success', 'Inventory item deleted successfully!');
-            res.redirect('/admin/inventory');
-        } catch (error) {
-            next(error);
-        }
-    },
+    // // Delete an inventory item
+    // deleteInventory: async (req, res, next) => {
+    //     const { itemId } = req.params;
+    //     try {
+    //         await Inventory.findByIdAndDelete(itemId);
+    //         req.flash('success', 'Inventory item deleted successfully!');
+    //         res.redirect('/admin/inventory');
+    //     } catch (error) {
+    //         next(error);
+    //     }
+    // },
 
     
 };

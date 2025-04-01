@@ -10,12 +10,18 @@
                 <!-- Admin-only links -->
                 <li><a href="/admin/appointments-list">Appointments</a></li>
                 <li><a href="/admin/users">Manage users</a></li>  
-                <li><a href="/admin/inventory">Inventory</a></li>  
+               
+                <li><a href="/admin/add">Inventory</a></li> 
+                <li><a href="/admin/low-stock">Stocks</a></li>
+                <li><a href="/admin">List Product</a></li> 
+                <li><a href="/admin/avail">Avail Product</a></li>
+                <li><a href="/admin/report">Report</a></li>
                 <li><a href="/admin/districts">Districts</a></li>  
                 
             <% } else { %>
                 <!-- Regular user links -->
                 <li><a href="/user/appointments">Appointments</a></li>
+                <li><a href="/user/events">Notification Event</a></li>
             <% } %>
 
             <li><a href="/auth/logout">Logout</a></li>

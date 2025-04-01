@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product List</title>
+</head>
+<body>
+    <h2>Product List</h2>
+    <a href="/admin/add">Add New Product</a>
+    <table border="1">
+        <tr>
+            <th>Product Name</th>
+            <th>Category</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Supplier</th>
+            <th>Actions</th>
+        </tr>
+        <% products.forEach(product => { %>
+            <tr>
+                <td><%= product.name %></td>
+                <td><%= product.category %></td>
+                <td><%= product.quantity %></td>
+                <td>₱<%= product.price %></td>
+                <td><%= product.supplier %></td>
+                <td>
+                    <a href="/admin/edit/<%= product._id %>">Edit</a>
+                    <form action="/admin/delete/<%= product._id %>" method="POST" style="display:inline;">
+                        <button type="submit" onclick="return confirm('Are you sure?')">Delete</button>
+                    </form>
+                    <!-- Add Stock Button -->
+                    <button onclick="openStockModal('<%= product._id %>', '<%= product.name %>')">
+                        ➕ Add Stock
+                    </button>
+                </td>
+            </tr>
+        <% }); %>
+    </table>
+    <a href="/admin/low-stock">Check Low Stock</a>
+
+    <!-- Add Stock Modal -->
+    <div id="stockModal" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    background: white; padding: 20px; border: 1px solid black; box-shadow: 2px 2px 10px gray;">
+        <h2 id="modalTitle"></h2>
+        <form id="stockForm" method="POST">
+            <label for="stockQuantity">Additional Quantity:</label>
+            <input type="number" name="quantity" id="stockQuantity" required min="1">
+            <button type="submit">Confirm</button>
+            <button type="button" onclick="closeStockModal()">Cancel</button>
+        </form>
+    </div>
+
+    <script>
+        function openStockModal(productId, productName) {
+            document.getElementById("modalTitle").innerText = "Add Stock to " + productName;
+            document.getElementById("stockForm").action = "/admin/add-stocks/" + productId;
+            document.getElementById("stockModal").style.display = "block";
+        }
+
+        function closeStockModal() {
+            document.getElementById("stockModal").style.display = "none";
+        }
+    </script>
+<a href="/admin/report">📄 View Product Report</a>
+<a href="/admin/avail">🛍️ Avail Product</a>
+
+</body>
+</html>

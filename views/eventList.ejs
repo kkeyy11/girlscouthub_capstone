@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Event List</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/css/eventlist.css"> <!-- LINK TO SEPARATE CSS -->
+</head>
+<body>
+    <h1>Upcoming Events</h1>
+
+    <!-- Notification Bell -->
+    <div class="notification-container">
+        <i class="fa fa-bell notification-bell"></i>
+        <span class="notification-count" id="notif-count"><%= notificationsCount %></span>
+
+        <!-- Notification Dropdown -->
+        <div class="notification-dropdown" id="notificationDropdown">
+            <ul id="notification-list">
+                <% events.forEach(event => { %>
+                    <% if (!event.dismissed) { %>
+                        <li id="event-<%= event._id %>">
+                            <div>
+                                <strong><%= event.title %></strong> - <%= event.date.toDateString() %> <br>
+                                <small>Location: <%= event.location %></small> <br>
+                                <small>Description: <%= event.description %></small>
+                            </div>
+                            <button class="dismiss-btn" data-id="<%= event._id %>">X</button>
+                        </li>
+                    <% } %>
+                <% }); %>
+            </ul>
+        </div>
+    </div>
+
+   
+
+    <script>
+        $(document).ready(function () {
+            // Toggle Notification Dropdown
+            $('.notification-bell').click(function () {
+                $('#notificationDropdown').toggle();
+            });
+
+            // Dismiss Notification
+            $('.dismiss-btn').click(function () {
+                let eventId = $(this).data('id');
+                $.post(/events/dismiss/${eventId}, function (response) {
+                    if (response.success) {
+                        $(#event-${eventId}).remove();
+                        let count = parseInt($('#notif-count').text()) - 1;
+                        $('#notif-count').text(count >= 0 ? count : 0);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
