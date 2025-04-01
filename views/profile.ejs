@@ -1,9 +1,7 @@
 <%- include('./layouts/header') %>
 
 <main>
-    <h1>
-        <span class="goback" onclick="window.history.back()">&larr;</span> Profile
-    </h1>
+    <h1 class="table-title">Profile</h1>
 
     <div class="table-container">
         <table class="profile-table">
@@ -19,10 +17,7 @@
                 <th>Role</th>
                 <td><%= person.role %></td>
             </tr>
-            <tr>
-                <th>User Object</th>
-                <td><pre><%= JSON.stringify(person, null, 2) %></pre></td>
-            </tr>
+            
         </table>
     </div>
 </main>

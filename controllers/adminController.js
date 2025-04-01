@@ -18,7 +18,18 @@ const adminController = {
         } catch (error) {
             next(error);
         }
+    },
+
+    getInventory: (req, res, next) => {
+        res.render('inventory');
+    },
+
+    getTroops: (req, res, next) => {
+        res.render('troops');
     }
+
+
+
     
 };
 

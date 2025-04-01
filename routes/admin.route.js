@@ -5,4 +5,7 @@ router.get('/users', adminController.getUsers);
 router.get('/appointments', adminController.getAllAppointments);
 router.get('/appointments-list', adminController.getAllAppointments);
 
+router.get('/inventory', adminController.getInventory);
+router.get('/troops', adminController.getTroops);
+
 module.exports = router;
