@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Members in District: <%= district.name %></title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+  <div class="members-container">
+    <h2>Members in District: <%= district.name %></h2>
+    <a href="/" class="btn-back">← Back to District List</a>
+
+    <% if (members.length === 0) { %>
+      <p class="no-members">No members in this district.</p>
+    <% } else { %>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Date of Birth</th>
+            <th>Address</th>
+            <th>Contact Number</th>
+            <th>Troop #</th>
+            <th>School</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% members.forEach(m => { %>
+            <tr>
+              <td><%= m.name %></td>
+              <td><%= m.dateOfBirth.toDateString() %></td>
+              <td><%= m.address %></td>
+              <td><%= m.contactNumber %></td>
+              <td><%= m.troopNumber %></td>
+              <td><%= m.school %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    <% } %>
+  </div>
+
+</body>
+</html>

@@ -11,6 +11,8 @@
     const passport = require('passport');
     const MongoStore = require('connect-mongo');
     const connectEnsureLogin = require('connect-ensure-login')
+    const districtRoutes = require('./routes/districtRoutes');
+    const troopMemberRoutes = require('./routes/troopMemberRoutes');
 
     const app = express();
     app.use(morgan('dev'));
@@ -49,6 +51,12 @@
     });
 
     //routes
+    app.use('/districts', districtRoutes);
+
+    app.use('/troopmembers', troopMemberRoutes);
+
+
+
     app.use('/', require('./routes/index.route'));
     app.use('/auth', require('./routes/auth.route'));
     app.use('/user', connectEnsureLogin.ensureLoggedIn({redirectTo: "/auth/login"}), require('./routes/user.route'));

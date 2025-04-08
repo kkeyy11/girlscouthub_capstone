@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Troop Member</title>
+  <!-- Font Awesome CDN -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #ffffff; /* White background for the page */
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #333;
+      overflow: hidden;
+    }
+
+    .form-container {
+      background: linear-gradient(to right, #A8E6CF, #DCEDC1); /* Shades of green */
+      padding: 40px;
+      border-radius: 15px;
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 900px;
+      backdrop-filter: blur(5px); /* Optional: apply blur effect to form */
+    }
+
+    h1 {
+      font-size: 2rem;
+      text-align: center;
+      margin-bottom: 30px;
+      color: #2E7D32; /* Dark green for the title */
+    }
+
+    h1 i {
+      margin-right: 10px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .form-group .input-container {
+      width: 48%; /* 48% width to create 2-column layout */
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 16px;
+      margin-bottom: 5px;
+      color: #333;
+      font-weight: bold;
+    }
+
+    .input-field {
+      width: 100%; /* Ensures all inputs take up full width of their container */
+      padding: 12px;
+      font-size: 16px;
+      border: 1px solid #A5D6A7; /* Light green border */
+      border-radius: 8px;
+      margin-top: 5px;
+      background: #F1F8E9; /* Light green background */
+      color: #333;
+      transition: all 0.3s ease;
+    }
+
+    .input-field:focus {
+      outline: none;
+      background: #C8E6C9; /* Slightly darker green background when focused */
+      border: 1px solid #388E3C; /* Darker green border on focus */
+    }
+
+    select.input-field {
+      background: #F1F8E9; /* Light green background */
+      color: #333;
+    }
+
+    button.submit-btn {
+      width: 100%;
+      padding: 14px;
+      background: #388E3C; /* Dark green background */
+      border: none;
+      border-radius: 8px;
+      font-size: 18px;
+      color: #fff;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button.submit-btn:hover {
+      background-color: #2C6B31; /* Darker green on hover */
+    }
+
+    button i {
+      margin-right: 10px;
+    }
+
+    @media (max-width: 600px) {
+      .form-container {
+        padding: 30px;
+        width: 80%;
+      }
+
+      h1 {
+        font-size: 1.5rem;
+      }
+
+      .input-field {
+        width: 100%; /* Full-width for smaller screens */
+      }
+
+      .form-group {
+        flex-direction: column; /* Stack inputs vertically on small screens */
+      }
+
+      .form-group .input-container {
+        width: 100%; /* Full-width for smaller screens */
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="form-container">
+    <h1><i class="fas fa-user-plus"></i> Add Troop Member</h1>
+    <form action="/troopmembers/add" method="POST">
+      <div class="form-group">
+        <div class="input-container">
+          <label for="name"><i class="fas fa-user"></i> Name</label>
+          <input name="name" id="name" placeholder="Enter name" required class="input-field"><br>
+        </div>
+
+        <div class="input-container">
+          <label for="dateOfBirth"><i class="fas fa-calendar-alt"></i> Date of Birth</label>
+          <input type="date" name="dateOfBirth" id="dateOfBirth" required class="input-field"><br>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="input-container">
+          <label for="address"><i class="fas fa-map-marker-alt"></i> Address</label>
+          <input name="address" id="address" placeholder="Enter address" required class="input-field"><br>
+        </div>
+
+        <div class="input-container">
+          <label for="contactNumber"><i class="fas fa-phone-alt"></i> Contact Number</label>
+          <input name="contactNumber" id="contactNumber" placeholder="Enter contact number" required class="input-field"><br>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="input-container">
+          <label for="guardianName"><i class="fas fa-user-shield"></i> Guardian Name</label>
+          <input name="guardianName" id="guardianName" placeholder="Enter guardian name" required class="input-field"><br>
+        </div>
+
+        <div class="input-container">
+          <label for="guardianContact"><i class="fas fa-phone-alt"></i> Guardian Contact</label>
+          <input name="guardianContact" id="guardianContact" placeholder="Enter guardian contact" required class="input-field"><br>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="input-container">
+          <label for="troopNumber"><i class="fas fa-users"></i> Troop Number</label>
+          <input name="troopNumber" id="troopNumber" placeholder="Enter troop number" required class="input-field"><br>
+        </div>
+
+        <div class="input-container">
+          <label for="district"><i class="fas fa-sitemap"></i> District</label>
+          <select name="district" id="district" required class="input-field">
+            <% districts.forEach(d => { %>
+              <option value="<%= d._id %>"><%= d.name %></option>
+            <% }) %>
+          </select><br>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="input-container">
+          <label for="school"><i class="fas fa-school"></i> School</label>
+          <input name="school" id="school" placeholder="Enter school name" required class="input-field"><br>
+        </div>
+      </div>
+
+      <button type="submit" class="submit-btn"><i class="fas fa-plus-circle"></i> Add Member</button>
+    </form>
+  </div>
+
+</body>
+</html>

@@ -4,38 +4,137 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Product</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #F4F9F4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .form-container {
+            background-color: #ffffff;
+            width: 50%;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: 1px solid #D1E7DD;
+        }
+        .form-container h2 {
+            text-align: center;
+            font-size: 30px;
+            color: #2C6B44; /* Girl Scout Green */
+            margin-bottom: 20px;
+        }
+        label {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+            display: inline-flex;
+            align-items: center;
+            position: relative;
+            margin-top: 10px;
+        }
+        label i {
+            margin-right: 8px; /* Space between the icon and the text */
+            color: #2C6B44;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border: 1px solid #D1E7DD;
+            border-radius: 8px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        select {
+            background-color: #F9FBF9;
+        }
+        textarea {
+            height: 100px;
+        }
+        button {
+            background-color: #2C6B44;
+            color: white;
+            padding: 12px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            display: block;
+            width: 100%;
+            margin-top: 20px;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #218F3B; /* Darker Green */
+        }
+        .form-container .form-group {
+            margin-bottom: 20px;
+        }
+        .form-container .form-group:last-child {
+            margin-bottom: 0;
+        }
+        @media (max-width: 768px) {
+            .form-container {
+                width: 80%;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h2>Add Product</h2>
-    <form action="/admin/add" method="POST">
-        <label>Product Name:</label>
-        <input type="text" name="name" required><br>
-    
-        <label>Category:</label>
-        <select name="category">
-            <option>Uniform</option>
-            <option>Camping Gear</option>
-            <option>Accessories</option>
-            <option>Badges</option>
-        </select><br>
-    
-        <label>Description:</label>
-        <textarea name="description"></textarea><br>
-    
-        <label>Quantity:</label>
-        <input type="number" name="quantity" required><br>
-    
-        <label>Price (PHP):</label>
-        <input type="number" name="price" step="0.01" required><br> <!-- ADD PRICE INPUT -->
-    
-        <label>Supplier:</label>
-        <input type="text" name="supplier"><br>
-    
-        <label>Date Acquired:</label>
-        <input type="date" name="dateAcquired"><br>
-    
-        <button type="submit">Add Product</button>
-    </form>
-    
+
+    <div class="form-container">
+        <h2>Add Product</h2>
+        <form action="/admin/add" method="POST">
+            <div class="form-group">
+                <label for="name"><i class="fas fa-box"></i>Product Name:</label>
+                <input type="text" name="name" id="name" required placeholder="Enter product name">
+            </div>
+
+            <div class="form-group">
+                <label for="category"><i class="fas fa-tags"></i>Category:</label>
+                <select name="category" id="category" required>
+                    <option value="Uniform">Uniform</option>
+                    <option value="Camping Gear">Camping Gear</option>
+                    <option value="Accessories">Accessories</option>
+                    <option value="Badges">Badges</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="description"><i class="fas fa-pencil-alt"></i>Description:</label>
+                <textarea name="description" id="description" placeholder="Enter product description"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="quantity"><i class="fas fa-cubes"></i>Quantity:</label>
+                <input type="number" name="quantity" id="quantity" required placeholder="Enter quantity">
+            </div>
+
+            <div class="form-group">
+                <label for="price"><i class="fas fa-money-bill-wave"></i>Price (PHP):</label>
+                <input type="number" name="price" id="price" step="0.01" required placeholder="Enter price">
+            </div>
+
+            <div class="form-group">
+                <label for="supplier"><i class="fas fa-truck"></i>Supplier:</label>
+                <input type="text" name="supplier" id="supplier" placeholder="Enter supplier name">
+            </div>
+
+            <div class="form-group">
+                <label for="dateAcquired"><i class="fas fa-calendar-alt"></i>Date Acquired:</label>
+                <input type="date" name="dateAcquired" id="dateAcquired" required>
+            </div>
+
+            <button type="submit">Add Product</button>
+        </form>
+    </div>
+
 </body>
 </html>

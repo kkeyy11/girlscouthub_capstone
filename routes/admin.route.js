@@ -54,17 +54,17 @@ router.post('/event', eventController.createEvent);
 
 
 // District routes
-router.get('/districts', districtController.getDistricts); // Route for displaying districts
-router.get('/district/create', districtController.showCreateDistrictForm); // Route to show create district form
+//router.get('/districts', districtController.getDistricts); // Route for displaying districts
+//router.get('/district/create', districtController.showCreateDistrictForm); // Route to show create district form
 
-router.post('/district/create', districtController.createDistrict); // Route to handle create district POST request
+//router.post('/district/create', districtController.createDistrict); // Route to handle create district POST request
 
 // Route for updating districts
-router.get('/district/edit/:districtId', districtController.showEditDistrictForm); // Route to show edit form
-router.post('/district/update', districtController.updateDistrict); // Route for updating the district
+//router.get('/district/edit/:districtId', districtController.showEditDistrictForm); // Route to show edit form
+//router.post('/district/update', districtController.updateDistrict); // Route for updating the district
 
 // Route for deleting district
-router.post('/district/delete/:districtId', districtController.deleteDistrict);
+//router.post('/district/delete/:districtId', districtController.deleteDistrict);
 
 
 // School routes

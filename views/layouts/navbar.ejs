@@ -1,34 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Girl Scout</title>
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* General Styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        nav {
+            background-color: #2F5233;
+            color: white;
+            width: 240px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            padding: 20px 10px;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+            overflow-y: auto;  /* Enable scrolling */
+            
+            /* Hide scrollbar but allow scrolling */
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;     /* Firefox */
+        }
+
+        nav::-webkit-scrollbar {
+            display: none;  /* Chrome, Safari, Opera */
+        }
+
+        nav h2 {
+            font-size: 24px;
+            color: #BEEAC5;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        nav ul li {
+            margin-bottom: 10px;
+        }
+
+        nav ul li a {
+            display: flex;
+            align-items: center;
+            color: white;
+            text-decoration: none;
+            font-size: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        nav ul li a i {
+            margin-right: 10px;
+        }
+
+        nav ul li a:hover {
+            background-color: #234026;
+        }
+
+        /* Dropdown Styles */
+        .dropdown-content {
+            display: none;
+            padding-left: 20px;
+        }
+
+        .dropdown.show .dropdown-content {
+            display: block;
+        }
+
+        /* Main Content */
+        main {
+            margin-left: 240px;
+            padding: 30px;
+            width: calc(100% - 240px);
+            background-color: #fff;
+        }
+    </style>
+</head>
+
+<body>
+
 <nav>
-    <h2>Girl Scout Hub</h2>
+    <h2><i class="fas fa-leaf"></i> Girl Scout</h2>
     <ul>
-        <li><a href="/">Home</a></li>
+        <li><a href="/"><i class="fas fa-home"></i> Home</a></li>
 
         <% if (user) { %>
-            <li><a href="/user/profile">Profile</a></li>
+        <li><a href="/user/profile"><i class="fas fa-user-circle"></i> Profile</a></li>
 
-            <% if (user.role && user.role.toLowerCase() === "admin") { %>
-                <!-- Admin-only links -->
-                <li><a href="/admin/appointments-list">Appointments</a></li>
-                <li><a href="/admin/users">Manage users</a></li>  
-               
-                <li><a href="/admin/add">Inventory</a></li> 
-                <li><a href="/admin/low-stock">Stocks</a></li>
-                <li><a href="/admin">List Product</a></li> 
-                <li><a href="/admin/avail">Avail Product</a></li>
-                <li><a href="/admin/report">Report</a></li>
-                <li><a href="/admin/districts">Districts</a></li>  
-                
-            <% } else { %>
-                <!-- Regular user links -->
-                <li><a href="/user/appointments">Appointments</a></li>
-                <li><a href="/user/events">Notification Event</a></li>
-            <% } %>
+        <% if (user.role && user.role.toLowerCase() === "admin") { %>
+            <li><a href="/admin/appointments-list"><i class="fas fa-calendar-check"></i> Appointments</a></li>
+            <li><a href="/admin/users"><i class="fas fa-users-cog"></i> Manage Users</a></li>
+            <li><a href="/admin/add"><i class="fas fa-box"></i> Products</a></li>
+            <li><a href="/admin/low-stock"><i class="fas fa-boxes"></i> Stocks</a></li>
+            <li><a href="/admin"><i class="fas fa-list"></i> List Product</a></li>
+            <li><a href="/admin/avail"><i class="fas fa-shopping-cart"></i> Avail Product</a></li>
+            <li><a href="/admin/report"><i class="fas fa-file-alt"></i> Report</a></li>
 
-            <li><a href="/auth/logout">Logout</a></li>
+            <li class="dropdown">
+                <a href="javascript:void(0)" onclick="toggleDropdown(this)">
+                    <i class="fas fa-map-marked-alt"></i> Districts
+                </a>
+                <ul class="dropdown-content">
+                    <!-- Dynamic Districts will load here -->
+                </ul>
+            </li>
+
         <% } else { %>
-            <li><a href="/auth/register">Register</a></li>
-            <li><a href="/auth/login">Login</a></li>
+            <li><a href="/user/appointments"><i class="fas fa-calendar"></i> Appointments</a></li>
+            <li><a href="/user/events"><i class="fas fa-bell"></i> Notification Event</a></li>
+        <% } %>
+
+        <li><a href="/auth/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+
+        <% } else { %>
+        <li><a href="/auth/register"><i class="fas fa-user-plus"></i> Register</a></li>
+        <li><a href="/auth/login"><i class="fas fa-sign-in-alt"></i> Login</a></li>
         <% } %>
 
     </ul>
 </nav>
+
+<main>
+    <h1>Welcome to Girl Scout Hub</h1>
+    <p>This is your dashboard content area.</p>
+</main>
+
+<script>
+    function toggleDropdown(element) {
+        element.parentElement.classList.toggle('show');
+    }
+
+    // Fetch Districts from Server
+    fetch('/districts/all')
+        .then(res => res.json())
+        .then(districts => {
+            const dropdown = document.querySelector('.dropdown-content');
+            districts.forEach(district => {
+                const li = document.createElement('li');
+                li.innerHTML = `<a href="/districts/${district._id}/members">${district.name}</a>`;
+                dropdown.appendChild(li);
+            });
+        })
+        .catch(err => console.error('Failed to load districts', err));
+</script>
+
+</body>
+</html>

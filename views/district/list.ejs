@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Districts</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  
+
+  <div class="table-container">
+    <h2>Districts</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>District</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% districts.forEach(d => { %>
+          <tr>
+            <td><%= d.name %></td>
+            <td>
+              <a href="/districts/<%= d._id %>/members" class="btn">View Members</a>
+              <form action="/districts/delete/<%= d._id %>" method="POST" style="display:inline;">
+                <button type="submit" onclick="return confirm('Delete?')" class="btn btn-danger">Delete</button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+
+
+</body>
+</html>
