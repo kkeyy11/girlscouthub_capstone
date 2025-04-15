@@ -1,30 +1,202 @@
 <%- include('./layouts/header') %>
 
-<main>
-    <h1 class="table-title">All Appointments</h1>
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #ffffff;
+    color: #333;
+  }
 
-    <div class="table-container">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>User</th>
-                    <th>Date</th>
-                    <th>Time</th>
-                    <th>Description</th>
-                </tr>
-            </thead>
-            <tbody>
-                <% appointments.forEach(appointment => { %>
-                    <tr>
-                        <td><%= appointment.user.email %></td>
-                        <td><%= appointment.date.toDateString() %></td>
-                        <td><%= appointment.time %></td>
-                        <td><%= appointment.description %></td>
-                    </tr>
-                <% }); %>
-            </tbody>
-        </table>
-    </div>
-</main>
+  h1.calendar-title, h1.table-title {
+    text-align: center;
+    font-size: 2.2rem;
+    margin-top: 40px;
+    margin-bottom: 20px;
+    color: #2c3e50;
+  }
 
+  /* Calendar Section */
+  .calendar-wrapper {
+    max-width: 1100px;
+    margin: 0 auto 50px auto;
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  }
+
+  .calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr); /* Monday–Friday */
+    gap: 1px;
+  }
+
+  .day-header {
+    background-color: #f7f7f7;
+    padding: 16px;
+    text-align: center;
+    font-weight: bold;
+    border-bottom: 2px solid #ccc;
+    font-size: 1rem;
+    color: #2c3e50;
+  }
+
+  .calendar-cell {
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    min-height: 140px;
+    padding: 10px;
+    position: relative;
+  }
+
+  .calendar-cell .date {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+  }
+
+  .appointment {
+    background-color: #d1e7dd;
+    color: #0f5132;
+    padding: 6px 8px;
+    font-size: 13px;
+    border-radius: 6px;
+    margin-bottom: 5px;
+    word-wrap: break-word;
+  }
+
+  .no-appointments {
+    font-size: 13px;
+    color: #aaa;
+    margin-top: 10px;
+  }
+
+  /* Table Section */
+  .table-container {
+    display: flex;
+    justify-content: center;
+    margin: 0 auto 60px auto;
+    max-width: 1100px;
+  }
+
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+    background: #ffffff;
+  }
+
+  .table thead {
+    background-color: #f0f0f0;
+    color: #2c3e50;
+  }
+
+  .table th,
+  .table td {
+    padding: 14px 16px;
+    text-align: left;
+    font-size: 15px;
+  }
+
+  .table th {
+    font-weight: bold;
+    border-bottom: 2px solid #ddd;
+  }
+
+  .table tbody tr {
+    border-bottom: 1px solid #f0f0f0;
+    transition: background-color 0.2s ease;
+  }
+
+  .table tbody tr:hover {
+    background-color: #f9f9f9;
+  }
+
+  .table td i {
+    margin-right: 6px;
+  }
+</style>
+
+<!-- Monthly Calendar View -->
+<h1 class="calendar-title">📅 Monthly Appointment Calendar (Weekdays Only)</h1>
+<div class="calendar-wrapper">
+  <div class="calendar-grid">
+    <% const weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']; %>
+    <% weekdays.forEach(day => { %>
+      <div class="day-header"><%= day %></div>
+    <% }); %>
+
+    <% 
+      const currentDate = new Date();
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth();
+      const firstDayOfMonth = new Date(year, month, 1);
+      const lastDayOfMonth = new Date(year, month + 1, 0);
+      const daysInMonth = lastDayOfMonth.getDate();
+
+      let cells = [];
+      for (let day = 1; day <= daysInMonth; day++) {
+        const date = new Date(year, month, day);
+        const dayOfWeek = date.getDay(); // 0 = Sunday, 6 = Saturday
+        if (dayOfWeek >= 1 && dayOfWeek <= 5) {
+          cells.push(date);
+        }
+      }
+
+      cells.forEach(date => {
+        const dateStr = date.toISOString().slice(0, 10);
+    %>
+      <div class="calendar-cell">
+        <div class="date"><%= date.getDate() %></div>
+        <% 
+          let hasAppointment = false;
+          appointments.forEach(appt => {
+            const apptDate = new Date(appt.date).toISOString().slice(0, 10);
+            if (apptDate === dateStr) {
+              hasAppointment = true;
+        %>
+          <div class="appointment">
+            <%= appt.time %> – <%= appt.description %>
+          </div>
+        <% }}); %>
+        <% if (!hasAppointment) { %>
+          <div class="no-appointments">No appointments</div>
+        <% } %>
+      </div>
+    <% }); %>
+  </div>
+</div>
+
+<!-- Table View -->
+<h1 class="table-title"><i class="fas fa-calendar-check"></i> Appointment List</h1>
+<div class="table-container">
+  <table class="table">
+    <thead>
+      <tr>
+        <th><i class="fas fa-user"></i> User</th>
+        <th><i class="fas fa-calendar-alt"></i> Date</th>
+        <th><i class="fas fa-clock"></i> Time</th>
+        <th><i class="fas fa-info-circle"></i> Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% appointments.forEach(appointment => { %>
+        <tr>
+          <td><%= appointment.user.email %></td>
+          <td><%= new Date(appointment.date).toDateString() %></td>
+          <td><%= appointment.time %></td>
+          <td><%= appointment.description %></td>
+        </tr>
+      <% }); %>
+    </tbody>
+  </table>
+</div>
+
+<!-- Font Awesome -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
 <%- include('./layouts/footer') %>

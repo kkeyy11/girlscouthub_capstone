@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Reservation List</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    h2 {
+      margin-top: 40px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: left;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+    button {
+      padding: 5px 10px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    .approved {
+      color: green;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Reservation Management</h1>
+
+  <!-- Pending Reservations Section -->
+  <h2>Pending Reservations</h2>
+  <% if (reservations.length === 0) { %>
+    <p>No pending reservations.</p>
+  <% } else { %>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Items</th>
+          <th>Date Reserved</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% reservations.forEach(res => { %>
+          <tr>
+            <td><%= res.reservedBy %></td>
+            <td>
+              <ul>
+                <% res.items.forEach(item => { %>
+                  <li><%= item.name %> (x<%= item.quantity %>)</li>
+                <% }) %>
+              </ul>
+            </td>
+            <td><%= new Date(res.dateReserved).toLocaleString() %></td>
+            <td>
+              <form action="/reservations/approve/<%= res._id %>" method="POST">
+                <button type="submit">Approve</button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  <% } %>
+
+  <!-- Approved Reservations Section -->
+<h2>Approved Reservations</h2>
+<% if (typeof approvedReservations !== 'undefined' && approvedReservations.length === 0) { %>
+  <p>No approved reservations yet.</p>
+<% } else if (typeof approvedReservations !== 'undefined' && approvedReservations.length > 0) { %>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Items</th>
+        <th>Date Reserved</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% approvedReservations.forEach(res => { %>
+        <tr class="approved">
+          <td><%= res.reservedBy %></td>
+          <td><%= res.email %></td>
+          <td>
+            <ul>
+              <% res.items.forEach(item => { %>
+                <li><%= item.name %> (x<%= item.quantity %>)</li>
+              <% }) %>
+            </ul>
+          </td>
+          <td><%= new Date(res.dateReserved).toLocaleString() %></td>
+          <td class="approved">Approved</td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+<% } %>
+
+
+</body>
+</html>

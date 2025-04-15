@@ -13,6 +13,8 @@
     const connectEnsureLogin = require('connect-ensure-login')
     const districtRoutes = require('./routes/districtRoutes');
     const troopMemberRoutes = require('./routes/troopMemberRoutes');
+    const cartRoutes = require("./routes/cartRoutes");
+    const reservationRoutes = require('./routes/cartRoutes');
 
     const app = express();
     app.use(morgan('dev'));
@@ -54,7 +56,22 @@
     app.use('/districts', districtRoutes);
 
     app.use('/troopmembers', troopMemberRoutes);
+    app.use('/', require('./routes/review.route')); // Adjust path if needed
 
+
+    //app.use("/", productRoutes);
+    app.use("/reservations", cartRoutes);
+    
+    app.use('/reservations', reservationRoutes);
+    
+    
+    
+    // Root Route - Can be redirected to product list
+    app.get("/", (req, res) => {
+      res.redirect("/products/avail");
+    });
+    
+    
 
 
     app.use('/', require('./routes/index.route'));

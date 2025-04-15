@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -21,5 +21,130 @@
     <% } %>
 
     <a href="/products">Back to Products</a>
+</body>
+</html> -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Low Stock Alert</title>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+  />
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background: #f2fbe0;
+      color: #2F5233;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: 50px auto;
+      padding: 30px;
+      background: #ffffff;
+      border-radius: 15px;
+      box-shadow: 0 10px 25px rgba(47, 82, 51, 0.1);
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 32px;
+      color: #2F5233;
+      margin-bottom: 20px;
+    }
+
+    h1 i {
+      color: white;
+      background: #76B947;
+      padding: 12px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    li {
+      background: #f9fff1;
+      border-left: 5px solid #FF6F61;
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+    }
+
+    li i {
+      color: #FF6F61;
+      margin-right: 10px;
+    }
+
+    .no-products {
+      text-align: center;
+      font-size: 18px;
+      background: #e8f5e9;
+      padding: 20px;
+      border-radius: 10px;
+      margin-top: 20px;
+    }
+
+    .btn-back {
+      display: inline-block;
+      margin-top: 30px;
+      padding: 12px 25px;
+      background: #2F5233;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: bold;
+      transition: background 0.3s ease;
+    }
+
+    .btn-back:hover {
+      background: #1e3b24;
+    }
+
+    .btn-back i {
+      margin-right: 6px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1><i class="fas fa-triangle-exclamation"></i>Low Stock Alert</h1>
+
+    <% if (lowStockProducts.length === 0) { %>
+      <div class="no-products">
+        <i class="fas fa-check-circle"></i> No low stock products. All good!
+      </div>
+    <% } else { %>
+      <ul>
+        <% lowStockProducts.forEach(product => { %>
+          <li>
+            <i class="fas fa-box-open"></i>
+            <strong><%= product.name %></strong> - Only <strong><%= product.quantity %></strong> left!
+          </li>
+        <% }); %>
+      </ul>
+    <% } %>
+
+    <a href="/products" class="btn-back"><i class="fas fa-arrow-left"></i> Back to Products</a>
+  </div>
+
 </body>
 </html>

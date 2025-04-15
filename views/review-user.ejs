@@ -1,0 +1,74 @@
+<%- include('./layouts/header') %>
+<%- include('./layouts/navbar') %>
+
+<style>
+    .review-container {
+        padding: 2rem;
+        max-width: 800px;
+        margin: auto;
+    }
+
+    .review-container h1,
+    .review-container h2 {
+        color: #2c3e50;
+        text-align: center;
+    }
+
+    .review-form {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 2rem;
+    }
+
+    .review-form textarea {
+        padding: 10px;
+        font-size: 16px;
+        resize: vertical;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        margin-bottom: 10px;
+    }
+
+    .review-form button {
+        width: fit-content;
+        padding: 8px 16px;
+        background-color: #2ecc71;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+    }
+
+    .review-list li {
+        margin-bottom: 15px;
+        border-left: 5px solid #3498db;
+        padding: 10px;
+        background-color: #f9f9f9;
+        border-radius: 6px;
+    }
+
+    .review-list small {
+        color: #7f8c8d;
+    }
+</style>
+
+<div class="review-container">
+    <h1>User Reviews</h1>
+
+    <form method="POST" action="/user/reviews" class="review-form">
+        <textarea name="message" rows="4" placeholder="Write your review here..." required></textarea>
+        <button type="submit">Submit Review</button>
+    </form>
+
+    <h2>Your Submitted Reviews</h2>
+    <ul class="review-list">
+        <% reviews.forEach(review => { %>
+            <li>
+                <%= review.message %><br>
+                <small><%= new Date(review.createdAt).toLocaleString() %></small>
+            </li>
+        <% }) %>
+    </ul>
+</div>
+
+<%- include('./layouts/footer') %>

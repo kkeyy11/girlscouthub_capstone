@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -83,5 +83,546 @@
         <a href="/admin">Back to Product List</a>
     </div>
 
+</body>
+</html> -->
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ShopNow</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+  <style>
+    :root {
+      --primary: #3f704d;      /* Girl Scout Green */
+      --secondary: #8dc63f;    /* Lighter green accent */
+      --dark: #2d3436;
+      --light: #f9f9f9;
+      --gray: #dfe6e9;
+      --text: #2d3436;
+      --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      --radius: 8px;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f5f5f5;
+      color: var(--text);
+      line-height: 1.6;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    
+    /* Header Styles */
+    header {
+      background-color: white;
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    
+    .header-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 0;
+    }
+    
+    .logo {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--primary);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+    }
+    
+    .logo span {
+      margin-left: 8px;
+    }
+    
+    nav ul {
+      display: flex;
+      list-style: none;
+    }
+    
+    nav ul li {
+      margin-left: 25px;
+    }
+    
+    nav ul li a {
+      text-decoration: none;
+      color: var(--dark);
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+    
+    nav ul li a:hover {
+      color: var(--primary);
+    }
+    
+    .cart-icon {
+      position: relative;
+      font-size: 22px;
+    }
+    
+    .cart-count {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background-color: var(--primary);
+      color: white;
+      font-size: 12px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    /* Hero Section */
+    .hero {
+      background-color: var(--primary);
+      color: white;
+      padding: 60px 0;
+      margin-bottom: 40px;
+      background-image: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    }
+    
+    .hero h1 {
+      font-size: 2.5rem;
+      margin-bottom: 15px;
+    }
+    
+    .hero p {
+      font-size: 1.1rem;
+      max-width: 600px;
+      margin-bottom: 25px;
+    }
+    
+    /* Products Section */
+    .products-section {
+      padding: 40px 0;
+    }
+    
+    .section-title {
+      font-size: 1.8rem;
+      margin-bottom: 30px;
+      text-align: center;
+      position: relative;
+    }
+    
+    .section-title::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 3px;
+      background-color: var(--primary);
+    }
+    
+    .filters {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+    
+    .category-filter select,
+    .sort-filter select {
+      padding: 8px 15px;
+      border: 1px solid var(--gray);
+      border-radius: var(--radius);
+      background-color: white;
+      font-family: 'Poppins', sans-serif;
+    }
+    
+    /* Product Cards */
+    .card-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 30px;
+    }
+    
+    .card {
+      background-color: white;
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .card-img {
+      height: 180px;
+      background-color: #f0f0f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    
+    .card-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .card-content {
+      padding: 20px;
+    }
+    
+    .card-category {
+      font-size: 0.8rem;
+      color: var(--primary);
+      text-transform: uppercase;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    
+    .card h3 {
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+      color: var(--dark);
+    }
+    
+    .card-details {
+      margin-bottom: 15px;
+    }
+    
+    .card-details p {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 5px;
+      font-size: 0.9rem;
+    }
+    
+    .card-price {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 15px;
+    }
+    
+    .card-description {
+      font-size: 0.9rem;
+      color: #666;
+      margin-bottom: 15px;
+    }
+
+    .reserve-form {
+      margin-top: 15px;
+    }
+    
+    .form-group {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    
+    .form-group label {
+      margin-right: 10px;
+      font-weight: 500;
+    }
+    
+    .form-group input {
+      width: 70px;
+      padding: 8px;
+      border: 1px solid var(--gray);
+      border-radius: var(--radius);
+      text-align: center;
+    }
+    
+    .btn {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      border-radius: var(--radius);
+      font-family: 'Poppins', sans-serif;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      width: 100%;
+      text-align: center;
+    }
+    
+    .btn:hover {
+      background-color: #2c5a38; /* Darker green on hover */
+    }
+    
+    .btn-outline {
+      background-color: transparent;
+      border: 2px solid var(--primary);
+      color: var(--primary);
+    }
+    
+    .btn-outline:hover {
+      background-color: var(--primary);
+      color: white;
+    }
+    
+    /* Cart Button */
+    .cart-button {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background-color: var(--primary);
+      color: white;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: var(--shadow);
+      text-decoration: none;
+      font-size: 24px;
+      transition: transform 0.3s;
+      z-index: 99;
+    }
+    
+    .cart-button:hover {
+      transform: scale(1.1);
+    }
+    
+    /* Footer */
+    footer {
+      background-color: var(--dark);
+      color: white;
+      padding: 40px 0;
+      margin-top: 60px;
+    }
+    
+    .footer-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 30px;
+    }
+    
+    .footer-col h4 {
+      font-size: 1.2rem;
+      margin-bottom: 20px;
+      position: relative;
+    }
+    
+    .footer-col h4::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: -8px;
+      width: 40px;
+      height: 2px;
+      background-color: var(--secondary);
+    }
+    
+    .footer-col ul {
+      list-style: none;
+    }
+    
+    .footer-col ul li {
+      margin-bottom: 10px;
+    }
+    
+    .footer-col ul li a {
+      color: #ddd;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    
+    .footer-col ul li a:hover {
+      color: var(--secondary);
+      padding-left: 5px;
+    }
+    
+    .copyright {
+      text-align: center;
+      padding-top: 30px;
+      border-top: 1px solid #444;
+      margin-top: 30px;
+      font-size: 0.9rem;
+      color: #aaa;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      .header-container {
+        flex-direction: column;
+      }
+      
+      nav ul {
+        margin-top: 15px;
+      }
+      
+      nav ul li {
+        margin-left: 15px;
+        margin-right: 15px;
+      }
+      
+      .hero {
+        padding: 40px 0;
+      }
+      
+      .hero h1 {
+        font-size: 2rem;
+      }
+      
+      .filters {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      .category-filter, .sort-filter {
+        margin-bottom: 15px;
+        width: 100%;
+      }
+      
+      .category-filter select, .sort-filter select {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="container header-container">
+      <a href="/" class="logo">
+        🛍️ <span>ShopNow</span>
+      </a>
+      <nav>
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="">Products</a></li>
+          <li><a href="">Contact</a></li>
+          <li>
+            <a href="/cart" class="cart-icon">
+              🛒
+              <span class="cart-count">0</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <h1>Discover Your Scouting Essentials</h1>
+      <p>Explore our collection of quality Girl Scout gear and supplies — perfect for every adventure!</p>
+    </div>
+  </section>
+
+  <!-- Products Section -->
+  <section class="products-section">
+    <div class="container">
+      <h2 class="section-title">Available Products</h2>
+      
+      <div class="filters">
+        <div class="category-filter">
+          <select>
+            <option value="">All Categories</option>
+            <option value="/">Uniform</option>
+            <option value="/">Camping Gear</option>
+            <option value="/">Accesories</option>
+            <option value="/">badge</option>
+          </select>
+        </div>
+        
+        <div class="sort-filter">
+          <select>
+            <option value="popular">Sort by: Popularity</option>
+            <option value="price-low">Price: Low to High</option>
+            <option value="price-high">Price: High to Low</option>
+            <option value="newest">Newest First</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="card-container">
+        <% products.forEach(product => { %>
+          <div class="card">
+            <div class="card-img">
+              <img src="https://via.placeholder.com/300x180?text=<%= product.name %>" alt="<%= product.name %>">
+            </div>
+            <div class="card-content">
+              <div class="card-category"><%= product.category %></div>
+              <h3><%= product.name %></h3>
+              
+              <div class="card-details">
+                <p>
+                  <span>Availability:</span>
+                  <span class="<%= product.quantity > 10 ? 'in-stock' : 'low-stock' %>">
+                    <%= product.quantity > 10 ? 'In Stock' : product.quantity + ' left' %>
+                  </span>
+                </p>
+              </div>
+              
+              <div class="card-price">₱<%= product.price.toLocaleString() %></div>
+              
+              <!-- Product Description -->
+              <p class="card-description"><%= product.description %></p>
+              
+              <form class="reserve-form" action="/cart/add/<%= product._id %>" method="POST">
+                <div class="form-group">
+                  <label for="qty-<%= product._id %>">Quantity:</label>
+                  <input 
+                    type="number" 
+                    id="qty-<%= product._id %>" 
+                    name="quantity" 
+                    min="1" 
+                    max="<%= product.quantity %>" 
+                    value="1" 
+                    required
+                  >
+                </div>
+                <button type="submit" class="btn">Add to Cart</button>
+              </form>
+            </div>
+          </div>
+        <% }); %>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container footer-container">
+      <div class="footer-col">
+        
+      </div>
+    </div>
+    <div class="copyright">© 2025 ShopNow. All Rights Reserved.</div>
+  </footer>
+
+  <!-- Cart Button -->
+  <a href="/cart" class="cart-button">
+    🛒
+  </a>
 </body>
 </html>

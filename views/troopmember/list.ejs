@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -25,12 +25,22 @@
       font-size: 2.8rem;
       color: #2C6B44;
       text-align: center;
-      margin-bottom: 40px;
+      margin-bottom: 20px;
       font-weight: bold;
     }
     .btn {
-      margin: 10px;
+      margin: 10px 5px 10px 0;
       border-radius: 5px;
+    }
+    .search-box {
+      margin: 20px 0;
+    }
+    .search-input {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
     }
     .table-container {
       overflow-x: auto;
@@ -117,13 +127,6 @@
       border-radius: 8px;
       font-size: 16px;
     }
-    .modal button {
-      width: 100%;
-      padding: 14px;
-      font-size: 16px;
-      cursor: pointer;
-      border-radius: 5px;
-    }
     .modal h3 {
       font-size: 1.8rem;
       color: #2C6B44;
@@ -144,104 +147,121 @@
 </head>
 <body>
 
-  <div class="container">
-    <h1>Troop Members</h1>
-    <a href="/troopmembers/add" class="btn btn-primary">Add New Member</a>
+<div class="container">
+  <h1>Troop Members</h1>
+  <a href="/troopmembers/add" class="btn btn-primary">Add New Member</a>
 
-    <div class="table-container">
-      <table class="members-table">
-        <thead>
+  <!-- EXPORT BUTTONS -->
+  <div class="mb-3">
+    <a href="/troopmembers/export/csv" class="btn btn-outline-secondary">Export CSV</a>
+    <a href="/troopmembers/export/excel" class="btn btn-outline-success">Export Excel</a>
+    <a href="/troopmembers/export/pdf" class="btn btn-outline-danger">Export PDF</a>
+  </div>
+
+  <!-- SEARCH -->
+  <div class="search-box">
+    <input type="text" class="search-input" id="searchInput" placeholder="Search by name, school, district, troop #...">
+  </div>
+
+  <!-- TABLE -->
+  <div class="table-container">
+    <table class="members-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Birthday</th>
+          <th>Address</th>
+          <th>Contact</th>
+          <th>Guardian</th>
+          <th>Guardian Contact</th>
+          <th>Troop #</th>
+          <th>District</th>
+          <th>School</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="membersTableBody">
+        <% members.forEach(m => { %>
           <tr>
-            <th>Name</th>
-            <th>Birthday</th>
-            <th>Address</th>
-            <th>Contact</th>
-            <th>Guardian</th>
-            <th>Guardian Contact</th>
-            <th>Troop #</th>
-            <th>District</th>
-            <th>School</th>
-            <th>Actions</th>
+            <td><%= m.name %></td>
+            <td><%= m.dateOfBirth.toDateString() %></td>
+            <td><%= m.address %></td>
+            <td><%= m.contactNumber %></td>
+            <td><%= m.guardianName %></td>
+            <td><%= m.guardianContact %></td>
+            <td><%= m.troopNumber %></td>
+            <td><%= m.district?.name %></td>
+            <td><%= m.school %></td>
+            <td>
+              <button class="btn btn-edit" onclick="openEditModal('<%= m._id %>')">Edit</button>
+              <form action="/troopmembers/delete/<%= m._id %>" method="POST" class="delete-form">
+                <button type="submit" class="btn btn-danger" onclick="return confirm('Delete this member?')">Delete</button>
+              </form>
+            </td>
           </tr>
-        </thead>
-        <tbody>
-          <% members.forEach(m => { %>
-            <tr>
-              <td><%= m.name %></td>
-              <td><%= m.dateOfBirth.toDateString() %></td>
-              <td><%= m.address %></td>
-              <td><%= m.contactNumber %></td>
-              <td><%= m.guardianName %></td>
-              <td><%= m.guardianContact %></td>
-              <td><%= m.troopNumber %></td>
-              <td><%= m.district?.name %></td>
-              <td><%= m.school %></td>
-              <td>
-                <button class="btn btn-edit" onclick="openEditModal('<%= m._id %>')">Edit</button>
-                <form action="/troopmembers/delete/<%= m._id %>" method="POST" class="delete-form">
-                  <button type="submit" class="btn btn-danger" onclick="return confirm('Delete this member?')">Delete</button>
-                </form>
-              </td>
-            </tr>
-          <% }) %>
-        </tbody>
-      </table>
-    </div>
+        <% }) %>
+      </tbody>
+    </table>
   </div>
+</div>
 
-  <!-- Modal -->
-  <div id="editModal" class="modal">
-    <div class="modal-content">
-      <h3>Edit Troop Member</h3>
-      <form id="editForm" method="POST">
-        <input type="hidden" id="editId">
-        <input name="name" id="editName" required class="input-field" placeholder="Name"><br>
-        <input type="date" name="dateOfBirth" id="editDob" required class="input-field"><br>
-        <input name="address" id="editAddress" required class="input-field" placeholder="Address"><br>
-        <input name="contactNumber" id="editContact" required class="input-field" placeholder="Contact Number"><br>
-        <input name="guardianName" id="editGuardianName" required class="input-field" placeholder="Guardian Name"><br>
-        <input name="guardianContact" id="editGuardianContact" required class="input-field" placeholder="Guardian Contact"><br>
-        <input name="troopNumber" id="editTroop" required class="input-field" placeholder="Troop Number"><br>
-        <select name="district" id="editDistrict" required class="input-field">
-          <% districts.forEach(d => { %>
-            <option value="<%= d._id %>"><%= d.name %></option>
-          <% }) %>
-        </select><br>
-        <input name="school" id="editSchool" required class="input-field" placeholder="School"><br><br>
-        <button type="submit" class="btn btn-primary">Update</button>
-        <button type="button" class="btn btn-cancel" onclick="closeModal()">Cancel</button>
-      </form>
-    </div>
+<!-- MODAL -->
+<div id="editModal" class="modal">
+  <div class="modal-content">
+    <h3>Edit Troop Member</h3>
+    <form id="editForm" method="POST">
+      <input type="hidden" id="editId">
+      <input name="name" id="editName" required placeholder="Name"><br>
+      <input type="date" name="dateOfBirth" id="editDob" required><br>
+      <input name="address" id="editAddress" required placeholder="Address"><br>
+      <input name="contactNumber" id="editContact" required placeholder="Contact Number"><br>
+      <input name="guardianName" id="editGuardianName" required placeholder="Guardian Name"><br>
+      <input name="guardianContact" id="editGuardianContact" required placeholder="Guardian Contact"><br>
+      <input name="troopNumber" id="editTroop" required placeholder="Troop Number"><br>
+      <select name="district" id="editDistrict" required>
+        <% districts.forEach(d => { %>
+          <option value="<%= d._id %>"><%= d.name %></option>
+        <% }) %>
+      </select><br>
+      <input name="school" id="editSchool" required placeholder="School"><br><br>
+      <button type="submit" class="btn btn-primary">Update</button>
+      <button type="button" class="btn btn-cancel" onclick="closeModal()">Cancel</button>
+    </form>
   </div>
+</div>
 
-  <script>
-    function openEditModal(id) {
-      fetch(`/troopmembers/api/${id}`)
-        .then(res => res.json())
-        .then(member => {
-          document.getElementById('editForm').action = `/troopmembers/edit/${member._id}`;
-          document.getElementById('editName').value = member.name;
-          document.getElementById('editDob').value = member.dateOfBirth.slice(0, 10);
-          document.getElementById('editAddress').value = member.address;
-          document.getElementById('editContact').value = member.contactNumber;
-          document.getElementById('editGuardianName').value = member.guardianName;
-          document.getElementById('editGuardianContact').value = member.guardianContact;
-          document.getElementById('editTroop').value = member.troopNumber;
-          document.getElementById('editDistrict').value = member.district;
-          document.getElementById('editSchool').value = member.school;
+<script>
+  function openEditModal(id) {
+    fetch(/troopmembers/api/${id})
+      .then(res => res.json())
+      .then(member => {
+        document.getElementById('editForm').action = /troopmembers/edit/${member._id};
+        document.getElementById('editName').value = member.name;
+        document.getElementById('editDob').value = member.dateOfBirth.slice(0, 10);
+        document.getElementById('editAddress').value = member.address;
+        document.getElementById('editContact').value = member.contactNumber;
+        document.getElementById('editGuardianName').value = member.guardianName;
+        document.getElementById('editGuardianContact').value = member.guardianContact;
+        document.getElementById('editTroop').value = member.troopNumber;
+        document.getElementById('editDistrict').value = member.district;
+        document.getElementById('editSchool').value = member.school;
+        document.getElementById('editModal').style.display = 'flex';
+      });
+  }
 
-          document.getElementById('editModal').style.display = 'flex';
-          document.getElementById('editModal').classList.add('show');
-        });
-    }
+  function closeModal() {
+    document.getElementById('editModal').style.display = 'none';
+  }
 
-    function closeModal() {
-      document.getElementById('editModal').classList.remove('show');
-      setTimeout(() => {
-        document.getElementById('editModal').style.display = 'none';
-      }, 300);
-    }
-  </script>
+  document.getElementById('searchInput').addEventListener('input', function () {
+    const searchValue = this.value.toLowerCase();
+    const rows = document.querySelectorAll('#membersTableBody tr');
+    rows.forEach(row => {
+      const rowText = row.innerText.toLowerCase();
+      row.style.display = rowText.includes(searchValue) ? '' : 'none';
+    });
+  });
+</script>
 
 </body>
 </html>

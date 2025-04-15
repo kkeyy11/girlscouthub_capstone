@@ -1,10 +1,160 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Event List</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="/css/eventlist.css"> <!-- LINK TO SEPARATE CSS -->
+    
+    <style>
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            color: #388e3c;
+            margin-bottom: 30px;
+        }
+
+        /* Notification Bell */
+        .notification-container {
+            position: relative;
+            text-align: right;
+            margin-bottom: 20px;
+        }
+
+        .notification-bell {
+            font-size: 2rem;
+            color: #388e3c;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .notification-bell:hover {
+            color: #66bb6a;
+        }
+
+        .notification-count {
+            position: absolute;
+            top: -5px;
+            right: -10px;
+            background-color: #f44336;
+            color: white;
+            font-size: 1rem;
+            padding: 3px 7px;
+            border-radius: 50%;
+            font-weight: bold;
+        }
+
+        /* Notification Dropdown */
+        .notification-dropdown {
+            display: none;
+            position: absolute;
+            top: 40px;
+            right: 0;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            z-index: 9999;
+            padding: 10px;
+        }
+
+        .notification-dropdown ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .notification-dropdown li {
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            padding: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: 0.3s;
+        }
+
+        .notification-dropdown li:hover {
+            background-color: #e8f5e9;
+        }
+
+        .notification-dropdown li div {
+            color: #333;
+            font-size: 1rem;
+        }
+
+        .dismiss-btn {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .dismiss-btn:hover {
+            background-color: #d32f2f;
+        }
+
+        /* Table Styling */
+        .event-table {
+            width: 100%;
+            border-collapse: collapse;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .event-table thead {
+            background-color: #388e3c;
+            color: white;
+        }
+
+        .event-table th,
+        .event-table td {
+            padding: 12px;
+            text-align: left;
+        }
+
+        .event-table th {
+            font-weight: bold;
+        }
+
+        .event-table tbody tr {
+            background-color: #f9f9f9;
+            transition: background-color 0.3s ease;
+        }
+
+        .event-table tbody tr:hover {
+            background-color: #e0f7e0;
+        }
+
+        .event-table td i {
+            margin-right: 8px;
+        }
+
+        .event-table td,
+        .event-table th {
+            font-size: 1rem;
+        }
+    </style>
 </head>
 <body>
     <h1>Upcoming Events</h1>
@@ -25,7 +175,7 @@
                                 <small>Location: <%= event.location %></small> <br>
                                 <small>Description: <%= event.description %></small>
                             </div>
-                            <button class="dismiss-btn" data-id="<%= event._id %>">X</button>
+                            <button class="dismiss-btn" data-id="<%= event._id %>">Dismiss</button>
                         </li>
                     <% } %>
                 <% }); %>
@@ -33,7 +183,27 @@
         </div>
     </div>
 
-   
+    <!-- Event Table -->
+    <table class="event-table">
+        <thead>
+            <tr>
+                <th><i class="fa fa-calendar-alt"></i> Event</th>
+                <th><i class="fa fa-map-marker-alt"></i> Location</th>
+                <th><i class="fa fa-info-circle"></i> Description</th>
+                <th><i class="fa fa-clock"></i> Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% events.forEach(event => { %>
+                <tr>
+                    <td><%= event.title %></td>
+                    <td><%= event.location %></td>
+                    <td><%= event.description %></td>
+                    <td><%= event.date.toDateString() %></td>
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
 
     <script>
         $(document).ready(function () {

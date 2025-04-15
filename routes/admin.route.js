@@ -30,8 +30,8 @@ router.get("/low-stock", productController.getLowStockProducts);
 
 router.get("/report", productController.getReport);
 
-router.get("/avail", productController.getAvailForm);
-router.post("/avail", productController.processAvail);
+// router.get("/avail", productController.getAvailForm);
+// router.post("/avail", productController.processAvail);
 
 
 // View all users and appointments

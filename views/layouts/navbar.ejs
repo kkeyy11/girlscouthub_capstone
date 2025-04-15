@@ -112,8 +112,12 @@
             <li><a href="/admin/add"><i class="fas fa-box"></i> Products</a></li>
             <li><a href="/admin/low-stock"><i class="fas fa-boxes"></i> Stocks</a></li>
             <li><a href="/admin"><i class="fas fa-list"></i> List Product</a></li>
-            <li><a href="/admin/avail"><i class="fas fa-shopping-cart"></i> Avail Product</a></li>
+            <li><a href="/admin/event"><i class="fas fa-bell"></i> Create Event</a></li>
+            <!-- <li><a href="/admin/avail"><i class="fas fa-shopping-cart"></i> Avail Product</a></li> -->
+            <li><a href="/reservations"><i class=""></i> List of Reservation</a></li>
             <li><a href="/admin/report"><i class="fas fa-file-alt"></i> Report</a></li>
+            <li><a href="/admin/reviews"><i class="fas fa-star"></i> Reviews</a></li>
+
 
             <li class="dropdown">
                 <a href="javascript:void(0)" onclick="toggleDropdown(this)">
@@ -126,7 +130,10 @@
 
         <% } else { %>
             <li><a href="/user/appointments"><i class="fas fa-calendar"></i> Appointments</a></li>
+            <li><a href="/user/avail"><i class="fas fa-shopping-cart"></i> Product</a></li>
             <li><a href="/user/events"><i class="fas fa-bell"></i> Notification Event</a></li>
+            <li><a href="/user/reviews"><i class="fas fa-star"></i> Reviews</a></li>
+
         <% } %>
 
         <li><a href="/auth/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
@@ -139,10 +146,10 @@
     </ul>
 </nav>
 
-<main>
+<!-- <main>
     <h1>Welcome to Girl Scout Hub</h1>
     <p>This is your dashboard content area.</p>
-</main>
+</main> -->
 
 <script>
     function toggleDropdown(element) {

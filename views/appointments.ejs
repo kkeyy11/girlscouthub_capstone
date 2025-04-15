@@ -1,43 +1,204 @@
 <%- include('./layouts/header') %>
 
-<h1>My Appointments</h1>
+<style>
+  body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    color: #333;
+    background-color: #eaf6e5;
+  }
 
-<ul>
-    <% appointments.forEach(appointment => { %>
-        <li>
-            <strong><%= appointment.date.toDateString() %> - <%= appointment.time %></strong>
-            <p><%= appointment.description %></p>
-            <form action="/user/appointments/delete/<%= appointment._id %>" method="POST">
-                <button type="submit">Delete</button>
-            </form>
-        </li>
+  h1, h2 {
+    font-weight: bold;
+    color: #388e3c;
+    text-align: center;
+  }
+
+  .calendar-container {
+    width: 60%;
+    max-width: 900px;
+    margin: 20px auto;
+    border: 1px solid #b9e6b1;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #ffffff;
+  }
+
+  .calendar {
+    display: grid;
+    grid-template-columns: 80px repeat(5, 1fr);
+    grid-auto-rows: 60px;
+    border: 1px solid #b9e6b1;
+    margin-top: 20px;
+  }
+
+  .time-slot {
+    border: 1px solid #d0f5d3;
+    text-align: right;
+    padding: 5px;
+    font-size: 12px;
+    background-color: #f1f9f1;
+  }
+
+  .day-header {
+    background-color: #c8e6c9;
+    font-weight: bold;
+    text-align: center;
+    padding: 10px;
+    border: 1px solid #b9e6b1;
+    color: #388e3c;
+  }
+
+  .appointment {
+    background-color: #66bb6a;
+    color: white;
+    padding: 4px;
+    font-size: 13px;
+    border-radius: 5px;
+    margin: 2px;
+    position: relative;
+    font-weight: bold;
+  }
+
+  .appointment form {
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+  }
+
+  .appointment form button {
+    background: #f44336;
+    border: none;
+    color: white;
+    font-size: 10px;
+    padding: 2px 5px;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+
+  .new-appointment {
+    margin: 20px auto;
+    text-align: center;
+    width: 60%;
+    max-width: 600px;
+  }
+
+  .new-appointment form {
+    display: inline-block;
+    text-align: left;
+    background-color: #f1f9f1;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+  }
+
+  .new-appointment label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #388e3c;
+  }
+
+  .new-appointment input, .new-appointment select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #c8e6c9;
+    border-radius: 5px;
+  }
+
+  .new-appointment button {
+    padding: 10px 20px;
+    background-color: #66bb6a;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 5px;
+    font-weight: bold;
+    width: 100%;
+  }
+
+  .new-appointment button:hover {
+    background-color: #388e3c;
+  }
+
+  @media (max-width: 768px) {
+    .calendar-container,
+    .new-appointment {
+      width: 90%;
+    }
+  }
+</style>
+
+<h1>📅 My Weekly Appointments</h1>
+
+<div class="calendar-container">
+  <div class="calendar">
+    <!-- Header Row with Days of the Week -->
+    <div></div>
+    <% const weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']; %>
+    <% const currentDate = new Date(); %>
+    <% weekdays.forEach((day, index) => { %>
+      <% const dayOffset = (index - currentDate.getDay() + 7) % 7; %>
+      <% const dayDate = new Date(currentDate); %>
+      <% dayDate.setDate(currentDate.getDate() + dayOffset); %>
+      <div class="day-header">
+        <%= day %>
+      </div>
     <% }); %>
-</ul>
 
-<% if (appointments.length === 0) { %> 
-    <!-- Only show form if user has no appointment -->
-    <h2>Book a New Appointment</h2>
-    <form action="/user/appointments" method="POST">
-        <label>Date: <input type="date" name="date" required></label><br>
+    <!-- Time Slots + Appointments -->
+    <% const hours = ['08:00 AM', '09:00 AM', '10:00 AM', '11:00 AM', '12:00 PM', '01:00 PM', '02:00 PM', '03:00 PM', '04:00 PM']; %>
+    <% hours.forEach(hour => { %>
+      <div class="time-slot"><%= hour %></div>
+      <% weekdays.forEach(day => { %>
+        <div>
+          <% appointments.forEach(appointment => {
+            const apptDate = new Date(appointment.date);
+            const dayName = apptDate.toLocaleDateString('en-US', { weekday: 'long' });
+            const apptTime = appointment.time;
+            if (dayName === day && apptTime === hour) { %>
+              <div class="appointment">
+                <%= appointment.time %><br>
+                <%= appointment.description %>
+                <form action="/user/appointments/delete/<%= appointment._id %>" method="POST">
+                  <button type="submit">X</button>
+                </form>
+              </div>
+          <% } }); %>
+        </div>
+      <% }); %>
+    <% }); %>
+  </div>
+</div>
 
-        <label>Time: 
-            <select name="time" required>
-                <option value="08:00 AM">08:00 AM</option>
-                <option value="09:00 AM">09:00 AM</option>
-                <option value="10:00 AM">10:00 AM</option>
-                <option value="11:00 AM">11:00 AM</option>
-                <option value="01:00 PM">01:00 PM</option>
-                <option value="02:00 PM">02:00 PM</option>
-                <option value="03:00 PM">03:00 PM</option>
-                <option value="04:00 PM">04:00 PM</option>
-            </select>
-        </label><br>
-
-        <label>Description: <textarea name="description" required></textarea></label><br>
-        <button type="submit">Add Appointment</button>
-    </form>
-<% } else { %>
-    <p>You already have an appointment today. Delete it if you want to book a new one.</p>
-<% } %>
+<!-- New Appointment Form -->
+<div class="new-appointment">
+  <h2>Book a New Appointment</h2>
+  <form action="/user/appointments" method="POST">
+    <label>Date:
+      <input type="date" name="date" required>
+    </label><br><br>
+    <label>Time:
+      <select name="time" required>
+        <% hours.forEach(h => { %>
+          <option value="<%= h %>"><%= h %></option>
+        <% }); %>
+      </select>
+    </label><br><br>
+    <label>Description:
+      <input type="text" name="description" required>
+    </label><br><br>
+    <button type="submit">➕ Add Appointment</button>
+  </form>
+</div>
 
 <%- include('./layouts/footer') %>
+     

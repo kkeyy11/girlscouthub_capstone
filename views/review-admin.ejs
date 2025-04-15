@@ -1,0 +1,57 @@
+<%- include('./layouts/header') %>
+<%- include('./layouts/navbar') %>
+
+<style>
+    .admin-review-container {
+        padding: 2rem;
+        max-width: 900px;
+        margin: auto;
+    }
+
+    .admin-review-container h1 {
+        text-align: center;
+        color: #2c3e50;
+        margin-bottom: 2rem;
+    }
+
+    .admin-review-list li {
+        margin-bottom: 20px;
+        background: #ecf0f1;
+        padding: 15px;
+        border-left: 5px solid #e67e22;
+        border-radius: 6px;
+    }
+
+    .admin-review-list strong {
+        color: #d35400;
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    .admin-review-list em {
+        color: #34495e;
+        display: block;
+        margin-bottom: 3px;
+    }
+
+    .admin-review-list small {
+        color: #7f8c8d;
+    }
+</style>
+
+<div class="admin-review-container">
+    <h1>All User Reviews (Admin View)</h1>
+
+    <ul class="admin-review-list">
+        <% reviews.forEach(review => { %>
+            <li>
+                <strong><%= review.sentiment %></strong>
+                <%= review.message %>
+                <em>By: <%= review.user?.username || 'Unknown User' %></em>
+                <small><%= new Date(review.createdAt).toLocaleString() %></small>
+            </li>
+        <% }) %>
+    </ul>
+</div>
+
+<%- include('./layouts/footer') %>

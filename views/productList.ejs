@@ -4,66 +4,229 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Product List</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #F0F9F1;
+            color: #2F5233;
+        }
+
+        header {
+            background-color: #2F5233;
+            padding: 20px;
+            text-align: center;
+            color: white;
+        }
+
+        header h2 {
+            margin: 0;
+            font-size: 28px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(47, 82, 51, 0.2);
+            border-radius: 10px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 8px 16px;
+            margin-bottom: 10px;
+            border: none;
+            border-radius: 6px;
+            background-color: #76B947;
+            color: white;
+            font-weight: bold;
+            text-decoration: none;
+            transition: background 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #5C944F;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            border: 1px solid #ccc;
+            text-align: left;
+        }
+
+        th {
+            background-color: #C5E1C5;
+        }
+
+        tr:nth-child(even) {
+            background-color: #F7FFF7;
+        }
+
+        .actions a, .actions button {
+            margin-right: 5px;
+        }
+
+        .actions form {
+            display: inline;
+        }
+
+        button {
+            padding: 6px 10px;
+            border: none;
+            border-radius: 4px;
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #3D8B40;
+        }
+
+        /* Modal Styles */
+        #stockModal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+        }
+
+        #stockModal input {
+            padding: 8px;
+            margin: 10px 0;
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        #stockModal button {
+            margin-top: 10px;
+            width: 48%;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 14px;
+            color: #777;
+        }
+
+        .footer-links a {
+            margin: 10px;
+            text-decoration: none;
+            color: #2F5233;
+        }
+
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
-    <h2>Product List</h2>
-    <a href="/admin/add">Add New Product</a>
-    <table border="1">
-        <tr>
-            <th>Product Name</th>
-            <th>Category</th>
-            <th>Quantity</th>
-            <th>Price</th>
-            <th>Supplier</th>
-            <th>Actions</th>
-        </tr>
-        <% products.forEach(product => { %>
-            <tr>
-                <td><%= product.name %></td>
-                <td><%= product.category %></td>
-                <td><%= product.quantity %></td>
-                <td>₱<%= product.price %></td>
-                <td><%= product.supplier %></td>
-                <td>
-                    <a href="/admin/edit/<%= product._id %>">Edit</a>
-                    <form action="/admin/delete/<%= product._id %>" method="POST" style="display:inline;">
-                        <button type="submit" onclick="return confirm('Are you sure?')">Delete</button>
-                    </form>
-                    <!-- Add Stock Button -->
-                    <button onclick="openStockModal('<%= product._id %>', '<%= product.name %>')">
-                        ➕ Add Stock
-                    </button>
-                </td>
-            </tr>
-        <% }); %>
-    </table>
-    <a href="/admin/low-stock">Check Low Stock</a>
 
-    <!-- Add Stock Modal -->
-    <div id="stockModal" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-    background: white; padding: 20px; border: 1px solid black; box-shadow: 2px 2px 10px gray;">
-        <h2 id="modalTitle"></h2>
-        <form id="stockForm" method="POST">
-            <label for="stockQuantity">Additional Quantity:</label>
-            <input type="number" name="quantity" id="stockQuantity" required min="1">
-            <button type="submit">Confirm</button>
-            <button type="button" onclick="closeStockModal()">Cancel</button>
-        </form>
+<header>
+    <h2><i class="fas fa-leaf"></i> Product Inventory Management</h2>
+</header>
+
+<div class="container">
+    <a href="/admin/add" class="btn"><i class="fas fa-plus-circle"></i> Add New Product</a>
+    
+    <div class="table-container">
+        <table>
+            <tr>
+                <th><i class="fas fa-box"></i> Product Name</th>
+                <th><i class="fas fa-tags"></i> Category</th>
+                <th><i class="fas fa-cubes"></i> Stocks</th>
+                <th><i class="fas fa-money-bill-wave"></i> Price</th>
+                <th><i class="fas fa-truck"></i> Supplier</th>
+                <th><i class="fas fa-tools"></i> Actions</th>
+            </tr>
+            <% products.forEach(product => { %>
+                <tr>
+                    <td><%= product.name %></td>
+                    <td><%= product.category %></td>
+                    <td><%= product.quantity %></td>
+                    <td>₱<%= product.price %></td>
+                    <td><%= product.supplier %></td>
+                    <td class="actions">
+                        <a href="/admin/edit/<%= product._id %>" class="btn"><i class="fas fa-edit"></i> Edit</a>
+                        <form action="/admin/delete/<%= product._id %>" method="POST" onsubmit="return confirm('Are you sure?')">
+                            <button type="submit"><i class="fas fa-trash"></i></button>
+                        </form>
+                        <button onclick="openStockModal('<%= product._id %>', '<%= product.name %>')">
+                            <i class="fas fa-plus"></i> Stock
+                        </button>
+                    </td>
+                </tr>
+            <% }); %>
+        </table>
     </div>
 
-    <script>
-        function openStockModal(productId, productName) {
-            document.getElementById("modalTitle").innerText = "Add Stock to " + productName;
-            document.getElementById("stockForm").action = "/admin/add-stocks/" + productId;
-            document.getElementById("stockModal").style.display = "block";
-        }
+    <div style="margin-top: 20px;">
+        <a href="/admin/low-stock" class="btn"><i class="fas fa-exclamation-triangle"></i> Check Low Stock</a>
+        <a href="/admin/report" class="btn"><i class="fas fa-file-alt"></i> View Product Report</a>
+        <a href="" class="btn"><i class="fas fa-shopping-cart"></i> Avail Product</a>
+    </div>
+</div>
 
-        function closeStockModal() {
-            document.getElementById("stockModal").style.display = "none";
-        }
-    </script>
-<a href="/admin/report">📄 View Product Report</a>
-<a href="/admin/avail">🛍️ Avail Product</a>
+<!-- Add Stock Modal -->
+<div id="stockModal">
+    <h2 id="modalTitle"></h2>
+    <form id="stockForm" method="POST">
+        <label for="stockQuantity">Additional Quantity:</label>
+        <input type="number" name="quantity" id="stockQuantity" required min="1">
+        <div style="display: flex; justify-content: space-between;">
+            <button type="submit"><i class="fas fa-check"></i> Confirm</button>
+            <button type="button" onclick="closeStockModal()" style="background-color: #ccc; color: #333;">
+                <i class="fas fa-times"></i> Cancel
+            </button>
+        </div>
+    </form>
+</div>
+
+<footer>
+    <div class="footer-links">
+        <a href="/admin">🏠 Home</a> |
+        <a href="/admin/help">❓ Help</a>
+    </div>
+    <p>&copy; 2025 Your Company. All rights reserved.</p>
+</footer>
+
+<script>
+    function openStockModal(productId, productName) {
+        document.getElementById("modalTitle").innerText = "Add Stock to " + productName;
+        document.getElementById("stockForm").action = "/admin/add-stocks/" + productId;
+        document.getElementById("stockModal").style.display = "block";
+    }
+
+    function closeStockModal() {
+        document.getElementById("stockModal").style.display = "none";
+    }
+</script>
 
 </body>
 </html>
