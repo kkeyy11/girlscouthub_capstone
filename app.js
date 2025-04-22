@@ -67,9 +67,9 @@
     
     
     // Root Route - Can be redirected to product list
-    app.get("/", (req, res) => {
-      res.redirect("/products/avail");
-    });
+//     app.get("/", (req, res) => {
+//       res.redirect("/products/avail");
+//  });
     
     
 

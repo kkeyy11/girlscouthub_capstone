@@ -7,6 +7,9 @@
 
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
         /* General Styles */
@@ -14,36 +17,29 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f4f4f4;
+            background-color: #fefbfb; /* Dark background */
+            color: #000000;
             display: flex;
             min-height: 100vh;
+            flex-direction: column;
         }
 
         /* Sidebar Styles */
         nav {
-            background-color: #2F5233;
-            color: white;
+            background-color: #2F5233; /* green */
+            color: #ffffff;
             width: 240px;
             position: fixed;
             top: 0;
             left: 0;
             height: 100%;
             padding: 20px 10px;
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
-            overflow-y: auto;  /* Enable scrolling */
-            
-            /* Hide scrollbar but allow scrolling */
-            -ms-overflow-style: none;  /* IE and Edge */
-            scrollbar-width: none;     /* Firefox */
-        }
-
-        nav::-webkit-scrollbar {
-            display: none;  /* Chrome, Safari, Opera */
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
         }
 
         nav h2 {
             font-size: 24px;
-            color: #BEEAC5;
             text-align: center;
             margin-bottom: 25px;
         }
@@ -60,7 +56,7 @@
         nav ul li a {
             display: flex;
             align-items: center;
-            color: white;
+            color: #ffffff;
             text-decoration: none;
             font-size: 15px;
             padding: 10px;
@@ -73,17 +69,7 @@
         }
 
         nav ul li a:hover {
-            background-color: #234026;
-        }
-
-        /* Dropdown Styles */
-        .dropdown-content {
-            display: none;
-            padding-left: 20px;
-        }
-
-        .dropdown.show .dropdown-content {
-            display: block;
+            background-color: #BEEAC5; /* light green on hover */
         }
 
         /* Main Content */
@@ -91,8 +77,33 @@
             margin-left: 240px;
             padding: 30px;
             width: calc(100% - 240px);
-            background-color: #fff;
+            background-color: #fefbfb; /* dark background for main */
         }
+
+        /* Chart Container */
+        .chart-container {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 30px;
+        }
+
+        .chart-container canvas {
+            max-width: 500px;
+            max-height: 300px;
+        }
+
+        /* Total Sales Box */
+        .total-sales-box {
+            background-color: #2F5233; /* green background */
+            color: #fff;
+            padding: 20px;
+            margin-top: 30px;
+            text-align: center;
+            border-radius: 10px;
+            font-size: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
     </style>
 </head>
 
@@ -109,15 +120,11 @@
         <% if (user.role && user.role.toLowerCase() === "admin") { %>
             <li><a href="/admin/appointments-list"><i class="fas fa-calendar-check"></i> Appointments</a></li>
             <li><a href="/admin/users"><i class="fas fa-users-cog"></i> Manage Users</a></li>
-            <li><a href="/admin/add"><i class="fas fa-box"></i> Products</a></li>
-            <li><a href="/admin/low-stock"><i class="fas fa-boxes"></i> Stocks</a></li>
             <li><a href="/admin"><i class="fas fa-list"></i> List Product</a></li>
             <li><a href="/admin/event"><i class="fas fa-bell"></i> Create Event</a></li>
-            <!-- <li><a href="/admin/avail"><i class="fas fa-shopping-cart"></i> Avail Product</a></li> -->
-            <li><a href="/reservations"><i class=""></i> List of Reservation</a></li>
+            <li><a href="/reservations"><i class="fas fa-bookmark"></i> List of Reservation</a></li>
             <li><a href="/admin/report"><i class="fas fa-file-alt"></i> Report</a></li>
             <li><a href="/admin/reviews"><i class="fas fa-star"></i> Reviews</a></li>
-
 
             <li class="dropdown">
                 <a href="javascript:void(0)" onclick="toggleDropdown(this)">
@@ -133,7 +140,6 @@
             <li><a href="/user/avail"><i class="fas fa-shopping-cart"></i> Product</a></li>
             <li><a href="/user/events"><i class="fas fa-bell"></i> Notification Event</a></li>
             <li><a href="/user/reviews"><i class="fas fa-star"></i> Reviews</a></li>
-
         <% } %>
 
         <li><a href="/auth/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
@@ -142,14 +148,8 @@
         <li><a href="/auth/register"><i class="fas fa-user-plus"></i> Register</a></li>
         <li><a href="/auth/login"><i class="fas fa-sign-in-alt"></i> Login</a></li>
         <% } %>
-
     </ul>
 </nav>
-
-<!-- <main>
-    <h1>Welcome to Girl Scout Hub</h1>
-    <p>This is your dashboard content area.</p>
-</main> -->
 
 <script>
     function toggleDropdown(element) {

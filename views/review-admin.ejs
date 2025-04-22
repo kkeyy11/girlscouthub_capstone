@@ -2,53 +2,106 @@
 <%- include('./layouts/navbar') %>
 
 <style>
+    body {
+        background-color: #f0fdf4;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
     .admin-review-container {
         padding: 2rem;
-        max-width: 900px;
+        max-width: 1000px;
         margin: auto;
     }
 
     .admin-review-container h1 {
         text-align: center;
-        color: #2c3e50;
+        color: #2e7d32;
         margin-bottom: 2rem;
+        font-size: 2.5rem;
     }
 
-    .admin-review-list li {
+    .admin-review-list {
+        list-style: none;
+        padding: 0;
+    }
+
+    .review-card {
         margin-bottom: 20px;
-        background: #ecf0f1;
-        padding: 15px;
-        border-left: 5px solid #e67e22;
-        border-radius: 6px;
+        padding: 20px;
+        border-left: 8px solid;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .review-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .review-positive {
+        border-color: #4caf50;
+        background-color: #e8f5e9;
+    }
+
+    .review-neutral {
+        border-color: #fbc02d;
+        background-color: #fffde7;
+    }
+
+    .review-negative {
+        border-color: #e53935;
+        background-color: #ffebee;
     }
 
     .admin-review-list strong {
-        color: #d35400;
+        font-size: 1.1rem;
         display: block;
-        margin-bottom: 5px;
+        margin-bottom: 8px;
+    }
+
+    .review-positive strong {
+        color: #2e7d32;
+    }
+
+    .review-neutral strong {
+        color: #f57f17;
+    }
+
+    .review-negative strong {
+        color: #c62828;
     }
 
     .admin-review-list em {
-        color: #34495e;
+        color: #2e7d32;
         display: block;
-        margin-bottom: 3px;
+        margin-top: 10px;
+        font-style: italic;
     }
 
     .admin-review-list small {
-        color: #7f8c8d;
+        color: #555;
+        font-size: 0.85rem;
+        display: block;
+        margin-top: 4px;
     }
 </style>
 
 <div class="admin-review-container">
-    <h1>All User Reviews (Admin View)</h1>
+    <h1>📋 All User Reviews (Admin View)</h1>
 
     <ul class="admin-review-list">
-        <% reviews.forEach(review => { %>
-            <li>
-                <strong><%= review.sentiment %></strong>
-                <%= review.message %>
+        <% reviews.forEach(review => { 
+            let sentimentClass = '';
+            if (review.sentiment.toLowerCase() === 'positive') sentimentClass = 'review-positive';
+            else if (review.sentiment.toLowerCase() === 'neutral') sentimentClass = 'review-neutral';
+            else if (review.sentiment.toLowerCase() === 'negative') sentimentClass = 'review-negative';
+        %>
+            <li class="review-card <%= sentimentClass %>">
+                <strong>Sentiment: <%= review.sentiment %></strong>
+                <p><%= review.message %></p>
                 <em>By: <%= review.user?.username || 'Unknown User' %></em>
-                <small><%= new Date(review.createdAt).toLocaleString() %></small>
+                <small>Posted on: <%= new Date(review.createdAt).toLocaleString() %></small>
             </li>
         <% }) %>
     </ul>

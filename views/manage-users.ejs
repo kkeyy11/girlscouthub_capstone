@@ -1,10 +1,76 @@
 <%- include ('layouts/header') %>
 
+<style>
+    .table-title {
+        font-size: 24px;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    .table-container {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+
+    .styled-table {
+        width: 80%;
+        max-width: 800px;
+        margin: 0 auto;
+        border-collapse: collapse;
+        background-color: #fff;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .styled-table th, .styled-table td {
+        padding: 12px 20px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .styled-table th {
+        background-color: #2F5233;
+        color: white;
+        font-size: 16px;
+    }
+
+    .styled-table td {
+        font-size: 14px;
+        color: #555;
+    }
+
+    .styled-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .styled-table tr:hover {
+        background-color: #f1f1f1;
+    }
+
+    @media (max-width: 768px) {
+        .styled-table {
+            width: 90%;
+        }
+
+        .table-title {
+            font-size: 20px;
+        }
+
+        .styled-table th, .styled-table td {
+            padding: 10px;
+        }
+    }
+</style>
+
 <main>
     <h1 class="table-title">Manage Users</h1>
 
     <div class="table-container">
-        <table class="table">
+        <table class="styled-table">
             <thead>
                 <tr>
                     <th>ID</th>

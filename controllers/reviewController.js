@@ -1,6 +1,15 @@
 const Review = require('../models/review.model');
 const Sentiment = require('sentiment');
 const sentiment = new Sentiment();
+const { spawn } = require('child_process');
+const path = require('path');
+
+// Simple language detector (improve this if needed)
+function isEnglish(text) {
+    const tagalogWords = ['ako', 'ikaw', 'siya', 'sila', 'maganda', 'pangit', 'ka', 'mo', 'natin', 'tayo'];
+    const lower = text.toLowerCase();
+    return !tagalogWords.some(word => lower.includes(word));
+}
 
 exports.getUserReviews = async (req, res) => {
     try {
@@ -15,16 +24,23 @@ exports.getUserReviews = async (req, res) => {
 exports.postUserReview = async (req, res) => {
     try {
         const message = req.body.message;
-        const result = sentiment.analyze(message);
-        let sentimentType = 'Neutral';
 
-        if (result.score > 0) sentimentType = 'Positive';
-        else if (result.score < 0) sentimentType = 'Negative';
+        let sentimentResult = 'Neutral';
 
+        if (isEnglish(message)) {
+            // English sentiment using npm package
+            const result = sentiment.analyze(message);
+            sentimentResult = result.score > 0 ? 'Positive' : result.score < 0 ? 'Negative' : 'Neutral';
+        } else {
+            // Tagalog/mixed sentiment using Python model
+            sentimentResult = await analyzeSentiment(message);
+        }
+
+        // Save the review
         await Review.create({
             user: req.user._id,
             message,
-            sentiment: sentimentType
+            sentiment: sentimentResult
         });
 
         req.flash('success', 'Review submitted successfully');
@@ -44,4 +60,27 @@ exports.getAdminReviews = async (req, res) => {
         console.error(err);
         res.status(500).send("Error loading admin reviews");
     }
+};
+
+// Calls Python script for sentiment (Tagalog)
+const analyzeSentiment = async (message) => {
+    return new Promise((resolve, reject) => {
+        const pythonProcess = spawn('python', [path.join(__dirname, '..', 'scripts', 'sentiment_analysis.py'), message]);
+
+        pythonProcess.stdout.on('data', (data) => {
+            const sentimentResult = data.toString().trim();
+            resolve(sentimentResult);
+        });
+
+        pythonProcess.stderr.on('data', (data) => {
+            console.error(`Error (Python): ${data}`);
+            reject('Error analyzing sentiment (Python)');
+        });
+
+        pythonProcess.on('close', (code) => {
+            if (code !== 0) {
+                reject(`Python process exited with code ${code}`);
+            }
+        });
+    });
 };
