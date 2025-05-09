@@ -75,6 +75,7 @@
 
 
 <style>
+<<<<<<< Updated upstream
     /* Layout */
     .container {
         display: flex;
@@ -263,5 +264,104 @@
         .title {
             font-size: 28px;
         }
+=======
+  body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    color: #333;
+    background-color: #eaf6e5;
+  }
+
+  h1, h2 {
+    font-weight: bold;
+    color: #388e3c;
+    text-align: center;
+  }
+
+  .new-appointment {
+    margin: 20px auto;
+    text-align: center;
+    width: 60%;
+    max-width: 600px;
+  }
+
+  .new-appointment form {
+    display: inline-block;
+    text-align: left;
+    background-color: #f1f9f1;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+  }
+
+  .new-appointment label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #388e3c;
+  }
+
+  .new-appointment input, .new-appointment select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #c8e6c9;
+    border-radius: 5px;
+  }
+
+  .new-appointment button {
+    padding: 10px 20px;
+    background-color: #66bb6a;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 5px;
+    font-weight: bold;
+    width: 100%;
+  }
+
+  .new-appointment button:hover {
+    background-color: #388e3c;
+  }
+
+  @media (max-width: 768px) {
+    .new-appointment {
+      width: 90%;
+>>>>>>> Stashed changes
     }
 </style>
+<<<<<<< Updated upstream
+=======
+
+<h1>📅 My Appointments</h1>
+
+<!-- New Appointment Form -->
+<div class="new-appointment">
+  <h2>Book a New Appointment</h2>
+  <form action="/user/appointments" method="POST">
+    <label>Date:
+      <input type="date" name="date" required>
+    </label><br><br>
+    <label>Time:
+      <% const hours = ['08:00 AM', '09:00 AM', '10:00 AM', '11:00 AM', '12:00 PM', '01:00 PM', '02:00 PM', '03:00 PM', '04:00 PM']; %>
+      <select name="time" required>
+        <% hours.forEach(h => { %>
+          <option value="<%= h %>"><%= h %></option>
+        <% }); %>
+      </select>
+    </label><br><br>
+    <label>Description:
+      <input type="text" name="description" required>
+    </label><br><br>
+    <button type="submit">➕ Add Appointment</button>
+  </form>
+</div>
+
+<%- include('./layouts/footer') %>
+>>>>>>> Stashed changes

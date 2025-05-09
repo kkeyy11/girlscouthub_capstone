@@ -1,0 +1,187 @@
+<%- include('../layouts/header') %> <!-- This will include your navbar -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Members in District: <%= district.name %></title>
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f9f4;
+      margin: 0;
+      padding: 0;
+    }
+
+    .members-container {
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 40px;
+      border-radius: 15px;
+      background: rgba(255, 255, 255, 0.8);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+      color: #333;
+      backdrop-filter: blur(8px); /* Blur effect */
+    }
+
+    h2 {
+      text-align: center;
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+      color: #388E3C; /* Dark green */
+    }
+
+    .btn-back, .add-new-btn {
+      display: inline-block;
+      padding: 10px 25px;
+      border-radius: 8px;
+      font-weight: bold;
+      text-decoration: none;
+      transition: background 0.3s ease;
+      color: #fff;
+      font-size: 1rem;
+      border: 2px solid #388E3C; /* Green border */
+      margin: 10px;
+      text-align: center;
+      background-color: #4CAF50; /* Lighter green */
+    }
+
+    .btn-back:hover, .add-new-btn:hover {
+      background-color: #388E3C; /* Darker green */
+    }
+
+    .search-bar {
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: flex-start;
+    }
+
+    .search-bar input {
+      padding: 12px;
+      font-size: 1.1rem;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      width: 100%;
+      max-width: 350px;
+      background-color: #e8f5e1; /* Light green */
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 30px;
+    }
+
+    th, td {
+      padding: 18px 25px;
+      text-align: left;
+      font-size: 1.1rem;
+      color: #555;
+    }
+
+    th {
+      background-color: #A5D6A7; /* Light green for headers */
+      color: #333;
+      font-weight: 600;
+      border-bottom: 2px solid #ddd;
+    }
+
+    tr:nth-child(even) {
+      background-color: #ffffff; /* White for even rows */
+    }
+
+    tr:nth-child(odd) {
+      background-color: #dcedc8; /* Light green for odd rows */
+    }
+
+    tr:hover {
+      background-color: #c8e6c9; /* Slightly darker light green on hover */
+    }
+
+    .no-members {
+      text-align: center;
+      font-size: 1.4em;
+      color: #388E3C;
+      padding: 25px;
+      background: #dcedc8;
+      border-radius: 10px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="members-container">
+    <h2>District: <%= district.name %></h2>
+    <a href="/districts" class="btn-back">District List</a>
+
+    <!-- Add New District Button -->
+    <a href="/troopmembers/add" class="add-new-btn">Add Members</a>
+
+    <!-- Search Bar -->
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="Search members by name..." onkeyup="filterTable()">
+    </div>
+
+    <% if (members.length === 0) { %>
+      <p class="no-members">No members in this district.</p>
+    <% } else { %>
+      <table id="membersTable">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Date of Birth</th>
+            <th>Address</th>
+            <th>Contact Number</th>
+            <th>Troop #</th>
+            <th>School</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% members.forEach(m => { %>
+            <tr>
+              <td><%= m.name %></td>
+              <td><%= m.dateOfBirth.toDateString() %></td>
+              <td><%= m.address %></td>
+              <td><%= m.contactNumber %></td>
+              <td><%= m.troopNumber %></td>
+              <td><%= m.school %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    <% } %>
+  </div>
+
+  <script>
+    // Function to filter the table based on the search input
+    function filterTable() {
+      const input = document.getElementById('searchInput');
+      const filter = input.value.toLowerCase();
+      const table = document.getElementById('membersTable');
+      const rows = table.getElementsByTagName('tr');
+
+      for (let i = 1; i < rows.length; i++) {
+        let cells = rows[i].getElementsByTagName('td');
+        let nameCell = cells[0]; // Name column
+        if (nameCell) {
+          let name = nameCell.textContent || nameCell.innerText;
+          if (name.toLowerCase().indexOf(filter) > -1) {
+            rows[i].style.display = '';
+          } else {
+            rows[i].style.display = 'none';
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Move the sidebar or header down using margin-top -->
+  <div style="margin-top: 60px;"> <!-- Adjust the margin-top value as needed -->
+    <%- include('../layouts/header') %>
+  </div>
+
+</body>
+</html>

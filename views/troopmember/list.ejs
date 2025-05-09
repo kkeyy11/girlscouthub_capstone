@@ -1,0 +1,302 @@
+<%- include('../layouts/header') %>
+
+<style>
+  body {
+    background-color: #f9f9f9;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: flex-start;
+  }
+
+  .container {
+    width: 90%;
+    margin: 0 auto;
+    padding-top: 30px;
+  }
+
+  h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+  }
+
+  .btn-primary, .btn-outline-secondary, .btn-outline-success, .btn-outline-danger {
+    margin-bottom: 10px;
+  }
+
+  .search-box {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .search-input {
+    width: 80%;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+  }
+
+  .table-container {
+    width: 100%;
+    margin: 20px auto;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #46dfb1, #80ee98);
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow-x: auto;
+  }
+
+  table.members-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  table.members-table th, table.members-table td {
+    padding: 12px 15px;
+    text-align: center;
+    font-size: 14px;
+  }
+
+  table.members-table th {
+    background-color: #46dfb1;
+    color: white;
+    text-transform: uppercase;
+  }
+
+  table.members-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+
+  table.members-table tr:nth-child(odd) {
+    background-color: #e8f8f2;
+  }
+
+  .action-icons i {
+    font-size: 20px;
+    cursor: pointer;
+    margin: 0 5px;
+  }
+
+  .modal-content {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    width: 80%;
+    max-width: 600px;
+    margin: auto;
+  }
+
+  .modal-content input, .modal-content select {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+
+  .modal-content button {
+    margin: 10px 5px;
+  }
+
+  .btn-cancel {
+    background-color: #f44336;
+    color: white;
+  }
+
+  .pagination {
+    margin-top: 20px;
+    text-align: center;
+  }
+
+  .pagination button {
+    background-color: #46dfb1;
+    color: white;
+    border: none;
+    margin: 0 5px;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  .pagination button.active {
+    background-color: #2ca17e;
+  }
+
+  #editModal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+
+  #editModal .modal-content {
+    width: 60%;
+    max-width: 700px;
+  }
+</style>
+
+</head>
+<body>
+
+<div class="container">
+
+  <a href="/troopmembers/add" class="btn btn-primary">Add New Member</a>
+
+  <!-- SEARCH -->
+  <div class="search-box">
+    <input type="text" class="search-input" id="searchInput" placeholder="Search by name, school, district, troop #...">
+  </div>
+
+  <!-- TABLE -->
+  <div class="table-container">
+    <table class="members-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Birthday</th>
+          <th>Address</th>
+          <th>Contact</th>
+          <th>Guardian</th>
+          <th>Guardian Contact</th>
+          <th>Troop #</th>
+          <th>District</th>
+          <th>School</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="membersTableBody">
+        <% members.forEach(m => { %>
+          <tr>
+            <td><%= m.name %></td>
+            <td><%= m.dateOfBirth.toDateString() %></td>
+            <td><%= m.address %></td>
+            <td><%= m.contactNumber %></td>
+            <td><%= m.guardianName %></td>
+            <td><%= m.guardianContact %></td>
+            <td><%= m.troopNumber %></td>
+            <td><%= m.district?.name %></td>
+            <td><%= m.school %></td>
+            <td class="action-icons">
+              <i class="fas fa-edit" onclick="openEditModal('<%= m._id %>')"></i>
+              <form action="/troopmembers/delete/<%= m._id %>" method="POST" class="delete-form" style="display: inline;">
+                <button type="submit" class="btn btn-danger" onclick="return confirm('Delete this member?')">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- PAGINATION -->
+  <div class="pagination" id="pagination"></div>
+
+</div>
+
+<!-- MODAL -->
+<div id="editModal">
+  <div class="modal-content">
+    <h3>Edit Troop Member</h3>
+    <form id="editForm" method="POST">
+      <input type="hidden" id="editId">
+      <input name="name" id="editName" required placeholder="Name"><br>
+      <input type="date" name="dateOfBirth" id="editDob" required><br>
+      <input name="address" id="editAddress" required placeholder="Address"><br>
+      <input name="contactNumber" id="editContact" required placeholder="Contact Number"><br>
+      <input name="guardianName" id="editGuardianName" required placeholder="Guardian Name"><br>
+      <input name="guardianContact" id="editGuardianContact" required placeholder="Guardian Contact"><br>
+      <input name="troopNumber" id="editTroop" required placeholder="Troop Number"><br>
+      <select name="district" id="editDistrict" required>
+        <% districts.forEach(d => { %>
+          <option value="<%= d._id %>"><%= d.name %></option>
+        <% }) %>
+      </select><br>
+      <input name="school" id="editSchool" required placeholder="School"><br><br>
+      <button type="submit" class="btn btn-primary">Update</button>
+      <button type="button" class="btn btn-cancel" onclick="closeModal()">Cancel</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  const rowsPerPage = 15;
+  let currentPage = 1;
+
+  function openEditModal(id) {
+    fetch(`/troopmembers/api/${id}`)
+      .then(res => res.json())
+      .then(member => {
+        document.getElementById('editForm').action = `/troopmembers/edit/${member._id}`;
+        document.getElementById('editName').value = member.name;
+        document.getElementById('editDob').value = member.dateOfBirth.slice(0, 10);
+        document.getElementById('editAddress').value = member.address;
+        document.getElementById('editContact').value = member.contactNumber;
+        document.getElementById('editGuardianName').value = member.guardianName;
+        document.getElementById('editGuardianContact').value = member.guardianContact;
+        document.getElementById('editTroop').value = member.troopNumber;
+        document.getElementById('editDistrict').value = member.district;
+        document.getElementById('editSchool').value = member.school;
+        document.getElementById('editModal').style.display = 'flex';
+      });
+  }
+
+  function closeModal() {
+    document.getElementById('editModal').style.display = 'none';
+  }
+
+  function paginateTable() {
+    const rows = document.querySelectorAll('#membersTableBody tr');
+    const totalRows = rows.length;
+    const totalPages = Math.ceil(totalRows / rowsPerPage);
+
+    rows.forEach((row, index) => {
+      row.style.display = (index >= (currentPage - 1) * rowsPerPage && index < currentPage * rowsPerPage) ? '' : 'none';
+    });
+
+    const pagination = document.getElementById('pagination');
+    pagination.innerHTML = '';
+
+    for (let i = 1; i <= totalPages; i++) {
+      const btn = document.createElement('button');
+      btn.textContent = i;
+      btn.classList.toggle('active', i === currentPage);
+      btn.addEventListener('click', () => {
+        currentPage = i;
+        paginateTable();
+      });
+      pagination.appendChild(btn);
+    }
+  }
+
+  document.getElementById('searchInput').addEventListener('input', function () {
+    const searchValue = this.value.toLowerCase();
+    const rows = document.querySelectorAll('#membersTableBody tr');
+    rows.forEach(row => {
+      const rowText = row.innerText.toLowerCase();
+      row.style.display = rowText.includes(searchValue) ? '' : 'none';
+    });
+    // Reset pagination when searching
+    document.getElementById('pagination').innerHTML = '';
+  });
+
+  document.addEventListener('DOMContentLoaded', paginateTable);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,334 @@
+<%- include('layouts/header') %>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Product List</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css"/>
+  <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css"/>
+
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #F0F9F1;
+      margin: 0;
+      padding: 0;
+      color: #2F5233;
+    }
+
+    header {
+      background-color: #2F5233;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 30px auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(47, 82, 51, 0.2);
+    }
+
+    .btn, .export-btn {
+      padding: 8px 16px;
+      border: 2px solid #2F5233;
+      border-radius: 6px;
+      background-color: transparent;
+      color: #2F5233;
+      text-decoration: none;
+      font-weight: bold;
+      margin-right: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn:hover, .export-btn:hover {
+      background-color: #E6F4E6;
+      border-color: #5C944F;
+    }
+
+    .dropdown {
+      position: relative;
+      display: inline-block;
+    }
+
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: white;
+      min-width: 200px;
+      box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+      z-index: 10;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .dropdown-content a {
+      color: #2F5233;
+      padding: 12px 16px;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: background 0.3s;
+    }
+
+    .dropdown-content a:hover {
+      background-color: #C5E1C5;
+    }
+
+    .dropdown:hover .dropdown-content {
+      display: block;
+    }
+
+    /* Centering and making table landscape */
+    .table-wrapper {
+      overflow-x: auto;
+      display: flex;
+      justify-content: center;
+      margin-top: 15px;
+    }
+
+    table {
+      width: 100%;
+      table-layout: fixed; /* Forces the table to distribute its columns evenly */
+      border-collapse: collapse;
+      margin: 0 auto;
+    }
+
+    th, td {
+      padding: 12px 15px;
+      border: 1px solid #ccc;
+      text-align: left;
+    }
+
+    th {
+      background-color: #C5E1C5;
+    }
+
+    tr:nth-child(even) {
+      background-color: #F7FFF7;
+    }
+
+    .dt-buttons {
+      display: none;
+    }
+
+    /* Modal styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 999;
+      padding-top: 80px;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.6);
+    }
+
+    .modal-content {
+      background-color: #fff;
+      margin: auto;
+      padding: 10px;
+      border: 2px solid #2F5233;
+      width: 60%;
+      max-width: 800px;
+      border-radius: 10px;
+      text-align: center;
+    }
+
+    .modal-header {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 24px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .close:hover {
+      color: black;
+    }
+
+    #previewTableWrapper {
+      overflow-x: auto;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <a href="/admin/add" class="btn"><i class="fas fa-plus-circle"></i> Add New Product</a>
+  <a href="/admin/low-stock" class="btn"><i class="fas fa-exclamation-triangle"></i> Check Low Stock</a>
+  <a href="/admin/report" class="btn"><i class="fas fa-file-alt"></i> View Product Report</a>
+
+  <div class="dropdown" style="margin-top: 10px;">
+    <button class="export-btn"><i class="fas fa-file-export"></i> Export Options</button>
+    <div class="dropdown-content">
+      <a href="#" onclick="previewData(0)"><i class="fas fa-file-csv"></i> Export to CSV</a>
+      <a href="#" onclick="previewData(1)"><i class="fas fa-file-excel"></i> Export to Excel</a>
+      <a href="#" onclick="previewData(2)"><i class="fas fa-file-pdf"></i> Export to PDF</a>
+    </div>
+  </div>
+
+  <div class="table-wrapper">
+    <table id="productTable" class="display nowrap">
+      <thead>
+        <tr>
+          <th>Product Name</th>
+          <th>Category</th>
+          <th>Variant</th>
+          <th>Stocks</th>
+          <th>Status</th>
+          <th>Price</th>
+          <th>Supplier</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% products.forEach(product => { %>
+          <tr>
+            <td><%= product.name %></td>
+            <td><%= product.category %></td>
+            <td><%= product.variant %></td>
+            <td><%= product.quantity %></td>
+            <td><%= product.quantity > 0 ? 'Active' : 'Out of Stock' %></td>
+            <td>₱<%= product.price %></td>
+            <td><%= product.supplier %></td>
+            <td>
+              <a href="/admin/edit/<%= product._id %>" class="btn"><i class="fas fa-edit"></i></a>
+              <form action="/admin/delete/<%= product._id %>" method="POST" style="display:inline;">
+                <button type="submit" onclick="return confirm('Are you sure?')" class="btn"><i class="fas fa-trash"></i></button>
+              </form>
+            </td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal -->
+<div id="previewModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <div class="modal-header">Preview Export Data</div>
+    <div id="previewTableWrapper"></div>
+    <button onclick="confirmExport()" class="btn" style="margin-top: 20px;"><i class="fas fa-download"></i> Confirm Export</button>
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+
+<script>
+  let dataTable;
+  let selectedExport = 0;
+
+  $(document).ready(function () {
+    dataTable = $('#productTable').DataTable({
+      dom: 'Bfrtip',
+      responsive: true,
+      columnDefs: [
+        {
+          targets: -1,
+          visible: true,
+          searchable: false,
+          orderable: false,
+        }
+      ],
+      buttons: [
+        {
+          extend: 'csvHtml5',
+          title: 'Product Inventory',
+          exportOptions: {
+            columns: ':not(:last-child)',
+            modifier: { page: 'current' }
+          }
+        },
+        {
+          extend: 'excelHtml5',
+          title: 'Product Inventory',
+          exportOptions: {
+            columns: ':not(:last-child)',
+            modifier: { page: 'current' }
+          }
+        },
+        {
+          extend: 'pdfHtml5',
+          title: 'Product Inventory',
+          orientation: 'landscape',
+          pageSize: 'A4',
+          exportOptions: {
+            columns: ':not(:last-child)',
+            modifier: { page: 'current' }
+          }
+        }
+      ]
+    });
+  });
+
+  function previewData(index) {
+    selectedExport = index;
+    const currentPageData = dataTable.rows({ page: 'current' }).data().toArray();
+    let previewTable = '<table class="display" style="width:100%"><thead><tr>';
+    previewTable += '<th>Product Name</th><th>Category</th><th>Variant</th><th>Stocks</th><th>Status</th><th>Price</th><th>Supplier</th></tr></thead><tbody>';
+
+    currentPageData.forEach(row => {
+      previewTable += `<tr>
+        <td>${row[0]}</td>
+        <td>${row[1]}</td>
+        <td>${row[2]}</td>
+        <td>${row[3]}</td>
+        <td>${row[4]}</td>
+        <td>${row[5]}</td>
+        <td>${row[6]}</td>
+      </tr>`;
+    });
+    previewTable += '</tbody></table>';
+    $('#previewTableWrapper').html(previewTable);
+    $('#previewModal').css('display', 'block');
+  }
+
+  function closeModal() {
+    $('#previewModal').css('display', 'none');
+  }
+
+  function confirmExport() {
+    switch (selectedExport) {
+      case 0:
+        dataTable.button(0).trigger();
+        break;
+      case 1:
+        dataTable.button(1).trigger();
+        break;
+      case 2:
+        dataTable.button(2).trigger();
+        break;
+    }
+    closeModal();
+  }
+</script>
+
+</body>
+</html>

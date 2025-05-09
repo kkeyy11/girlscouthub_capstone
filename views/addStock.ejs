@@ -1,0 +1,21 @@
+<%- include ('layouts/header') %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Stocks</title>
+</head>
+<body>
+    <h1>Add Stocks to <%= product.name %></h1>
+    
+    <form action="/admin/add-stocks/<%= product._id %>" method="POST">
+        <label for="quantity">Additional Quantity:</label>
+        <input type="number" name="quantity" required>
+        
+        <button type="submit">Add Stocks</button>
+    </form>
+
+    <a href="/admin">Back to Products</a>
+</body>
+</html>

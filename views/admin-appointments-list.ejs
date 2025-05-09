@@ -50,6 +50,7 @@
         background-color: #f4f4f4;
     }
 
+<<<<<<< Updated upstream
     /* Sidebar */
     .sidebar {
         width: 220px;
@@ -160,3 +161,262 @@
         }
     }
 </style>
+=======
+  h1.table-title {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-top: 40px;
+    margin-bottom: 30px;
+    color: #2c3e50;
+  }
+
+  .table-container {
+    display: flex;
+    justify-content: center;
+    margin: 0 auto 60px auto;
+    max-width: 1100px;
+    padding: 0 20px;
+  }
+
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 20px rgba(0, 128, 0, 0.1);
+    background: #ffffff;
+  }
+
+  .table thead {
+    background-color: #d5f5e3;
+    color: #145a32;
+  }
+
+  .table th,
+  .table td {
+    padding: 16px 20px;
+    text-align: left;
+    font-size: 16px;
+  }
+
+  .table th {
+    font-weight: bold;
+    border-bottom: 2px solid #c3e6cb;
+  }
+
+  .table tbody tr:nth-child(even) {
+    background-color: #f9fff9;
+  }
+
+  .table tbody tr:hover {
+    background-color: #e8fce8;
+    transition: background-color 0.3s ease;
+  }
+
+  .status-btn {
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 18px;
+    margin: 0 5px;
+    transition: all 0.2s ease;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  }
+
+  .status-btn.confirm {
+    background-color: #d4edda;
+    color: #28a745;
+  }
+
+  .status-btn.cancel {
+    background-color: #f8d7da;
+    color: #dc3545;
+  }
+
+  .status-btn:hover {
+    transform: scale(1.2);
+  }
+
+  /* Toast next to the action buttons */
+  .toast-wrapper {
+    position: relative;
+    display: inline-block;
+    margin-left: 20px;
+  }
+
+  #actionToast {
+    position: absolute;
+    top: 0;
+    left: 100%;
+    transform: translateX(10px);
+    z-index: 1055;
+    min-width: 250px;
+    display: none;
+    font-size: 1rem;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+    background-color: #28a745; /* Green background */
+    border-radius: 10px;
+    padding: 12px;
+    color: white;
+    font-weight: bold;
+    box-shadow: 0 4px 15px rgba(0, 128, 0, 0.5);
+  }
+
+  .toast.show {
+    opacity: 1;
+  }
+
+  /* Add lightbox effect */
+  .lightbox-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 1040;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .lightbox-content {
+    background-color: #28a745;
+    color: white;
+    border-radius: 10px;
+    padding: 20px;
+    font-size: 18px;
+    font-weight: bold;
+    box-shadow: 0 4px 15px rgba(0, 128, 0, 0.5);
+  }
+</style>
+
+<!-- Table View -->
+<h1 class="table-title"><i class="fas fa-calendar-check"></i> Appointment List</h1>
+<div class="table-container">
+  <table class="table">
+    <thead>
+      <tr>
+        <th><i class="fas fa-user"></i> User</th>
+        <th><i class="fas fa-calendar-alt"></i> Date</th>
+        <th><i class="fas fa-clock"></i> Time </th>
+        <th><i class="fas fa-info-circle"></i> Status</th>
+        <th><i class="fas fa-cogs"></i> Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% appointments.forEach(appointment => { %>
+        <tr>
+          <td><%= appointment.user.email %></td>
+          <td><%= new Date(appointment.date).toISOString().slice(0, 10) %></td>
+          <td class="ph-time"><%= appointment.time %></td>
+          <td><%= appointment.status %></td>
+          <td>
+            <form action="/admin/appointments/update-status/<%= appointment._id %>/Confirmed" method="POST" class="status-action-form" data-action="Confirmed" style="display: inline;">
+              <button type="submit" class="status-btn confirm" title="Confirm">
+                <i class="fas fa-check"></i>
+              </button>
+            </form>
+            <form action="/admin/appointments/update-status/<%= appointment._id %>/Cancelled" method="POST" class="status-action-form" data-action="Cancelled" style="display: inline;">
+              <button type="submit" class="status-btn cancel" title="Cancel">
+                <i class="fas fa-times"></i>
+              </button>
+            </form>
+            <!-- Toast next to the action buttons -->
+            <div class="toast-wrapper">
+              <div class="toast align-items-center text-white bg-success border-0" id="actionToast" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex justify-content-center p-3">
+                  <span id="toastMessage"></span>
+                </div>
+              </div>
+            </div>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+
+<!-- Lightbox -->
+<div class="lightbox-overlay" id="lightbox">
+  <div class="lightbox-content" id="lightboxMessage"></div>
+</div>
+
+<!-- Font Awesome & Bootstrap -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- JS for Philippine Time & Toast -->
+<script>
+  // Convert time to Philippine time (GMT+8)
+  document.querySelectorAll(".ph-time").forEach(td => {
+    const serverTime = td.textContent.trim();
+    const date = new Date("1970-01-01T" + serverTime + "Z");
+    const phTime = new Intl.DateTimeFormat('en-PH', {
+      hour: 'numeric',
+      minute: 'numeric',
+      hour12: true,
+      timeZone: 'Asia/Manila'
+    }).format(date);
+    td.textContent = phTime;
+  });
+
+  function showToastAndSubmit(form, message, bgColorClass) {
+    const toast = form.querySelector('#actionToast');
+    const toastMessage = toast.querySelector('#toastMessage');
+    const lightbox = document.getElementById('lightbox');
+    const lightboxMessage = document.getElementById('lightboxMessage');
+
+    // Set message in toast
+    toastMessage.textContent = message;
+    toast.className = `toast align-items-center text-white ${bgColorClass} border-0 show`;
+    toast.style.display = 'block';
+
+    // Set message in lightbox
+    lightboxMessage.textContent = message;
+    lightbox.style.display = 'flex';
+
+    // Force reflow to apply new styles (optional but helps with animations)
+    void toast.offsetWidth;
+
+    setTimeout(() => {
+      toast.style.display = 'none'; // Hide after showing
+      lightbox.style.display = 'none'; // Hide lightbox
+      form.submit();
+    }, 2000);
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.status-action-form').forEach(form => {
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const actionType = form.dataset.action;
+        let message;
+        let bgColor;
+
+        if (actionType === 'Confirmed') {
+          message = 'Appointment Confirmed! User Approved!';
+          bgColor = 'bg-success';
+        } else if (actionType === 'Cancelled') {
+          message = 'Appointment Cancelled!';
+          bgColor = 'bg-danger';
+        } else {
+          message = 'Status Updated!';
+          bgColor = 'bg-warning';
+        }
+
+        showToastAndSubmit(this, message, bgColor);
+      });
+    });
+  });
+</script>
+
+<%- include('./layouts/footer') %>
+>>>>>>> Stashed changes

@@ -1,0 +1,160 @@
+<%- include ('layouts/header') %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Add Product</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"/>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f0f7eb;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    .form-wrapper {
+      background: linear-gradient(to right, #a8e063, #56ab2f);
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      width: 90%;
+      max-width: 700px;
+    }
+
+    .form-wrapper h2 {
+      text-align: center;
+      color: #215732;
+      font-size: 28px;
+      margin-bottom: 25px;
+    }
+
+    form {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    label {
+      font-weight: bold;
+      color: #134022;
+      display: flex;
+      align-items: center;
+      font-size: 14px;
+    }
+
+    label i {
+      margin-right: 8px;
+      color: #215732;
+    }
+
+    input, select, textarea {
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: none;
+      font-size: 14px;
+      margin-top: 6px;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    select {
+      background-color: #fff;
+    }
+
+    .full-width {
+      grid-column: span 2;
+    }
+
+    button {
+      grid-column: span 2;
+      padding: 12px;
+      font-size: 16px;
+      border: none;
+      background-color: #1c7c3f;
+      color: white;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #166c35;
+    }
+
+    @media (max-width: 600px) {
+      form {
+        grid-template-columns: 1fr;
+      }
+
+      button {
+        grid-column: span 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="form-wrapper">
+    <h2><i class="fas fa-plus-circle"></i> Add Product</h2>
+    <form action="/admin/add" method="POST">
+      <div class="form-group">
+        <label for="name"><i class="fas fa-box"></i>Product Name</label>
+        <input type="text" name="name" id="name" required placeholder="Enter product name"/>
+      </div>
+
+      <div class="form-group">
+        <label for="category"><i class="fas fa-tags"></i>Category</label>
+        <select name="category" id="category" required>
+          <option value="Uniform">Uniform</option>
+          <option value="Camping Gear">Camping Gear</option>
+          <option value="Accessories">Accessories</option>
+          <option value="Badges">Badges</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+  <label for="variant"><i class="fas fa-tshirt"></i>Variant</label>
+  <select name="variant" id="variant" required>
+    <option value="S">S</option>
+    <option value="M">M</option>
+    <option value="L">L</option>
+    <option value="XXL">XXL</option>
+  </select>
+</div>
+
+     
+
+      <div class="form-group">
+        <label for="quantity"><i class="fas fa-cubes"></i>Quantity</label>
+        <input type="number" name="quantity" id="quantity" required placeholder="Enter quantity"/>
+      </div>
+
+      <div class="form-group">
+        <label for="price"><i class="fas fa-money-bill-wave"></i>Price (PHP)</label>
+        <input type="number" name="price" id="price" step="0.01" required placeholder="Enter price"/>
+      </div>
+
+
+
+      <div class="form-group">
+        <label for="dateAcquired"><i class="fas fa-calendar-alt"></i>Date Acquired</label>
+        <input type="date" name="dateAcquired" id="dateAcquired" required/>
+      </div>
+
+      <button type="submit"><i class="fas fa-plus"></i> Add Product</button>
+    </form>
+  </div>
+</body>
+</html>

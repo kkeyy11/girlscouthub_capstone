@@ -1,0 +1,145 @@
+<%- include('../layouts/header') %> <!-- Adjusted include path for header -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Districts</title>
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f9f4;
+      margin: 0;
+      padding: 0;
+    }
+
+    .table-container {
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 40px;
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 15px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(8px); /* Blur effect */
+    }
+
+    h2 {
+      text-align: center;
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+      color: #388E3C; /* Dark green */
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 30px;
+      border: 1px solid #ddd; /* Subtle border around the table */
+    }
+
+    th, td {
+      padding: 20px;
+      text-align: left;
+      font-size: 1.1rem;
+      color: #555;
+      border-bottom: 1px solid #ddd; /* Borders between rows */
+    }
+
+    th {
+      background-color: #A5D6A7; /* Light green for headers */
+      color: #333;
+      font-weight: 600;
+    }
+
+    tr:nth-child(even) {
+      background-color: #ffffff; /* White for even rows */
+    }
+
+    tr:nth-child(odd) {
+      background-color: #dcedc8; /* Light green for odd rows */
+    }
+
+    tr:hover {
+      background-color: #c8e6c9; /* Slightly darker light green on hover */
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 10px 25px;
+      background-color: #4CAF50; /* Lighter green */
+      color: #fff;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: bold;
+      text-align: center;
+      border: 2px solid #388E3C; /* Green border */
+      margin: 5px;
+      transition: background 0.3s ease;
+    }
+
+    .btn:hover {
+      background-color: #388E3C; /* Darker green */
+    }
+
+    .btn-danger {
+      background-color: #f44336; /* Red */
+      border-color: #d32f2f;
+    }
+
+    .btn-danger:hover {
+      background-color: #d32f2f;
+    }
+
+    /* Make the table more responsive for mobile */
+    @media (max-width: 768px) {
+      .table-container {
+        padding: 20px;
+      }
+
+      th, td {
+        padding: 12px;
+        font-size: 1rem;
+      }
+
+      table {
+        font-size: 0.9rem;
+      }
+
+      .btn {
+        padding: 8px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  
+  <div class="table-container">
+    <h2>Districts</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>District</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% districts.forEach(d => { %>
+          <tr>
+            <td><%= d.name %></td>
+            <td>
+              <a href="/districts/<%= d._id %>/members" class="btn">View Members</a>
+              <form action="/districts/delete/<%= d._id %>" method="POST" style="display:inline;">
+                <button type="submit" onclick="return confirm('Delete this district?')" class="btn btn-danger">Delete</button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>
+
