@@ -186,13 +186,26 @@
     </thead>
     <tbody>
       <% appointments.forEach(appointment => { %>
-        <tr>
-          <td><%= appointment.user.email %></td>
-          <td><%= new Date(appointment.date).toDateString() %></td>
-          <td><%= appointment.time %></td>
-          <td><%= appointment.description %></td>
-        </tr>
-      <% }); %>
+    <tr>
+        <td><%= appointment.user.email %></td>
+        <td><%= appointment.date %></td>
+        <td><%= appointment.time %></td>
+        <td><%= appointment.status %></td>
+        <td>
+            <!-- Action buttons to update status -->
+            <form action="/admin/appointments/update-status/<%= appointment._id %>/Confirmed" method="POST">
+                <button type="submit" class="btn btn-success">Confirm</button>
+            </form>
+            <form action="/admin/appointments/update-status/<%= appointment._id %>/Completed" method="POST">
+                <button type="submit" class="btn btn-primary">Complete</button>
+            </form>
+            <form action="/admin/appointments/update-status/<%= appointment._id %>/Cancelled" method="POST">
+                <button type="submit" class="btn btn-danger">Cancel</button>
+            </form>
+        </td>
+    </tr>
+<% }) %>
+
     </tbody>
   </table>
 </div>

@@ -13,13 +13,33 @@ const adminController = {
     },
 
     getAllAppointments: async (req, res, next) => {
-        try {
-            const appointments = await Appointment.find().populate('user', 'email');
-            res.render('admin-appointments-list', { appointments });
-        } catch (error) {
-            next(error);
+    try {
+        const appointments = await Appointment.find().populate('user', 'email');
+        res.render('admin-appointments-list', { appointments });
+    } catch (error) {
+        next(error);
+    }
+},
+// Update appointment status (confirm, complete, cancel)
+updateAppointmentStatus: async (req, res, next) => {
+    const { id, status } = req.params;
+    try {
+        const validStatuses = ['Confirmed', 'Completed', 'Cancelled'];
+        if (!validStatuses.includes(status)) {
+            return res.status(400).send('Invalid status.');
         }
-    },
+
+        // Update the status of the appointment
+        await Appointment.findByIdAndUpdate(id, { status });
+
+        req.flash('success', `Appointment status updated to ${status}`);
+        res.redirect('/admin/appointments');
+    } catch (error) {
+        next(error);
+    }
+},
+
+
 
     // Get all inventory items
     // getInventory: async (req, res, next) => {

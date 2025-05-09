@@ -38,6 +38,9 @@ router.get("/report", productController.getReport);
 router.get('/users', adminController.getUsers);
 router.get('/appointments', adminController.getAllAppointments);
 router.get('/appointments-list', adminController.getAllAppointments);
+// Admin route to update appointment status
+router.post('/appointments/update-status/:id/:status', adminController.updateAppointmentStatus);
+
 
 // // Inventory routes
 // router.get('/inventory', adminController.getInventory);

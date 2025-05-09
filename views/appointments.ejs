@@ -160,19 +160,22 @@
       <div class="time-slot"><%= hour %></div>
       <% weekdays.forEach(day => { %>
         <div>
-          <% appointments.forEach(appointment => {
-            const apptDate = new Date(appointment.date);
-            const dayName = apptDate.toLocaleDateString('en-US', { weekday: 'long' });
-            const apptTime = appointment.time;
-            if (dayName === day && apptTime === hour) { %>
-              <div class="appointment">
-                <%= appointment.time %><br>
-                <%= appointment.description %>
+          <% appointments.forEach(appointment => { %>
+    <tr>
+        <td><%= appointment.date %></td>
+        <td><%= appointment.time %></td>
+        <td><%= appointment.status %></td>
+        <td>
+            <!-- Show Cancel button only if the status is 'Pending' -->
+            <% if (appointment.status === 'Pending') { %>
                 <form action="/user/appointments/delete/<%= appointment._id %>" method="POST">
-                  <button type="submit">X</button>
+                    <button type="submit" class="btn btn-danger">Cancel Appointment</button>
                 </form>
-              </div>
-          <% } }); %>
+            <% } %>
+        </td>
+    </tr>
+<% }) %>
+
         </div>
       <% }); %>
     <% }); %>

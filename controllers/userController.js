@@ -11,13 +11,14 @@ const userController = {
     },
 
     getAppointments: async (req, res, next) => {
-        try {
-            const appointments = await Appointment.find({ user: req.user._id });
-            res.render('appointments', { appointments });
-        } catch (error) {
-            next(error);
-        }
-    },
+    try {
+        const appointments = await Appointment.find({ user: req.user._id });
+        res.render('appointments', { appointments });
+    } catch (error) {
+        next(error);
+    }
+},
+
 
     addAppointment: async (req, res, next) => {
         try {
@@ -51,13 +52,19 @@ const userController = {
     },
 
     deleteAppointment: async (req, res, next) => {
-        try {
-            await Appointment.findByIdAndDelete(req.params.id);
-            res.redirect('/user/appointments');
-        } catch (error) {
-            next(error);
+    try {
+        const appointment = await Appointment.findById(req.params.id);
+        if (appointment.status !== 'Pending') {
+            return res.status(400).send('You can only cancel a pending appointment.');
         }
+
+        await Appointment.findByIdAndDelete(req.params.id);
+        res.redirect('/user/appointments');
+    } catch (error) {
+        next(error);
     }
+}
+
 };
 
 module.exports = userController;
