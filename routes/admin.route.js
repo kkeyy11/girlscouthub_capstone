@@ -5,6 +5,10 @@ const schoolController = require('../controllers/schoolController');
 const scoutController = require('../controllers/scoutController');
 const eventController = require('../controllers/eventController');
 const productController = require("../controllers/productController");
+const dashboardController = require("../controllers/dashboardController");
+
+
+router.get("/dashboard", dashboardController.getIndex);
 
 // Show Add Product Form
 router.get("/add", productController.showAddProductForm);

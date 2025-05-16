@@ -1,8 +1,10 @@
 const User = require('../models/user.model');
 const Appointment = require('../models/appointment.model');
-const Inventory = require('../models/inventory.model');  // Import the Inventory model
+const Inventory = require('../models/inventory.model');  // Import for future use
+const { sendAppointmentEmail } = require('../utils/mailer');
 
 const adminController = {
+    // Get all users
     getUsers: async (req, res, next) => {
         try {
             const users = await User.find();
@@ -12,71 +14,80 @@ const adminController = {
         }
     },
 
+    // Get all appointments with user emails
     getAllAppointments: async (req, res, next) => {
-    try {
-        const appointments = await Appointment.find().populate('user', 'email');
-        res.render('admin-appointments-list', { appointments });
-    } catch (error) {
-        next(error);
-    }
-},
-// Update appointment status (confirm, complete, cancel)
-updateAppointmentStatus: async (req, res, next) => {
-    const { id, status } = req.params;
-    try {
-        const validStatuses = ['Confirmed', 'Completed', 'Cancelled'];
-        if (!validStatuses.includes(status)) {
-            return res.status(400).send('Invalid status.');
+        try {
+            const appointments = await Appointment.find().populate('user', 'email');
+            res.render('admin-appointments-list', { appointments });
+        } catch (error) {
+            next(error);
         }
+    },
 
-        // Update the status of the appointment
-        await Appointment.findByIdAndUpdate(id, { status });
+    getAllAppointments: async (req, res, next) => {
+        try {
+            const appointments = await Appointment.find().populate('user', 'email');
+            res.render('admin-appointments-list', { appointments });
+        } catch (error) {
+            next(error);
+        }
+    },
 
-        req.flash('success', `Appointment status updated to ${status}`);
-        res.redirect('/admin/appointments');
-    } catch (error) {
-        next(error);
-    }
-},
+    // Update appointment status and send email notification
+    updateAppointmentStatus: async (req, res, next) => {
+        const { id, status } = req.params;
+        try {
+            const validStatuses = ['Confirmed', 'Completed', 'Cancelled'];
+            if (!validStatuses.includes(status)) {
+                return res.status(400).send('Invalid status.');
+            }
 
+            const appointment = await Appointment.findById(id).populate('user', 'email');
+            if (!appointment) {
+                req.flash('error', 'Appointment not found.');
+                return res.redirect('/admin/appointments');
+            }
 
+            appointment.status = status;
+            await appointment.save();
 
-    // Get all inventory items
+            // Send email
+            const subject = `Your Appointment Has Been ${status}`;
+            const text = `Hello,\n\nYour appointment on ${appointment.date.toDateString()} at ${appointment.time} is now '${status}'.\n\nDescription: ${appointment.description}\n\nThank you.`;
+            await sendAppointmentEmail(appointment.user.email, subject, text);
+
+            req.flash('success', `Appointment status updated to ${status}`);
+            res.redirect('/admin/appointments');
+        } catch (error) {
+            next(error);
+        }
+    },
+
     // getInventory: async (req, res, next) => {
     //     try {
-    //         const inventory = await Inventory.find();  // Fetch all inventory items
+    //         const inventory = await Inventory.find();
     //         res.render('inventory', { inventory });
     //     } catch (error) {
     //         next(error);
     //     }
     // },
 
-    // // Create a new inventory item
     // createInventory: async (req, res, next) => {
     //     const { itemName, quantity, price } = req.body;
     //     try {
-    //         const newInventoryItem = new Inventory({
-    //             itemName,
-    //             quantity,
-    //             price
-    //         });
+    //         const newInventoryItem = new Inventory({ itemName, quantity, price });
     //         await newInventoryItem.save();
     //         req.flash('success', 'Inventory item added successfully!');
-    //         res.redirect('/admin/inventory');  // Redirect to the inventory page
+    //         res.redirect('/admin/inventory');
     //     } catch (error) {
     //         next(error);
     //     }
     // },
 
-    // // Update an inventory item
     // updateInventory: async (req, res, next) => {
     //     const { itemId, itemName, quantity, price } = req.body;
     //     try {
-    //         await Inventory.findByIdAndUpdate(itemId, {
-    //             itemName,
-    //             quantity,
-    //             price
-    //         });
+    //         await Inventory.findByIdAndUpdate(itemId, { itemName, quantity, price });
     //         req.flash('success', 'Inventory item updated successfully!');
     //         res.redirect('/admin/inventory');
     //     } catch (error) {
@@ -84,7 +95,6 @@ updateAppointmentStatus: async (req, res, next) => {
     //     }
     // },
 
-    // // Delete an inventory item
     // deleteInventory: async (req, res, next) => {
     //     const { itemId } = req.params;
     //     try {
@@ -95,8 +105,6 @@ updateAppointmentStatus: async (req, res, next) => {
     //         next(error);
     //     }
     // },
-
-    
 };
 
 module.exports = adminController;
