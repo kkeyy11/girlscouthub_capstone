@@ -1,3 +1,5 @@
+    require('dotenv').config();
+
     const express = require('express');
 
 
@@ -5,7 +7,7 @@
     const createHttpErrors = require('http-errors');
     const morgan = require('morgan');
     const mongoose = require('mongoose');
-    require('dotenv').config();
+    // require('dotenv').config();
     const session = require('express-session');
     const connectFlash = require('connect-flash');
     const passport = require('passport');

@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Create Event</title>
+    <title>Create Announcement</title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
@@ -128,7 +128,7 @@
 </head>
 <body>
 
-    <h1><i class="fas fa-calendar-plus"></i> Create an Event</h1>
+    <h1><i class="fas fa-calendar-plus"></i> Create an Announcement</h1>
 
     <div id="notification-count">
         <i class="fas fa-bell"></i> Notifications: <%= notificationsCount %>
@@ -138,7 +138,7 @@
         <form action="/admin/event" method="POST">
             <div class="input-group">
                 <i class="fas fa-heading"></i>
-                <input type="text" name="title" placeholder="Event Title" required>
+                <input type="text" name="title" placeholder="Subject" required>
             </div>
 
             <div class="input-group">

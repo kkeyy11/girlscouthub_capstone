@@ -1,5 +1,9 @@
+const User = require('../models/user.model');
+
 const Event = require('../models/Event');
 const nodemailer = require('nodemailer');
+const { sendAppointmentEmail } = require('../utils/mailer');
+
 
 const transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -23,18 +27,26 @@ exports.getEventForm = async (req, res) => {
 // Post event form
 exports.createEvent = async (req, res) => {
     try {
-        console.log("Received Data:", req.body); // Debugging log
-
         if (!req.body.title || !req.body.description || !req.body.date || !req.body.time || !req.body.location) {
-            console.log("Missing required fields");
             return res.status(400).send("Missing required fields");
         }
 
         const { title, description, date, time, location } = req.body;
         const newEvent = new Event({ title, description, date, time, location });
-
         await newEvent.save();
-        console.log("Event Saved:", newEvent); // Debug log
+
+        const users = await User.find({}, 'email');
+
+        // Prepare email content
+        const subject = `New Event: ${title}`;
+        const text = `Hello,\n\nA new event has been posted.\n\nTitle: ${title}\nDescription: ${description}\nDate: ${date}\nTime: ${time}\nLocation: ${location}\n\nBest regards,\nYour Team`;
+
+        // Send emails to all users, no await here to avoid blocking (optional improvement below)
+        users.forEach(user => {
+            if (user.email) {
+                sendAppointmentEmail(user.email, subject, text);
+            }
+        });
 
         res.redirect('/admin/event');
     } catch (error) {
@@ -42,6 +54,7 @@ exports.createEvent = async (req, res) => {
         res.status(500).send('Error creating event');
     }
 };
+
 
 
 
