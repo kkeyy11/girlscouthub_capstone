@@ -1,106 +1,265 @@
+<%- include('../layouts/header') %>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Members in District: <%= district.name %></title>
-  <link rel="stylesheet" href="/style.css">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+
+  <!-- jsPDF library for PDF export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
   <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #eff8ec;
-      margin: 0;
-      padding: 0;
-    }
-
+    /* Container */
     .members-container {
-      max-width: 1000px;
+      max-width: 960px;
       margin: 40px auto;
-      padding: 30px;
-      border-radius: 18px;
-      background: linear-gradient(135deg, #a8e063, #56ab2f);
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-      color: #fff;
+      background: #fff;
+      padding: 25px 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgb(0 0 0 / 0.1);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
-    h2 {
-      text-align: center;
-      font-size: 2rem;
-      margin-bottom: 20px;
+    /* Header */
+    .members-container h2 {
+      margin: 0 0 20px;
+      font-weight: 700;
+      font-size: 1.8rem;
+      color: #2f5233;
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
 
+    /* Back Button */
     .btn-back {
       display: inline-block;
-      margin-bottom: 20px;
-      padding: 10px 20px;
-      background-color: #ffffff;
-      color: #2d7d2d;
+      background-color: #2f5233;
+      color: white;
       text-decoration: none;
-      border-radius: 10px;
-      font-weight: bold;
-      transition: background 0.3s ease;
+      padding: 10px 18px;
+      border-radius: 5px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-bottom: 25px;
+      transition: background-color 0.3s ease;
+      user-select: none;
     }
-
+    .btn-back i {
+      margin-right: 6px;
+    }
     .btn-back:hover {
-      background-color: #f0f0f0;
+      background-color: #4b784a;
     }
 
+    /* Controls container - search bar and buttons */
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    /* Search bar */
+    .search-bar {
+      flex: 1 1 300px;
+      max-width: 350px;
+      position: relative;
+    }
+
+    .search-bar input[type="text"] {
+      width: 100%;
+      padding: 10px 38px 10px 12px;
+      border: 1.5px solid #ccc;
+      border-radius: 5px;
+      font-size: 1rem;
+      transition: border-color 0.3s ease;
+    }
+    .search-bar input[type="text"]:focus {
+      border-color: #2f5233;
+      outline: none;
+    }
+    .search-bar i {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #999;
+      pointer-events: none;
+      font-size: 1.1rem;
+    }
+
+    /* Export dropdown container */
+    .export-dropdown {
+      position: relative;
+      display: inline-block;
+      user-select: none;
+    }
+
+    .export-btn {
+      background-color: #2f5233;
+      color: white;
+      border: none;
+      padding: 9px 16px;
+      border-radius: 5px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: background-color 0.3s ease;
+    }
+    .export-btn:hover {
+      background-color: #4b784a;
+    }
+
+    /* Dropdown menu */
+    .export-dropdown-content {
+      display: none;
+      position: absolute;
+      right: 0;
+      background-color: #fff;
+      min-width: 160px;
+      box-shadow: 0 4px 8px rgb(0 0 0 / 0.1);
+      border-radius: 5px;
+      z-index: 1;
+      user-select: none;
+    }
+
+    .export-dropdown-content button {
+      color: #2f5233;
+      padding: 10px 16px;
+      text-align: left;
+      border: none;
+      background: none;
+      width: 100%;
+      font-size: 0.95rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background-color 0.2s ease;
+      border-bottom: 1px solid #eee;
+    }
+    .export-dropdown-content button:last-child {
+      border-bottom: none;
+    }
+    .export-dropdown-content button:hover {
+      background-color: #f0f7ec;
+      color: #4b784a;
+    }
+
+    /* Show dropdown on active */
+    .export-dropdown.show .export-dropdown-content {
+      display: block;
+    }
+
+    /* Table styles */
     table {
       width: 100%;
       border-collapse: collapse;
-      background-color: #fff;
-      border-radius: 10px;
+      font-size: 0.95rem;
+      box-shadow: 0 3px 6px rgb(0 0 0 / 0.1);
+      border-radius: 8px;
       overflow: hidden;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     }
-
-    th, td {
-      padding: 14px 16px;
+    thead tr {
+      background-color: #2f5233;
+      color: white;
       text-align: left;
+      font-weight: 700;
+    }
+    thead tr th {
+      padding: 12px 15px;
+      border-bottom: 2px solid #4b784a;
+    }
+    tbody tr {
+      border-bottom: 1px solid #ddd;
+      transition: background-color 0.2s ease;
+      cursor: default;
+    }
+    tbody tr:hover {
+      background-color: #f0f7ec;
+    }
+    tbody tr td {
+      padding: 10px 15px;
+      vertical-align: middle;
       color: #333;
     }
 
-    th {
-      background-color: #eaf7ea;
-      font-weight: bold;
-      color: #2c662d;
-      border-bottom: 2px solid #d5e8d4;
-    }
-
-    tr:nth-child(even) {
-      background-color: #f6fdf6;
-    }
-
-    tr:hover {
-      background-color: #e9fbe9;
-    }
-
+    /* No members text */
     .no-members {
+      font-size: 1.1rem;
+      color: #555;
+      margin-top: 30px;
       text-align: center;
-      font-size: 1.2em;
-      color: #fff;
-      padding: 20px;
-      background: rgba(255, 255, 255, 0.15);
-      border-radius: 10px;
-      margin-top: 20px;
+      font-style: italic;
     }
 
-    .fa {
-      margin-right: 8px;
+    /* Responsive tweaks */
+    @media (max-width: 600px) {
+      .controls {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .search-bar {
+        max-width: 100%;
+      }
+      .export-dropdown {
+        width: 100%;
+      }
+      .export-btn {
+        width: 100%;
+        justify-content: center;
+      }
+      .export-dropdown-content {
+        min-width: 100%;
+        right: 0;
+      }
     }
   </style>
 </head>
 <body>
 
   <div class="members-container">
-    <h2><i class="fas fa-users"></i>  District: <%= district.name %></h2>
-    <a href="/" class="btn-back"><i class="fas fa-arrow-left"></i> Back to District List</a>
+    <h2><i class="fas fa-users"></i> District: <%= district.name %></h2>
+   <a href="/districts" class="btn-back"><i class="fas fa-arrow-left"></i> Back to District List</a>
+<a href="/troopmembers" class="btn-back" style="margin-left: 10px; background-color: #4b784a;">
+  <i class="fas fa-list"></i> Troop List
+</a>
+
+
+
+    <!-- Controls: Search bar + Export dropdown button -->
+    <div class="controls">
+      <div class="search-bar">
+        <input type="text" id="searchInput" placeholder="Search members by name..." />
+        <i class="fas fa-search"></i>
+      </div>
+
+      <div class="export-dropdown" id="exportDropdown">
+        <button class="export-btn" id="exportBtn">
+          <i class="fas fa-file-export"></i> Export <i class="fas fa-caret-down"></i>
+        </button>
+        <div class="export-dropdown-content">
+          <button id="exportCSV"><i class="fas fa-file-csv"></i> Export CSV</button>
+          <button id="exportExcel"><i class="fas fa-file-excel"></i> Export Excel</button>
+          <button id="exportPDF"><i class="fas fa-file-pdf"></i> Export PDF</button>
+        </div>
+      </div>
+    </div>
 
     <% if (members.length === 0) { %>
       <p class="no-members">No members in this district.</p>
     <% } else { %>
-      <table>
+      <table id="membersTable">
         <thead>
           <tr>
             <th><i class="fas fa-user"></i> Name</th>
@@ -126,6 +285,120 @@
       </table>
     <% } %>
   </div>
+
+  <script>
+    // Toggle dropdown visibility
+    document.getElementById('exportBtn').addEventListener('click', function (e) {
+      e.stopPropagation();
+      const dropdown = document.getElementById('exportDropdown');
+      dropdown.classList.toggle('show');
+    });
+
+    // Close dropdown if clicked outside
+    window.addEventListener('click', () => {
+      const dropdown = document.getElementById('exportDropdown');
+      dropdown.classList.remove('show');
+    });
+
+    // Search filter functionality
+    document.getElementById('searchInput').addEventListener('input', function () {
+      const filter = this.value.toLowerCase();
+      const rows = document.querySelectorAll('#membersTable tbody tr');
+      rows.forEach(row => {
+        const nameCell = row.querySelector('td:first-child').textContent.toLowerCase();
+        if (nameCell.indexOf(filter) > -1) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    });
+
+    // Helper: get visible rows from table
+    function getVisibleRows() {
+      return Array.from(document.querySelectorAll('#membersTable tbody tr')).filter(row => row.style.display !== 'none');
+    }
+
+    // Convert table data to CSV string
+    function tableToCSV() {
+      const rows = getVisibleRows();
+      let csv = [];
+
+      // Add header
+      const headers = Array.from(document.querySelectorAll('#membersTable thead th')).map(th => `"${th.textContent.trim()}"`);
+      csv.push(headers.join(','));
+
+      // Add rows
+      rows.forEach(row => {
+        const cols = Array.from(row.querySelectorAll('td')).map(td => `"${td.textContent.trim()}"`);
+        csv.push(cols.join(','));
+      });
+      return csv.join('\n');
+    }
+
+    // Export CSV
+    document.getElementById('exportCSV').addEventListener('click', () => {
+      const csv = tableToCSV();
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'members.csv';
+      link.click();
+      closeDropdown();
+    });
+
+    // Export Excel (simple CSV renamed .xls)
+    document.getElementById('exportExcel').addEventListener('click', () => {
+      const csv = tableToCSV();
+      const blob = new Blob([csv], { type: 'application/vnd.ms-excel;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'members.xls';
+      link.click();
+      closeDropdown();
+    });
+
+    // Export PDF using jsPDF
+    document.getElementById('exportPDF').addEventListener('click', () => {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+
+      const rows = getVisibleRows();
+      const headers = Array.from(document.querySelectorAll('#membersTable thead th')).map(th => th.textContent.trim());
+
+      // Build data for autoTable
+      const bodyData = rows.map(row => Array.from(row.querySelectorAll('td')).map(td => td.textContent.trim()));
+
+      // Use autoTable plugin if available, else fallback
+      if (doc.autoTable) {
+        doc.autoTable({
+          head: [headers],
+          body: bodyData,
+          startY: 20,
+          styles: { fontSize: 8 },
+          headStyles: { fillColor: [47, 82, 51] },
+          margin: { top: 10 },
+        });
+      } else {
+        // Simple text fallback (basic)
+        doc.text('Members List', 14, 15);
+        let y = 20;
+        doc.setFontSize(8);
+        doc.text(headers.join(' | '), 14, y);
+        y += 6;
+        bodyData.forEach(row => {
+          doc.text(row.join(' | '), 14, y);
+          y += 6;
+        });
+      }
+      doc.save('members.pdf');
+      closeDropdown();
+    });
+
+    function closeDropdown() {
+      document.getElementById('exportDropdown').classList.remove('show');
+    }
+  </script>
 
 </body>
 </html>

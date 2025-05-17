@@ -1,172 +1,272 @@
-<%- include('./layouts/header') %>
-<!DOCTYPE html> 
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Troop Members</title>
-  <link rel="stylesheet" href="/css/list.css">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <style>
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #e5e5e5;
-      margin: 0;
-      padding: 0;
-    }
-    .container {
-      max-width: 1200px;
-      margin: 50px auto;
-      padding: 20px;
-      background-color: #ffffff;
-      border-radius: 10px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    }
-    h1 {
-      font-size: 2.8rem;
-      color: #2C6B44;
-      text-align: center;
-      margin-bottom: 20px;
-      font-weight: bold;
-    }
-    .btn {
-      margin: 10px 5px 10px 0;
-      border-radius: 5px;
-    }
-    .search-box {
-      margin: 20px 0;
-    }
-    .search-input {
-      width: 100%;
-      padding: 10px;
-      font-size: 16px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-    }
-    .table-container {
-      overflow-x: auto;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 30px;
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-    }
-    th, td {
-      padding: 15px;
-      text-align: left;
-      border-bottom: 2px solid #ddd;
-    }
-    th {
-      background-color: #2C6B44;
-      color: white;
-      font-weight: bold;
-      text-transform: uppercase;
-    }
-    td {
-      background-color: #fafafa;
-      color: #333;
-    }
-    td:hover {
-      background-color: #f1f1f1;
-      transition: background-color 0.3s;
-    }
-    .btn-edit, .btn-danger {
-      padding: 8px 16px;
-      margin: 5px 0;
-      font-size: 14px;
-      border-radius: 5px;
-    }
-    .btn-primary {
-      background-color: #2C6B44;
-      color: white;
-    }
-    .btn-primary:hover {
-      background-color: #218F3B;
-    }
-    .btn-danger {
-      background-color: #dc3545;
-      color: white;
-    }
-    .btn-danger:hover {
-      background-color: #c82333;
-    }
-    .btn-cancel {
-      background-color: #6c757d;
-      color: white;
-    }
-    .btn-cancel:hover {
-      background-color: #5a6268;
-    }
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 1;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      overflow: auto;
-      background-color: rgba(0, 0, 0, 0.5);
-      justify-content: center;
-      align-items: center;
-      transition: all 0.3s ease-in-out;
-    }
-    .modal-content {
-      background-color: white;
-      padding: 30px;
-      border-radius: 8px;
-      width: 50%;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    }
-    .modal input, .modal select {
-      width: 100%;
-      padding: 14px;
-      margin: 10px 0;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      font-size: 16px;
-    }
-    .modal h3 {
-      font-size: 1.8rem;
-      color: #2C6B44;
-      margin-bottom: 20px;
-    }
-    @media (max-width: 768px) {
-      .container {
-        width: 90%;
-      }
-      .modal-content {
-        width: 80%;
-      }
-      h1 {
-        font-size: 2rem;
-      }
-    }
-  </style>
-</head>
-<body>
+<%- include('../layouts/header') %>
+
+<style>
+  body {
+    background-color: #f9f9f9;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+
+  .container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 30px auto;
+  }
+
+  h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+  }
+
+  .top-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 15px;
+  }
+
+  .action-buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+  }
+
+  .btn-primary {
+    background-color: #46dfb1;
+    color: white;
+  }
+
+  .btn-primary:hover {
+    background-color: #38c29b;
+  }
+
+  .btn-outline-success {
+    background-color: white;
+    border: 2px solid #46dfb1;
+    color: #46dfb1;
+  }
+
+  .btn-outline-success:hover {
+    background-color: #46dfb1;
+    color: white;
+  }
+
+  .search-input {
+    width: 280px;
+    max-width: 100%;
+    padding: 10px 14px;
+    font-size: 14px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    outline: none;
+    transition: box-shadow 0.2s;
+  }
+
+  .search-input:focus {
+    box-shadow: 0 0 0 2px #80ee98aa;
+    border-color: #80ee98;
+  }
+
+  .table-container {
+    background: linear-gradient(135deg, #46dfb1, #80ee98);
+    padding: 15px;
+    border-radius: 8px;
+    overflow-x: auto;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  table.members-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  table.members-table th,
+  table.members-table td {
+    padding: 6px 8px;
+    text-align: center;
+    font-size: 13px;
+    max-width: 150px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  table.members-table th {
+    background-color: #46dfb1;
+    color: white;
+    text-transform: uppercase;
+  }
+
+  table.members-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+
+  table.members-table tr:nth-child(odd) {
+    background-color: #e8f8f2;
+  }
+
+  .action-icons i {
+    font-size: 18px;
+    cursor: pointer;
+    margin: 0 6px;
+  }
+
+  .delete-form button {
+    background-color: transparent;
+    border: none;
+    padding: 0;
+  }
+
+  #editModal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 9999;
+    display: none;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+  }
+
+  #editModal .modal-content {
+    background: #fff;
+    padding: 25px;
+    border-radius: 10px;
+    width: 95%;
+    max-width: 600px;
+  }
+
+  .modal-content input,
+  .modal-content select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 8px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+  }
+
+  .modal-content button {
+    margin-top: 15px;
+    margin-right: 10px;
+  }
+
+  .btn-cancel {
+    background-color: #f44336;
+    color: white;
+  }
+
+  .pagination {
+    margin-top: 20px;
+    text-align: center;
+  }
+
+  .pagination button {
+    background-color: #46dfb1;
+    color: white;
+    border: none;
+    margin: 0 3px;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  .pagination button.active {
+    background-color: #2ca17e;
+  }
+
+  .pagination button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+
+  /* Modal for Export Preview */
+  #exportModal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 10000;
+    display: none;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.6);
+    justify-content: center;
+    align-items: center;
+  }
+
+  #exportModal .modal-content {
+    background: #fff;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 900px;
+    max-height: 80vh;
+    overflow-y: auto;
+    padding: 20px;
+  }
+
+  #exportModal h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+  }
+
+  #exportModal table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  #exportModal table th, #exportModal table td {
+    border: 1px solid #ddd;
+    padding: 6px 8px;
+    font-size: 13px;
+    text-align: center;
+    max-width: 150px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  #exportModal table th {
+    background-color: #46dfb1;
+    color: white;
+    text-transform: uppercase;
+  }
+
+  #exportModal .btn-group {
+    margin-top: 15px;
+    text-align: right;
+  }
+</style>
 
 <div class="container">
-  <h1>Troop Members</h1>
-  <a href="/troopmembers/add" class="btn btn-primary">Add New Member</a>
+  <h1>Troop Members List</h1>
 
-  <!-- EXPORT BUTTONS -->
-  <div class="mb-3">
-    <a href="/troopmembers/export/csv" class="btn btn-outline-secondary">Export CSV</a>
-    <a href="/troopmembers/export/excel" class="btn btn-outline-success">Export Excel</a>
-    <a href="/troopmembers/export/pdf" class="btn btn-outline-danger">Export PDF</a>
+  <div class="top-actions">
+    <div class="action-buttons">
+      <a href="/troopmembers/add" class="btn btn-primary">➕ Add Member</a>
+      <button class="btn btn-outline-success" id="exportBtn">📥 Export</button>
+    </div>
+    <input type="text" class="search-input" id="searchInput" placeholder="🔍 Search by name, school, district...">
   </div>
 
-  <!-- SEARCH -->
-  <div class="search-box">
-    <input type="text" class="search-input" id="searchInput" placeholder="Search by name, school, district, troop #...">
-  </div>
-
-  <!-- TABLE -->
   <div class="table-container">
-    <table class="members-table">
+    <table class="members-table" id="membersTable">
       <thead>
         <tr>
           <th>Name</th>
@@ -185,7 +285,7 @@
         <% members.forEach(m => { %>
           <tr>
             <td><%= m.name %></td>
-            <td><%= m.dateOfBirth.toDateString() %></td>
+            <td><%= new Date(m.dateOfBirth).toDateString() %></td>
             <td><%= m.address %></td>
             <td><%= m.contactNumber %></td>
             <td><%= m.guardianName %></td>
@@ -193,10 +293,10 @@
             <td><%= m.troopNumber %></td>
             <td><%= m.district?.name %></td>
             <td><%= m.school %></td>
-            <td>
-              <button class="btn btn-edit" onclick="openEditModal('<%= m._id %>')">Edit</button>
-              <form action="/troopmembers/delete/<%= m._id %>" method="POST" class="delete-form">
-                <button type="submit" class="btn btn-danger" onclick="return confirm('Delete this member?')">Delete</button>
+            <td class="action-icons">
+              <i class="fas fa-edit" onclick="openEditModal('<%= m._id %>')"></i>
+              <form action="/troopmembers/delete/<%= m._id %>" method="POST" class="delete-form" onsubmit="return confirm('Delete this member?')" style="display:inline;">
+                <button type="submit"><i class="fas fa-trash text-danger"></i></button>
               </form>
             </td>
           </tr>
@@ -204,65 +304,278 @@
       </tbody>
     </table>
   </div>
+
+  <div class="pagination" id="pagination"></div>
 </div>
 
-<!-- MODAL -->
-<div id="editModal" class="modal">
+<!-- EDIT MODAL -->
+<div id="editModal">
   <div class="modal-content">
     <h3>Edit Troop Member</h3>
     <form id="editForm" method="POST">
-      <input type="hidden" id="editId">
-      <input name="name" id="editName" required placeholder="Name"><br>
-      <input type="date" name="dateOfBirth" id="editDob" required><br>
-      <input name="address" id="editAddress" required placeholder="Address"><br>
-      <input name="contactNumber" id="editContact" required placeholder="Contact Number"><br>
-      <input name="guardianName" id="editGuardianName" required placeholder="Guardian Name"><br>
-      <input name="guardianContact" id="editGuardianContact" required placeholder="Guardian Contact"><br>
-      <input name="troopNumber" id="editTroop" required placeholder="Troop Number"><br>
-      <select name="district" id="editDistrict" required>
-        <% districts.forEach(d => { %>
-          <option value="<%= d._id %>"><%= d.name %></option>
-        <% }) %>
-      </select><br>
-      <input name="school" id="editSchool" required placeholder="School"><br><br>
-      <button type="submit" class="btn btn-primary">Update</button>
-      <button type="button" class="btn btn-cancel" onclick="closeModal()">Cancel</button>
+      <input type="hidden" id="editId" name="id">
+      <input name="name" id="editName" required placeholder="Name">
+      <input type="date" name="dateOfBirth" id="editDOB" required>
+      <input name="address" id="editAddress" required placeholder="Address">
+      <input name="contactNumber" id="editContact" required placeholder="Contact Number">
+      <input name="guardianName" id="editGuardian" required placeholder="Guardian Name">
+      <input name="guardianContact" id="editGuardianContact" required placeholder="Guardian Contact">
+      <input name="troopNumber" id="editTroopNumber" required placeholder="Troop Number">
+      <input name="district" id="editDistrict" required placeholder="District">
+      <input name="school" id="editSchool" required placeholder="School">
+      <br>
+      <button type="submit" class="btn btn-primary">Save</button>
+      <button type="button" class="btn btn-cancel" onclick="closeEditModal()">Cancel</button>
     </form>
   </div>
 </div>
 
+<!-- EXPORT MODAL -->
+<div id="exportModal">
+  <div class="modal-content">
+    <h3>Preview Data Before Export</h3>
+    <select id="exportFormat" style="margin-bottom: 15px; padding: 8px; font-size: 14px;">
+      <option value="excel">Excel (.xlsx)</option>
+      <option value="csv">CSV (.csv)</option>
+      <option value="pdf">PDF (.pdf)</option>
+    </select>
+    <div style="overflow-x:auto; max-height: 400px;">
+      <table id="exportPreviewTable">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Birthday</th>
+            <th>Address</th>
+            <th>Contact</th>
+            <th>Guardian</th>
+            <th>Guardian Contact</th>
+            <th>Troop #</th>
+            <th>District</th>
+            <th>School</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div class="btn-group">
+      <button class="btn btn-primary" id="confirmExportBtn">Export</button>
+      <button class="btn btn-cancel" id="cancelExportBtn">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+
 <script>
-  function openEditModal(id) {
-    fetch(/troopmembers/api/${id})
-      .then(res => res.json())
-      .then(member => {
-        document.getElementById('editForm').action = /troopmembers/edit/${member._id};
-        document.getElementById('editName').value = member.name;
-        document.getElementById('editDob').value = member.dateOfBirth.slice(0, 10);
-        document.getElementById('editAddress').value = member.address;
-        document.getElementById('editContact').value = member.contactNumber;
-        document.getElementById('editGuardianName').value = member.guardianName;
-        document.getElementById('editGuardianContact').value = member.guardianContact;
-        document.getElementById('editTroop').value = member.troopNumber;
-        document.getElementById('editDistrict').value = member.district;
-        document.getElementById('editSchool').value = member.school;
-        document.getElementById('editModal').style.display = 'flex';
-      });
+  // Pagination setup
+  const rowsPerPage = 15;
+  let currentPage = 1;
+
+  function paginateTable() {
+    const rows = document.querySelectorAll('#membersTableBody tr');
+    const totalPages = Math.ceil(rows.length / rowsPerPage);
+
+    rows.forEach((row, i) => {
+      row.style.display = (i >= (currentPage - 1) * rowsPerPage && i < currentPage * rowsPerPage) ? '' : 'none';
+    });
+
+    const pagination = document.getElementById('pagination');
+    pagination.innerHTML = '';
+
+    const prevBtn = document.createElement('button');
+    prevBtn.textContent = 'Previous';
+    prevBtn.disabled = currentPage === 1;
+    prevBtn.onclick = () => {
+      if (currentPage > 1) {
+        currentPage--;
+        paginateTable();
+      }
+    };
+    pagination.appendChild(prevBtn);
+
+    for (let i = 1; i <= totalPages; i++) {
+      const btn = document.createElement('button');
+      btn.textContent = i;
+      if (i === currentPage) btn.classList.add('active');
+      btn.onclick = () => {
+        currentPage = i;
+        paginateTable();
+      };
+      pagination.appendChild(btn);
+    }
+
+    const nextBtn = document.createElement('button');
+    nextBtn.textContent = 'Next';
+    nextBtn.disabled = currentPage === totalPages;
+    nextBtn.onclick = () => {
+      if (currentPage < totalPages) {
+        currentPage++;
+        paginateTable();
+      }
+    };
+    pagination.appendChild(nextBtn);
   }
 
-  function closeModal() {
+  paginateTable();
+
+  // Search filter
+  document.getElementById('searchInput').addEventListener('input', function() {
+    const searchTerm = this.value.toLowerCase();
+    const rows = document.querySelectorAll('#membersTableBody tr');
+    rows.forEach(row => {
+      const text = row.textContent.toLowerCase();
+      row.style.display = text.includes(searchTerm) ? '' : 'none';
+    });
+    currentPage = 1;
+    paginateTable();
+  });
+
+  // Edit modal functions (simplified, you may want to implement your own fetching of data)
+  function openEditModal(id) {
+    const row = Array.from(document.querySelectorAll('#membersTableBody tr')).find(tr => {
+      return tr.querySelector('form[action$="' + id + '"]') !== null;
+    });
+
+    if (!row) return alert('Member not found');
+
+    document.getElementById('editId').value = id;
+    document.getElementById('editName').value = row.cells[0].textContent;
+    // Parse birthday string back to yyyy-mm-dd
+    let birthday = new Date(row.cells[1].textContent);
+    document.getElementById('editDOB').value = birthday.toISOString().substring(0,10);
+    document.getElementById('editAddress').value = row.cells[2].textContent;
+    document.getElementById('editContact').value = row.cells[3].textContent;
+    document.getElementById('editGuardian').value = row.cells[4].textContent;
+    document.getElementById('editGuardianContact').value = row.cells[5].textContent;
+    document.getElementById('editTroopNumber').value = row.cells[6].textContent;
+    document.getElementById('editDistrict').value = row.cells[7].textContent;
+    document.getElementById('editSchool').value = row.cells[8].textContent;
+
+    document.getElementById('editForm').action = '/troopmembers/edit/' + id;
+    document.getElementById('editModal').style.display = 'flex';
+  }
+
+  function closeEditModal() {
     document.getElementById('editModal').style.display = 'none';
   }
 
-  document.getElementById('searchInput').addEventListener('input', function () {
-    const searchValue = this.value.toLowerCase();
+  // Export modal and export functions
+  const exportBtn = document.getElementById('exportBtn');
+  const exportModal = document.getElementById('exportModal');
+  const exportPreviewTableBody = document.querySelector('#exportPreviewTable tbody');
+  const exportFormatSelect = document.getElementById('exportFormat');
+  const confirmExportBtn = document.getElementById('confirmExportBtn');
+  const cancelExportBtn = document.getElementById('cancelExportBtn');
+
+  exportBtn.addEventListener('click', () => {
+    // Clear previous preview
+    exportPreviewTableBody.innerHTML = '';
+
+    // Get all rows from the main table, but only visible ones (all or filtered)
     const rows = document.querySelectorAll('#membersTableBody tr');
     rows.forEach(row => {
-      const rowText = row.innerText.toLowerCase();
-      row.style.display = rowText.includes(searchValue) ? '' : 'none';
+      if (row.style.display === 'none') return; // skip hidden rows due to pagination or search
+
+      const cells = row.querySelectorAll('td');
+      const tr = document.createElement('tr');
+      // Copy all except the last column (actions)
+      for (let i = 0; i < cells.length - 1; i++) {
+        const td = document.createElement('td');
+        td.textContent = cells[i].textContent;
+        tr.appendChild(td);
+      }
+      exportPreviewTableBody.appendChild(tr);
     });
+
+    exportModal.style.display = 'flex';
   });
+
+  cancelExportBtn.addEventListener('click', () => {
+    exportModal.style.display = 'none';
+  });
+
+  confirmExportBtn.addEventListener('click', () => {
+    const format = exportFormatSelect.value;
+    if (format === 'excel') exportToExcel();
+    else if (format === 'csv') exportToCSV();
+    else if (format === 'pdf') exportToPDF();
+    exportModal.style.display = 'none';
+  });
+
+  function exportToExcel() {
+    // Create worksheet from table
+    const wb = XLSX.utils.book_new();
+    const ws_data = [];
+
+    // Headers
+    const headers = [];
+    document.querySelectorAll('#exportPreviewTable thead th').forEach(th => headers.push(th.textContent));
+    ws_data.push(headers);
+
+    // Rows
+    document.querySelectorAll('#exportPreviewTable tbody tr').forEach(tr => {
+      const row = [];
+      tr.querySelectorAll('td').forEach(td => row.push(td.textContent));
+      ws_data.push(row);
+    });
+
+    const ws = XLSX.utils.aoa_to_sheet(ws_data);
+    XLSX.utils.book_append_sheet(wb, ws, 'TroopMembers');
+
+    XLSX.writeFile(wb, 'TroopMembers.xlsx');
+  }
+
+  function exportToCSV() {
+    let csvContent = '';
+    // Headers
+    const headers = [];
+    document.querySelectorAll('#exportPreviewTable thead th').forEach(th => headers.push('"' + th.textContent.replace(/"/g, '""') + '"'));
+    csvContent += headers.join(',') + '\n';
+
+    // Rows
+    document.querySelectorAll('#exportPreviewTable tbody tr').forEach(tr => {
+      const row = [];
+      tr.querySelectorAll('td').forEach(td => row.push('"' + td.textContent.replace(/"/g, '""') + '"'));
+      csvContent += row.join(',') + '\n';
+    });
+
+    // Download CSV
+    const blob = new Blob([csvContent], {type: 'text/csv;charset=utf-8;'});
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'TroopMembers.csv';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  function exportToPDF() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    const headers = [];
+    document.querySelectorAll('#exportPreviewTable thead th').forEach(th => headers.push(th.textContent));
+
+    const data = [];
+    document.querySelectorAll('#exportPreviewTable tbody tr').forEach(tr => {
+      const row = [];
+      tr.querySelectorAll('td').forEach(td => row.push(td.textContent));
+      data.push(row);
+    });
+
+    doc.autoTable({
+      head: [headers],
+      body: data,
+      startY: 20,
+      styles: { fontSize: 8 },
+      headStyles: { fillColor: [70, 223, 177] },
+      margin: { left: 10, right: 10 }
+    });
+
+    doc.save('TroopMembers.pdf');
+  }
 </script>
 
-</body>
-</html>
+<%- include('../layouts/footer') %>

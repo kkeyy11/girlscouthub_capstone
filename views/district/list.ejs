@@ -1,41 +1,195 @@
-<%- include('./layouts/header') %>
+<%- include('../layouts/header') %>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Districts</title>
-  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/style.css" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      padding: 20px;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 15px;
+      color: black;
+    }
+
+    .add-button-container {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    .btn-add {
+      background-color: #80EE98; /* green */
+      color: black; /* black text */
+      padding: 8px 16px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: background-color 0.3s ease;
+    }
+    .btn-add:hover {
+      background-color: #66cc7a; /* darker green on hover */
+      color: black;
+    }
+
+    .districts-wrapper {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 20px;
+      padding-bottom: 10px;
+    }
+
+    .district-container {
+      background-color: #80EE98;
+      border-radius: 10px;
+      padding: 15px;
+      color: black;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      min-height: 110px;
+      width: 100%;
+      position: relative; /* for dropdown positioning */
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .district-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .district-name {
+      font-size: 1.3rem;
+      font-weight: bold;
+    }
+
+    /* Dropdown container */
+    .dropdown {
+      position: relative;
+      display: inline-block;
+    }
+
+    /* Dots button */
+    .dots-btn {
+      background: transparent;
+      border: none;
+      font-size: 1.8rem;
+      cursor: pointer;
+      user-select: none;
+      color: black;
+      padding: 0 5px;
+    }
+
+    /* Dropdown menu hidden by default */
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 30px;
+      background-color: white;
+      min-width: 140px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+      border-radius: 6px;
+      z-index: 10;
+      padding: 5px 0;
+    }
+
+    /* Show dropdown */
+    .dropdown-content.show {
+      display: block;
+    }
+
+    /* Dropdown links */
+    .dropdown-content a, .dropdown-content form button {
+      color: black;
+      padding: 8px 16px;
+      text-decoration: none;
+      display: block;
+      width: 100%;
+      background: none;
+      border: none;
+      text-align: left;
+      font-size: 0.95rem;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    /* Hover effect */
+    .dropdown-content a:hover, .dropdown-content form button:hover {
+      background-color: #f1f1f1;
+    }
+
+    /* Delete button style inside dropdown */
+    .btn-danger-dropdown {
+      color: #ff4444;
+      font-weight: 700;
+    }
+
+    .btn-danger-dropdown:hover {
+      background-color: #ffdddd;
+    }
+  </style>
 </head>
 <body>
-  
+  <h2>Districts</h2>
 
-  <div class="table-container">
-    <h2>Districts</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>District</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% districts.forEach(d => { %>
-          <tr>
-            <td><%= d.name %></td>
-            <td>
-              <a href="/districts/<%= d._id %>/members" class="btn">View Members</a>
-              <form action="/districts/delete/<%= d._id %>" method="POST" style="display:inline;">
-                <button type="submit" onclick="return confirm('Delete?')" class="btn btn-danger">Delete</button>
-              </form>
-            </td>
-          </tr>
-        <% }) %>
-      </tbody>
-    </table>
+  <div class="add-button-container">
+    <a href="/districts/add" class="btn-add">Add District</a>
   </div>
 
+  <div class="districts-wrapper">
+    <% districts.forEach(d => { %>
+      <div class="district-container">
+        <div class="district-header">
+          <div class="district-name"><%= d.name %></div>
+          <div class="dropdown">
+            <button class="dots-btn" onclick="toggleDropdown(event)">&#8942;</button>
+            <div class="dropdown-content">
+            
+              <a href="/districts/<%= d._id %>/members">View Members</a>
+              <form action="/districts/delete/<%= d._id %>" method="POST" onsubmit="return confirm('Delete this district?');" style="margin:0;">
+                <button type="submit" class="btn-danger-dropdown">Delete</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% }) %>
+  </div>
 
+  <script>
+    function toggleDropdown(event) {
+      event.stopPropagation();
+      closeAllDropdowns();
+
+      const dropdown = event.currentTarget.nextElementSibling;
+      dropdown.classList.toggle('show');
+    }
+
+    function closeAllDropdowns() {
+      document.querySelectorAll('.dropdown-content.show').forEach(menu => {
+        menu.classList.remove('show');
+      });
+    }
+
+    // Close dropdown if clicked outside
+    window.onclick = function(event) {
+      if (!event.target.matches('.dots-btn')) {
+        closeAllDropdowns();
+      }
+    }
+  </script>
 </body>
 </html>
-    
