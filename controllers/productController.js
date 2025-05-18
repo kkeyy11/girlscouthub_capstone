@@ -1,6 +1,12 @@
 const Product = require("../models/productModel");
 const Avail = require("../models/Avail"); 
 
+// //kay ken ito
+// exports.getShop = (req, res) => {
+//   res.render("availProduct");
+// };
+
+
 // Show Add Product Form
 exports.showAddProductForm = (req, res) => {
   res.render("addProduct");

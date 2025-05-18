@@ -3,6 +3,9 @@ const router = express.Router();
 const productController = require("../controllers/productController");
 const cartController = require("../controllers/cartController");
 
+// //kay ken ito
+// router.get("/shop", productController.getShop);
+
 // Route to show all products
 router.get("/products/avail", productController.getAllProducts);
 
