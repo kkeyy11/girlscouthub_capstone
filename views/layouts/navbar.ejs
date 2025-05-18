@@ -252,25 +252,47 @@
   </header>
 
   <!-- Sidebar -->
-  <nav id="sidebar">
-    <div class="sidebar-logo">
-      <img src="/public/logo.png" alt="Girl Scout Logo" />
-    </div>
+  <nav>
+    <h2><i class="fas fa-leaf"></i> Girl Scout</h2>
     <ul>
-      <li><a href="/"><i class="fas fa-home"></i><span> Home</span></a></li>
-      <li><a href="/admin/appointments-list"><i class="fas fa-calendar-check"></i><span> Appointments</span></a></li>
-      <li><a href="/admin"><i class="fas fa-list"></i><span> List Product</span></a></li>
-      <li><a href="/admin/event"><i class="fas fa-bell"></i><span> Create Event</span></a></li>
-      <li><a href="/reservations"><i class="fas fa-bookmark"></i><span> List of Reservation</span></a></li>
-      <li><a href="/admin/reviews"><i class="fas fa-star"></i><span> Reviews</span></a></li>
-      <li class="dropdown">
-        <a href="javascript:void(0)" onclick="toggleDropdown(this)">
-          <i class="fas fa-map-marked-alt"></i><span> Districts</span>
-        </a>
-        <ul class="dropdown-content"></ul>
-      </li>
+        <li><a href="/"><i class="fas fa-home"></i> Home</a></li>
+
+        <% if (user) { %>
+            <!-- <li><a href="/user/profile"><i class="fas fa-user-circle"></i> Profile</a></li> -->
+
+            <% if (user.role && user.role.toLowerCase() === "admin") { %>
+                <!-- <li><a href="/"><i class="fas fa-home"></i><span> Home</span></a></li> -->
+                <li><a href="/admin/appointments-list"><i class="fas fa-calendar-check"></i><span> Appointments</span></a></li>
+                <li><a href="/admin"><i class="fas fa-list"></i><span>Products</span></a></li>
+                <li><a href="/admin/event"><i class="fas fa-bell"></i><span> Create Event</span></a></li>
+                <li><a href="/reservations"><i class="fas fa-bookmark"></i><span> List of Reservation</span></a></li>
+                <li><a href="/admin/reviews"><i class="fas fa-star"></i><span> Reviews</span></a></li>
+
+                <li class="dropdown">
+                    <a href="javascript:void(0)" onclick="toggleDropdown(this)">
+                        <i class="fas fa-map-marked-alt"></i> Districts
+                    </a>
+                    <ul class="dropdown-content">
+                        <!-- Dynamic Districts will load here -->
+                    </ul>
+                </li>
+
+            <% } else { %>
+                <li><a href="/user/appointments"><i class="fas fa-calendar"></i> Appointments</a></li>
+                <li><a href="/user/events"><i class="fas fa-bell"></i> Notification Event</a></li>
+                <li><a href="/"><i class="fas fa-shopping-cart"></i><span> Avail Product</span></a></li>
+                <li><a href="/user/reviews"><i class="fas fa-star"></i><span> Reviews</span></a></li>
+            <% } %>
+
+            <li><a href="/auth/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+
+        <% } else { %>
+            <li><a href="/auth/register"><i class="fas fa-user-plus"></i> Register</a></li>
+            <li><a href="/auth/login"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+        <% } %>
     </ul>
-  </nav>
+</nav>
+
 
   <!-- Stylish Bottom Toggle Button -->
   <button class="toggle-btn" onclick="toggleSidebar()" title="Toggle Sidebar">
