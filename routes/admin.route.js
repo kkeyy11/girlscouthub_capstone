@@ -10,29 +10,29 @@ const dashboardController = require("../controllers/dashboardController");
 
 router.get("/dashboard", dashboardController.getIndex);
 
-// Show Add Product Form
-router.get("/add", productController.showAddProductForm);
-router.post("/add", productController.addProduct);
+// // Show Add Product Form
+// router.get("/add", productController.showAddProductForm);
+// router.post("/add", productController.addProduct);
 
-// Show All Products
-router.get("/", productController.getAllProducts);
+// // Show All Products
+// router.get("/", productController.getAllProducts);
 
-// Show Edit Product Form
-router.get("/edit/:id", productController.showEditForm);
-router.post("/edit/:id", productController.updateProduct);
+// // Show Edit Product Form
+// router.get("/edit/:id", productController.showEditForm);
+// router.post("/edit/:id", productController.updateProduct);
 
-// Delete Product
-router.post("/delete/:id", productController.deleteProduct);
+// // Delete Product
+// router.post("/delete/:id", productController.deleteProduct);
 
-// Show Add Stocks Form
-router.post("/add-stocks/:id", productController.addStocks);
-
-
-// Low Stock Alert Route
-router.get("/low-stock", productController.getLowStockProducts);
+// // Show Add Stocks Form
+// router.post("/add-stocks/:id", productController.addStocks);
 
 
-router.get("/report", productController.getReport);
+// // Low Stock Alert Route
+// router.get("/low-stock", productController.getLowStockProducts);
+
+
+// router.get("/report", productController.getReport);
 
 // router.get("/avail", productController.getAvailForm);
 // router.post("/avail", productController.processAvail);

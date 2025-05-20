@@ -1,5 +1,4 @@
     require('dotenv').config();
-
     const express = require('express');
 
 
@@ -7,7 +6,7 @@
     const createHttpErrors = require('http-errors');
     const morgan = require('morgan');
     const mongoose = require('mongoose');
-    // require('dotenv').config();
+    //require('dotenv').config();
     const session = require('express-session');
     const connectFlash = require('connect-flash');
     const passport = require('passport');
@@ -15,8 +14,12 @@
     const connectEnsureLogin = require('connect-ensure-login')
     const districtRoutes = require('./routes/districtRoutes');
     const troopMemberRoutes = require('./routes/troopMemberRoutes');
-    const cartRoutes = require("./routes/cartRoutes");
-    const reservationRoutes = require('./routes/cartRoutes');
+    const path = require('path');
+    const productRoutes = require('./routes/productRoutes');
+    const cartRoutes = require('./routes/cartRoutes');
+    //const path = require('path');
+
+
 
     const app = express();
     app.use(morgan('dev'));
@@ -62,9 +65,9 @@
 
 
     //app.use("/", productRoutes);
-    app.use("/reservations", cartRoutes);
+    //app.use("/reservations", cartRoutes);
     
-    app.use('/reservations', reservationRoutes);
+    //app.use('/reservations', reservationRoutes);
     
     
     
@@ -73,7 +76,36 @@
 //       res.redirect("/products/avail");
 //  });
     
-    
+    //bago
+app.use('/products', productRoutes);
+app.use('/', cartRoutes);
+
+
+//const productRoutes = require('./routes/productRoutes'); // adjust path if needed
+app.use('/', productRoutes);  // '/' can be changed if your routes are prefixed
+
+app.use(express.static('public'));
+
+
+const inventoryRoutes = require('./routes/inventoryRoutes');
+app.use('/', inventoryRoutes);
+
+
+
+//app.use(express.urlencoded({ extended: true }));
+//app.use(express.static(path.join(__dirname, 'public')));
+//app.set('view engine', 'ejs');
+
+// Routes
+//const productRoutes = require('./routes/productRoutes');
+app.use('/products', productRoutes);
+
+//app.post('/remove/:id', cartRoutes.removeReservation);
+
+
+app.use(express.urlencoded({ extended: true }));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 
 
     app.use('/', require('./routes/index.route'));

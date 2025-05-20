@@ -1,147 +1,94 @@
-const Product = require("../models/productModel");
-//const Cart = require("../models/ReservationCart");
-const Cart = require("../models/Cart");
-const Reservation = require('../models/Reservation');
-const nodemailer = require('nodemailer');
+const Product = require('../models/product');
+const Reservation = require('../models/reservation');
 
-exports.addToCart = (req, res) => {
-    const productId = req.params.id;
-    const quantity = parseInt(req.body.quantity, 10) || 1;  // Get quantity from the form or default to 1
-    let cart = req.session.cart || [];
-
-    // Check if the item is already in the cart
-    const existingProductIndex = cart.findIndex(item => item._id.toString() === productId);
-
-    if (existingProductIndex !== -1) {
-        // If product already exists in the cart, update the quantity
-        cart[existingProductIndex].quantity += quantity;
-    } else {
-        // Otherwise, add the product to the cart
-        cart.push({ _id: productId, name: "Product Name", quantity, price: 100 });  // Set product details accordingly
-    }
-
-    // Save the cart to the session
-    req.session.cart = cart;
-
-    // Redirect to the cart view
-    res.redirect("/cart");
-};
-
-  
-  
 exports.viewCart = (req, res) => {
-    const cart = req.session.cart || [];  // Get the cart from the session (or an empty array if not available)
-    
-    // Log cart to the console for debugging
-    console.log("Cart content:", cart);
-    
-    // Pass the cart to the view
-    res.render("cartView", { cart });
+  const cart = req.session.cart || [];
+  res.render('cart', { cart });
 };
 
+exports.addToCart = async (req, res) => {
+  const product = await Product.findById(req.params.id);
+  const cart = req.session.cart || [];
 
-  
-  
-exports.checkout = async (req, res) => {
-    try {
-        const selectedIds = req.body.selectedItems;
-        const reservedBy = req.body.reservedBy || "Anonymous";
+  const existing = cart.find(item => item._id == product._id.toString());
 
-        if (!selectedIds) {
-            return res.status(400).send("No items selected");
-        }
+  if (existing) {
+    existing.quantity += 1;
+  } else {
+    cart.push({ _id: product._id, name: product.name, price: product.price, quantity: 1 });
+  }
 
-        const selected = Array.isArray(selectedIds) ? selectedIds : [selectedIds];
-
-        const cart = req.session.cart || [];
-
-        const reservedItems = cart.filter(item => selected.includes(item._id));
-
-        if (reservedItems.length === 0) {
-            return res.status(400).send("No matching items in the cart");
-        }
-
-        const reservation = new Reservation({
-            items: reservedItems,
-            reservedBy: reservedBy
-        });
-
-        await reservation.save();
-
-        // Remove reserved items from session cart
-        req.session.cart = cart.filter(item => !selected.includes(item._id));
-
-        res.redirect("/cart");
-    } catch (error) {
-        console.error("Reservation failed:", error);
-        res.status(500).send("Reservation failed");
-    }
-};
-  
-exports.viewReservations = async (req, res) => {
-    try {
-        const reservations = await Reservation.find().sort({ dateReserved: -1 });
-        res.render("reservationList", { reservations });
-    } catch (error) {
-        console.error("Error viewing reservations:", error);
-        res.status(500).send("Error retrieving reservations");
-    }
+  req.session.cart = cart;
+  res.redirect('/products');
 };
 
-exports.getAllReservations = async (req, res) => {
-  try {
-    const allReservations = await Reservation.find().sort({ dateReserved: -1 });
-    const pending = allReservations.filter(r => !r.isApproved);
-    const approved = allReservations.filter(r => r.isApproved);
+exports.reserveCart = async (req, res) => {
+    const { name, contact, email } = req.body; // Capture the email from the form
+    const cart = req.session.cart || [];
 
-    res.render('reservationList', {
-      reservations: pending,
-      approvedReservations: approved
+    // Create a new reservation with the email
+    const reservation = new Reservation({
+        name,
+        contact,
+        email, // Include the email here
+        items: cart,
+        status: 'Pending'
     });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send('Server error');
-  }
+
+    try {
+        await reservation.save(); // Save the reservation to the database
+        req.session.cart = []; // Clear the cart after reservation
+        res.redirect('/cart'); // Redirect to reservations page
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Error saving reservation');
+    }
 };
 
-// APPROVE reservation
-// Approve reservation
+  
+
+exports.viewReservations = async (req, res) => {
+  const reservations = await Reservation.find();
+  res.render('reservations', { reservations });
+};
+
+
 exports.approveReservation = async (req, res) => {
-  try {
-      const reservationId = req.params.id;
+    const reservationId = req.params.id;
+    const reservation = await Reservation.findById(reservationId);
+  
+    if (!reservation || reservation.status === 'Approved') {
+      return res.redirect('/reservations');
+    }
+  
+    // Reduce quantity per item
+    for (const item of reservation.items) {
+      const product = await Product.findById(item._id);
+      if (product && product.quantity >= item.quantity) {
+        product.quantity -= item.quantity;
+        await product.save();
+      } else {
+        return res.send(`Not enough stock for ${item.name}`);
+      }
+    }
+  
+    reservation.status = 'Approved';
+    await reservation.save();
+  
+    res.redirect('/reservations');
+  };
+  
 
-      // Find the reservation by ID and update its status to 'approved'
-      const updatedReservation = await Reservation.findByIdAndUpdate(reservationId, {
-          status: 'approved',
-      }, { new: true });
-
-      // Redirect back to the reservation list page
-      res.redirect('/reservations'); // Update with your actual route
-  } catch (err) {
-      console.error('Error approving reservation:', err);
-      res.status(500).send('Server error');
-  }
-};
-
-
-// Controller to render reservation list
-exports.getReservationList = async (req, res) => {
-  try {
-      // Fetch all pending reservations (status: 'pending')
-      const reservations = await Reservation.find({ status: 'pending' });
-
-      // Fetch all approved reservations (status: 'approved')
-      const approvedReservations = await Reservation.find({ status: 'approved' });
-
-      // Render the view with both pending and approved reservations
-      res.render('reservationList', {
-          reservations,         // pending reservations
-          approvedReservations  // approved reservations
-      });
-  } catch (err) {
-      console.error('Error fetching reservations:', err);
-      res.status(500).send('Server error');
-  }
-};
-
-
+  exports.removeReservation = async (req, res) => {
+    const reservationId = req.params.id;
+    
+    try {
+      // Find and delete the reservation by its ID
+      await Reservation.findByIdAndDelete(reservationId);
+      res.redirect('/reservations'); // Redirect back to reservations page
+    } catch (err) {
+      console.error(err);
+      res.status(500).send('Error occurred while removing the reservation');
+    }
+  };
+  

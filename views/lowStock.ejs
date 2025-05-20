@@ -1,150 +1,249 @@
-<!-- <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Low Stock Alert</title>
-</head>
-<body>
-    <h1>Low Stock Alert</h1>
-
-    <% if (lowStockProducts.length === 0) { %>
-        <p>No low stock products.</p>
-    <% } else { %>
-        <ul>
-            <% lowStockProducts.forEach(product => { %>
-                <li>
-                    <%= product.name %> - Only <%= product.quantity %> left!
-                </li>
-            <% }); %>
-        </ul>
-    <% } %>
-
-    <a href="/products">Back to Products</a>
-</body>
-</html> -->
-
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Low Stock Alert</title>
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-  />
-  <style>
+<style>
+    /* Base styles */
     * {
-      box-sizing: border-box;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-
-    body {
       margin: 0;
       padding: 0;
-      background: #f2fbe0;
-      color: #2F5233;
+      box-sizing: border-box;
     }
-
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      background-color: #f8f9fa;
+      color: #333;
+      padding: 20px;
+    }
+    
+    /* Container */
     .container {
-      max-width: 700px;
-      margin: 50px auto;
-      padding: 30px;
-      background: #ffffff;
-      border-radius: 15px;
-      box-shadow: 0 10px 25px rgba(47, 82, 51, 0.1);
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
     }
-
+    
+    /* Heading */
     h1 {
-      text-align: center;
-      font-size: 32px;
-      color: #2F5233;
-      margin-bottom: 20px;
-    }
-
-    h1 i {
-      color: white;
-      background: #76B947;
-      padding: 12px;
-      border-radius: 50%;
-      margin-right: 10px;
-    }
-
-    ul {
-      list-style: none;
-      padding: 0;
-    }
-
-    li {
-      background: #f9fff1;
-      border-left: 5px solid #FF6F61;
-      padding: 15px;
-      margin-bottom: 10px;
-      border-radius: 8px;
-      font-size: 18px;
+      color: #e74c3c;
+      margin-bottom: 25px;
+      padding-bottom: 15px;
+      font-size: 2rem;
+      border-bottom: 2px solid #e74c3c;
       display: flex;
       align-items: center;
     }
-
-    li i {
-      color: #FF6F61;
+    
+    h1::before {
+      content: "⚠️";
       margin-right: 10px;
+      font-size: 1.8rem;
     }
-
-    .no-products {
+    
+    /* Table styles */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 30px;
+      background-color: white;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      overflow: hidden;
+      border: none;
+    }
+    
+    th {
+      background-color: #e74c3c;
+      color: white;
+      padding: 15px;
+      text-align: left;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.9rem;
+      letter-spacing: 0.5px;
+    }
+    
+    td {
+      padding: 15px;
+      border-bottom: 1px solid #ecf0f1;
+      vertical-align: middle;
+    }
+    
+    tr:last-child td {
+      border-bottom: none;
+    }
+    
+    tr:nth-child(even) {
+      background-color: #fef5f4;
+    }
+    
+    tr:hover {
+      background-color: #fdeae8;
+      transition: background-color 0.2s ease;
+    }
+    
+    /* Product name */
+    .product-name {
+      font-weight: 500;
+      color: #2c3e50;
+    }
+    
+    /* Price */
+    .product-price {
+      font-weight: 600;
+      color: #27ae60;
+    }
+    
+    /* Quantity */
+    .product-quantity {
+      font-weight: 700;
+      color: #e74c3c;
+      position: relative;
+      padding-left: 25px;
+    }
+    
+    .product-quantity::before {
+      content: "⚠️";
+      position: absolute;
+      left: 0;
+      font-size: 0.9rem;
+    }
+    
+    /* Actions column */
+    .actions-cell {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    /* Add stock form */
+    .stock-form {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    
+    .stock-input {
+      width: 100px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 0.9rem;
+    }
+    
+    .btn-add-stock {
+      padding: 10px 15px;
+      background-color: #2ecc71;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+    
+    .btn-add-stock:hover {
+      background-color: #27ae60;
+    }
+    
+    /* Empty state */
+    .empty-state {
       text-align: center;
-      font-size: 18px;
-      background: #e8f5e9;
-      padding: 20px;
-      border-radius: 10px;
-      margin-top: 20px;
+      padding: 40px 20px;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     }
-
-    .btn-back {
+    
+    .empty-state-icon {
+      font-size: 3rem;
+      margin-bottom: 20px;
+      color: #7f8c8d;
+    }
+    
+    .empty-state-message {
+      font-size: 1.2rem;
+      color: #7f8c8d;
+      margin-bottom: 20px;
+    }
+    
+    /* Navigation link */
+    .nav-link {
       display: inline-block;
-      margin-top: 30px;
-      padding: 12px 25px;
-      background: #2F5233;
+      padding: 12px 20px;
+      background-color: #34495e;
       color: white;
       text-decoration: none;
-      border-radius: 8px;
-      font-weight: bold;
-      transition: background 0.3s ease;
+      border-radius: 4px;
+      transition: background-color 0.2s ease;
+      margin-top: 20px;
+      font-weight: 500;
     }
-
-    .btn-back:hover {
-      background: #1e3b24;
+    
+    .nav-link:hover {
+      background-color: #2c3e50;
     }
-
-    .btn-back i {
-      margin-right: 6px;
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      table {
+        display: block;
+        overflow-x: auto;
+      }
+      
+      .stock-form {
+        flex-wrap: wrap;
+      }
+      
+      h1 {
+        font-size: 1.5rem;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      th, td {
+        padding: 10px;
+      }
+      
+      .stock-input {
+        width: 80px;
+      }
     }
   </style>
-</head>
-<body>
-
+  
   <div class="container">
-    <h1><i class="fas fa-triangle-exclamation"></i>Low Stock Alert</h1>
-
-    <% if (lowStockProducts.length === 0) { %>
-      <div class="no-products">
-        <i class="fas fa-check-circle"></i> No low stock products. All good!
-      </div>
+    <h1>Low Stock Products</h1>
+  
+    <% if (products.length > 0) { %>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% products.forEach(p => { %>
+            <tr>
+              <td class="product-name"><%= p.name %></td>
+              <td class="product-price">₱<%= p.price %></td>
+              <td class="product-quantity"><%= p.quantity %></td>
+              <td class="actions-cell">
+                <form action="/add-stock/<%= p._id %>" method="POST" class="stock-form">
+                  <input type="number" name="addQty" min="1" placeholder="Add Qty" required class="stock-input">
+                  <button type="submit" class="btn-add-stock">Add Stock</button>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
     <% } else { %>
-      <ul>
-        <% lowStockProducts.forEach(product => { %>
-          <li>
-            <i class="fas fa-box-open"></i>
-            <strong><%= product.name %></strong> - Only <strong><%= product.quantity %></strong> left!
-          </li>
-        <% }); %>
-      </ul>
+      <div class="empty-state">
+        <div class="empty-state-icon">✓</div>
+        <p class="empty-state-message">Great! No products are low in stock.</p>
+      </div>
     <% } %>
-
-    <a href="/products" class="btn-back"><i class="fas fa-arrow-left"></i> Back to Products</a>
+  
+    <a href="/manage-products" class="nav-link">Back to Product Management</a>
   </div>
-
-</body>
-</html>

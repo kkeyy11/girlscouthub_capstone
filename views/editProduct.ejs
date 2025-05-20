@@ -1,41 +1,470 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Product</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Product | InventoryPro</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --primary-light: #eef2ff;
+      --success: #10b981;
+      --danger: #ef4444;
+      --gray-50: #f9fafb;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-300: #d1d5db;
+      --gray-400: #9ca3af;
+      --gray-500: #6b7280;
+      --gray-600: #4b5563;
+      --gray-700: #374151;
+      --gray-800: #1f2937;
+      --gray-900: #111827;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      --radius-sm: 0.125rem;
+      --radius: 0.375rem;
+      --radius-md: 0.5rem;
+      --radius-lg: 0.75rem;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--gray-50);
+      color: var(--gray-800);
+      line-height: 1.5;
+      padding: 0;
+      margin: 0;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+    }
+
+    .card {
+      background-color: white;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+    }
+
+    .card-header {
+      background-color: var(--primary);
+      color: white;
+      padding: 1.5rem;
+      position: relative;
+    }
+
+    .card-header h1 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .card-header p {
+      margin-top: 0.5rem;
+      opacity: 0.9;
+      font-size: 0.875rem;
+    }
+
+    .card-body {
+      padding: 2rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: var(--gray-700);
+      font-size: 0.875rem;
+    }
+
+    .form-control {
+      display: block;
+      width: 100%;
+      padding: 0.75rem 1rem;
+      font-size: 1rem;
+      line-height: 1.5;
+      color: var(--gray-700);
+      background-color: white;
+      background-clip: padding-box;
+      border: 1px solid var(--gray-300);
+      border-radius: var(--radius);
+      transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    }
+
+    .form-control:focus {
+      border-color: var(--primary);
+      outline: 0;
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+    }
+
+    .form-control::placeholder {
+      color: var(--gray-400);
+    }
+
+    .input-group {
+      position: relative;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: stretch;
+      width: 100%;
+    }
+
+    .input-group-text {
+      display: flex;
+      align-items: center;
+      padding: 0.75rem 1rem;
+      font-size: 1rem;
+      font-weight: 400;
+      line-height: 1.5;
+      color: var(--gray-700);
+      text-align: center;
+      white-space: nowrap;
+      background-color: var(--gray-100);
+      border: 1px solid var(--gray-300);
+      border-radius: var(--radius);
+    }
+
+    .input-group > .form-control:not(:first-child) {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+    }
+
+    .input-group > .input-group-text:first-child {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+
+    .input-group > .form-control:focus {
+      z-index: 3;
+    }
+
+    .form-hint {
+      margin-top: 0.25rem;
+      font-size: 0.75rem;
+      color: var(--gray-500);
+    }
+
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--gray-200);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.75rem 1.5rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      line-height: 1;
+      text-align: center;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      user-select: none;
+      border: 1px solid transparent;
+      border-radius: var(--radius);
+      transition: all 0.2s ease-in-out;
+    }
+
+    .btn-primary {
+      color: white;
+      background-color: var(--primary);
+      border-color: var(--primary);
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary-hover);
+      border-color: var(--primary-hover);
+    }
+
+    .btn-outline {
+      color: var(--gray-700);
+      background-color: transparent;
+      border-color: var(--gray-300);
+    }
+
+    .btn-outline:hover {
+      color: var(--gray-800);
+      background-color: var(--gray-100);
+      border-color: var(--gray-400);
+    }
+
+    .btn-danger {
+      color: white;
+      background-color: var(--danger);
+      border-color: var(--danger);
+    }
+
+    .btn-danger:hover {
+      background-color: #dc2626;
+      border-color: #dc2626;
+    }
+
+    .btn-icon {
+      margin-right: 0.5rem;
+    }
+
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      font-size: 0.875rem;
+    }
+
+    .breadcrumb-item {
+      display: flex;
+      align-items: center;
+    }
+
+    .breadcrumb-item a {
+      color: var(--gray-600);
+      text-decoration: none;
+    }
+
+    .breadcrumb-item a:hover {
+      color: var(--primary);
+      text-decoration: underline;
+    }
+
+    .breadcrumb-separator {
+      margin: 0 0.5rem;
+      color: var(--gray-400);
+    }
+
+    .product-image {
+      width: 100%;
+      height: 200px;
+      background-color: var(--gray-100);
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .product-image img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+
+    .product-image-placeholder {
+      color: var(--gray-400);
+      font-size: 3rem;
+    }
+
+    .image-upload-btn {
+      position: absolute;
+      bottom: 0.5rem;
+      right: 0.5rem;
+      background-color: white;
+      border-radius: var(--radius);
+      padding: 0.5rem;
+      box-shadow: var(--shadow);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .image-upload-btn:hover {
+      background-color: var(--gray-100);
+    }
+
+    .form-row {
+      display: flex;
+      flex-wrap: wrap;
+      margin-right: -0.75rem;
+      margin-left: -0.75rem;
+    }
+
+    .form-col {
+      flex: 0 0 100%;
+      max-width: 100%;
+      padding-right: 0.75rem;
+      padding-left: 0.75rem;
+    }
+
+    @media (min-width: 768px) {
+      .form-col-md-6 {
+        flex: 0 0 50%;
+        max-width: 50%;
+      }
+    }
+
+    .alert {
+      position: relative;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+      border: 1px solid transparent;
+      border-radius: var(--radius);
+    }
+
+    .alert-info {
+      color: #0c5460;
+      background-color: #d1ecf1;
+      border-color: #bee5eb;
+    }
+
+    .alert-icon {
+      margin-right: 0.5rem;
+    }
+
+    @media (max-width: 768px) {
+      .card-header {
+        padding: 1.25rem;
+      }
+      
+      .card-body {
+        padding: 1.5rem;
+      }
+      
+      .form-actions {
+        flex-direction: column;
+      }
+      
+      .btn {
+        width: 100%;
+      }
+    }
+  </style>
 </head>
 <body>
-    <h2>Edit Product</h2>
-    <form action="/admin/edit/<%= product._id %>" method="POST">
-        <label>Product Name:</label>
-        <input type="text" name="name" value="<%= product.name %>" required><br>
-
-        <label>Category:</label>
-        <select name="category">
-            <option <%= product.category === "Uniform" ? "selected" : "" %>>Uniform</option>
-            <option <%= product.category === "Camping Gear" ? "selected" : "" %>>Camping Gear</option>
-            <option <%= product.category === "Accessories" ? "selected" : "" %>>Accessories</option>
-            <option <%= product.category === "Badges" ? "selected" : "" %>>Badges</option>
-        </select><br>
-
-        <label>Description:</label>
-        <textarea name="description"><%= product.description %></textarea><br>
-
-        <label>Quantity:</label>
-        <input type="number" name="quantity" value="<%= product.quantity %>" required><br>
-
-        <label>Price (PHP):</label>
-        <input type="number" name="price" step="0.01" value="<%= product.price %>" required><br>
-
-        <label>Supplier:</label>
-        <input type="text" name="supplier" value="<%= product.supplier %>"><br>
-
-        <label>Date Acquired:</label>
-        <input type="date" name="dateAcquired" value="<%= product.dateAcquired ? product.dateAcquired.toISOString().split('T')[0] : '' %>"><br>
-
-        <button type="submit">Update Product</button>
-    </form>
+  <div class="container">
+    <div class="breadcrumb">
+      <div class="breadcrumb-item">
+        <a href="/dashboard"><i class="fas fa-home"></i></a>
+      </div>
+      <div class="breadcrumb-separator">/</div>
+      <div class="breadcrumb-item">
+        <a href="/products">Products</a>
+      </div>
+      <div class="breadcrumb-separator">/</div>
+      <div class="breadcrumb-item">
+        Edit Product
+      </div>
+    </div>
+    
+    <div class="card">
+      <div class="card-header">
+        <h1>Edit Product</h1>
+        <p>Update product information in your inventory</p>
+      </div>
+      
+      <div class="card-body">
+        <div class="alert alert-info">
+          <i class="fas fa-info-circle alert-icon"></i>
+          Changes will be reflected immediately in your inventory system.
+        </div>
+        
+        <div class="product-image">
+          <% if (product.image) { %>
+            <img src="<%= product.image %>" alt="<%= product.name %>">
+          <% } else { %>
+            <div class="product-image-placeholder">
+              <i class="fas fa-box"></i>
+            </div>
+          <% } %>
+          <label for="image-upload" class="image-upload-btn">
+            <i class="fas fa-camera"></i>
+          </label>
+          <input type="file" id="image-upload" style="display: none;">
+        </div>
+        
+        <form action="/edit-product/<%= product._id %>" method="POST">
+          <div class="form-group">
+            <label for="name" class="form-label">Product Name</label>
+            <input type="text" id="name" name="name" class="form-control" value="<%= product.name %>" placeholder="Enter product name" required>
+            <div class="form-hint">Enter the full product name as it should appear in your inventory.</div>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-col form-col-md-6">
+              <div class="form-group">
+                <label for="price" class="form-label">Price</label>
+                <div class="input-group">
+                  <div class="input-group-text">₱</div>
+                  <input type="number" id="price" name="price" class="form-control" value="<%= product.price %>" step="0.01" min="0" placeholder="0.00" required>
+                </div>
+              </div>
+            </div>
+            
+            <div class="form-col form-col-md-6">
+              <div class="form-group">
+                <label for="quantity" class="form-label">Quantity</label>
+                <input type="number" id="quantity" name="quantity" class="form-control" value="<%= product.quantity %>" min="0" placeholder="0" required>
+              </div>
+            </div>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-col form-col-md-6">
+              <div class="form-group">
+                <label for="category" class="form-label">Category</label>
+                <select id="category" name="category" class="form-control">
+                  <option value="" disabled>Select a category</option>
+                  <option value="electronics" <%= product.category === 'electronics' ? 'selected' : '' %>>Electronics</option>
+                  <option value="clothing" <%= product.category === 'clothing' ? 'selected' : '' %>>Clothing</option>
+                  <option value="food" <%= product.category === 'food' ? 'selected' : '' %>>Food & Beverages</option>
+                  <option value="home" <%= product.category === 'home' ? 'selected' : '' %>>Home & Garden</option>
+                  <option value="other" <%= product.category === 'other' ? 'selected' : '' %>>Other</option>
+                </select>
+              </div>
+            </div>
+            
+            <div class="form-col form-col-md-6">
+              <div class="form-group">
+                <label for="sku" class="form-label">SKU</label>
+                <input type="text" id="sku" name="sku" class="form-control" value="<%= product.sku || '' %>" placeholder="SKU-12345">
+              </div>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="description" class="form-label">Description</label>
+            <textarea id="description" name="description" class="form-control" rows="4" placeholder="Enter product description"><%= product.description || '' %></textarea>
+          </div>
+          
+          <div class="form-actions">
+            <a href="/products" class="btn btn-outline">
+              <i class="fas fa-times btn-icon"></i>
+              Cancel
+            </a>
+            <button type="button" class="btn btn-danger">
+              <i class="fas fa-trash btn-icon"></i>
+              Delete Product
+            </button>
+            <button type="submit" class="btn btn-primary">
+              <i class="fas fa-save btn-icon"></i>
+              Update Product
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
 </body>
 </html>

@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Comprehensive Inventory Report</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-light: #3b82f6;
+      --primary-dark: #1d4ed8;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --info: #06b6d4;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-300: #d1d5db;
+      --gray-400: #9ca3af;
+      --gray-500: #6b7280;
+      --gray-600: #4b5563;
+      --gray-700: #374151;
+      --gray-800: #1f2937;
+      --gray-900: #111827;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f9fafb;
+      color: var(--gray-800);
+      line-height: 1.6;
+      padding: 0;
+      margin: 0;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 1rem;
+    }
+
+    header {
+      background-color: white;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      padding: 1rem 0;
+      margin-bottom: 2rem;
+    }
+
+    .header-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
+
+    .company-info {
+      display: flex;
+      align-items: center;
+    }
+
+    .logo {
+      width: 50px;
+      height: 50px;
+      background-color: var(--primary);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.5rem;
+      margin-right: 1rem;
+    }
+
+    .company-name {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .company-name h1 {
+      font-size: 1.5rem;
+      margin: 0;
+      color: var(--gray-900);
+    }
+
+    .company-name span {
+      font-size: 0.875rem;
+      color: var(--gray-500);
+    }
+
+    .user-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: var(--gray-200);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--gray-600);
+    }
+
+    .report-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .report-title {
+      font-size: 1.75rem;
+      font-weight: 600;
+      color: var(--gray-900);
+    }
+
+    .report-actions {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.625rem 1.25rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      border-radius: 0.375rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: none;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary-dark);
+    }
+
+    .btn-outline {
+      background-color: white;
+      color: var(--gray-700);
+      border: 1px solid var(--gray-300);
+    }
+
+    .btn-outline:hover {
+      background-color: var(--gray-100);
+    }
+
+    .btn-success {
+      background-color: var(--success);
+      color: white;
+    }
+
+    .btn-success:hover {
+      background-color: #0da271;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background-color: white;
+      border-radius: 0.5rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .stat-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .stat-title {
+      font-size: 0.875rem;
+      color: var(--gray-500);
+      font-weight: 500;
+    }
+
+    .stat-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
+
+    .stat-icon.blue {
+      background-color: var(--primary-light);
+    }
+
+    .stat-icon.green {
+      background-color: var(--success);
+    }
+
+    .stat-icon.orange {
+      background-color: var(--warning);
+    }
+
+    .stat-icon.red {
+      background-color: var(--danger);
+    }
+
+    .stat-value {
+      font-size: 1.75rem;
+      font-weight: 600;
+      color: var(--gray-900);
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-description {
+      font-size: 0.875rem;
+      color: var(--gray-500);
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .trend-up {
+      color: var(--success);
+    }
+
+    .trend-down {
+      color: var(--danger);
+    }
+
+    .filters {
+      background-color: white;
+      border-radius: 0.5rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .filters-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--gray-800);
+      margin-bottom: 1rem;
+    }
+
+    .filters-form {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .form-label {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--gray-700);
+    }
+
+    .form-control {
+      padding: 0.625rem;
+      border: 1px solid var(--gray-300);
+      border-radius: 0.375rem;
+      font-size: 0.875rem;
+      color: var(--gray-800);
+      width: 100%;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    .filters-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+
+    .inventory-section {
+      background-color: white;
+      border-radius: 0.5rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      margin-bottom: 2rem;
+      overflow: hidden;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .section-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: var(--gray-800);
+    }
+
+    .section-actions {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 1rem 1.5rem;
+      text-align: left;
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    th {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--gray-500);
+      background-color: var(--gray-50);
+    }
+
+    tbody tr:hover {
+      background-color: var(--gray-50);
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+
+    .status-in-stock {
+      background-color: rgba(16, 185, 129, 0.1);
+      color: var(--success);
+    }
+
+    .status-low {
+      background-color: rgba(245, 158, 11, 0.1);
+      color: var(--warning);
+    }
+
+    .status-out {
+      background-color: rgba(239, 68, 68, 0.1);
+      color: var(--danger);
+    }
+
+    .table-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .action-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--gray-500);
+      background-color: white;
+      border: 1px solid var(--gray-200);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .action-btn:hover {
+      background-color: var(--gray-100);
+      color: var(--gray-700);
+    }
+
+    .summary-section {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .summary-card {
+      background-color: white;
+      border-radius: 0.5rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      padding: 1.5rem;
+    }
+
+    .summary-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--gray-800);
+      margin-bottom: 1rem;
+    }
+
+    .summary-list {
+      list-style: none;
+    }
+
+    .summary-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .summary-item:last-child {
+      border-bottom: none;
+    }
+
+    .summary-label {
+      font-size: 0.875rem;
+      color: var(--gray-600);
+    }
+
+    .summary-value {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--gray-900);
+    }
+
+    .total-row {
+      font-weight: 600;
+      background-color: var(--gray-50);
+    }
+
+    .category-header {
+      background-color: var(--gray-100);
+      font-weight: 600;
+    }
+
+    .pagination {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-top: 2rem;
+    }
+
+    .page-item {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 0.375rem;
+      font-size: 0.875rem;
+      color: var(--gray-700);
+      background-color: white;
+      border: 1px solid var(--gray-300);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .page-item.active {
+      background-color: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    .page-item:hover:not(.active) {
+      background-color: var(--gray-100);
+    }
+
+    footer {
+      background-color: white;
+      border-top: 1px solid var(--gray-200);
+      padding: 1.5rem 0;
+      margin-top: 3rem;
+    }
+
+    .footer-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-text {
+      font-size: 0.875rem;
+      color: var(--gray-500);
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    .footer-link {
+      font-size: 0.875rem;
+      color: var(--gray-500);
+      text-decoration: none;
+    }
+
+    .footer-link:hover {
+      color: var(--primary);
+    }
+
+    .info-card {
+      background-color: white;
+      border-radius: 0.5rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .info-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background-color: rgba(37, 99, 235, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+      font-size: 1.5rem;
+    }
+
+    .info-content h3 {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: var(--gray-800);
+      margin-bottom: 0.5rem;
+    }
+
+    .info-content p {
+      font-size: 0.875rem;
+      color: var(--gray-600);
+      margin: 0;
+    }
+
+    @media (max-width: 768px) {
+      .stats-grid,
+      .summary-section {
+        grid-template-columns: 1fr;
+      }
+
+      .filters-form {
+        grid-template-columns: 1fr;
+      }
+
+      .header-content,
+      .footer-content {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .report-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+
+      .table-responsive {
+        overflow-x: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <div class="company-info">
+        <div class="logo">
+          <i class="fas fa-boxes"></i>
+        </div>
+        <div class="company-name">
+          <h1>InventoryPro</h1>
+          <span>Inventory Management System</span>
+        </div>
+      </div>
+      <div class="user-actions">
+        <div class="user-info">
+          <div class="user-avatar">
+            <i class="fas fa-user"></i>
+          </div>
+          <span>Admin User</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="report-header">
+      <h1 class="report-title">Comprehensive Inventory Report</h1>
+      <div class="report-actions">
+        <button class="btn btn-outline">
+          <i class="fas fa-sync-alt"></i>
+          Refresh
+        </button>
+        <a href="/inventory-report/download?category=<%= category %>&startDate=<%= startDate %>&endDate=<%= endDate %>" class="btn btn-success">
+          <i class="fas fa-file-pdf"></i>
+          Export PDF
+        </a>
+        <button class="btn btn-outline">
+          <i class="fas fa-file-excel"></i>
+          Export Excel
+        </button>
+        <button class="btn btn-primary">
+          <i class="fas fa-print"></i>
+          Print
+        </button>
+      </div>
+    </div>
+
+    <!-- Stats Overview -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-header">
+          <span class="stat-title">Total Items</span>
+          <div class="stat-icon blue">
+            <i class="fas fa-cubes"></i>
+          </div>
+        </div>
+        <div class="stat-value">
+          <%= inventory ? inventory.reduce((sum, item) => sum + item.quantity, 0) : 0 %>
+        </div>
+        <div class="stat-description">
+          <i class="fas fa-arrow-up trend-up"></i>
+          <span>5.3% increase from last month</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-header">
+          <span class="stat-title">Total Value</span>
+          <div class="stat-icon green">
+            <i class="fas fa-peso-sign"></i>
+          </div>
+        </div>
+        <div class="stat-value">
+          ₱<%= inventory ? inventory.reduce((sum, item) => sum + (item.price * item.quantity), 0).toFixed(2) : '0.00' %>
+        </div>
+        <div class="stat-description">
+          <i class="fas fa-arrow-up trend-up"></i>
+          <span>8.2% increase from last month</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-header">
+          <span class="stat-title">Low Stock Items</span>
+          <div class="stat-icon orange">
+            <i class="fas fa-exclamation-triangle"></i>
+          </div>
+        </div>
+        <div class="stat-value">
+          <%= inventory ? inventory.filter(item => item.quantity < 10 && item.quantity > 0).length : 0 %>
+        </div>
+        <div class="stat-description">
+          <i class="fas fa-arrow-down trend-down"></i>
+          <span>2.1% increase from last week</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-header">
+          <span class="stat-title">Out of Stock Items</span>
+          <div class="stat-icon red">
+            <i class="fas fa-times-circle"></i>
+          </div>
+        </div>
+        <div class="stat-value">
+          <%= inventory ? inventory.filter(item => item.quantity === 0).length : 0 %>
+        </div>
+        <div class="stat-description">
+          <i class="fas fa-arrow-down trend-down"></i>
+          <span>1.4% decrease from last week</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Info Card (Replacing Charts) -->
+    <div class="info-card">
+      <div class="info-icon">
+        <i class="fas fa-chart-pie"></i>
+      </div>
+      <div class="info-content">
+        <h3>Inventory Insights</h3>
+        <p>View detailed inventory statistics and trends in the dashboard. Monitor stock levels, track inventory value, and identify items that need attention.</p>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="filters">
+      <h3 class="filters-title">Filter Inventory</h3>
+      <form method="GET" action="/inventory-report" class="filters-form">
+        <div class="form-group">
+          <label for="category" class="form-label">Category</label>
+          <input type="text" id="category" name="category" class="form-control" placeholder="e.g. Gowns" value="<%= category || '' %>">
+        </div>
+        <div class="form-group">
+          <label for="location" class="form-label">Location</label>
+          <select id="location" name="location" class="form-control">
+            <option value="">All Locations</option>
+            <option value="warehouse-a">Warehouse A</option>
+            <option value="warehouse-b">Warehouse B</option>
+            <option value="store-1">Store 1</option>
+            <option value="store-2">Store 2</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="status" class="form-label">Status</label>
+          <select id="status" name="status" class="form-control">
+            <option value="">All Status</option>
+            <option value="in-stock">In Stock</option>
+            <option value="low-stock">Low Stock</option>
+            <option value="out-of-stock">Out of Stock</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="startDate" class="form-label">From Date</label>
+          <input type="date" id="startDate" name="startDate" class="form-control" value="<%= startDate || '' %>">
+        </div>
+        <div class="form-group">
+          <label for="endDate" class="form-label">To Date</label>
+          <input type="date" id="endDate" name="endDate" class="form-control" value="<%= endDate || '' %>">
+        </div>
+        <div class="form-group">
+          <label for="minPrice" class="form-label">Min Price (₱)</label>
+          <input type="number" id="minPrice" name="minPrice" class="form-control" placeholder="0">
+        </div>
+        <div class="form-group">
+          <label for="maxPrice" class="form-label">Max Price (₱)</label>
+          <input type="number" id="maxPrice" name="maxPrice" class="form-control" placeholder="10000">
+        </div>
+        <div class="filters-actions">
+          <button type="reset" class="btn btn-outline">Reset</button>
+          <button type="submit" class="btn btn-primary">Apply Filters</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Inventory Table -->
+    <% if (inventory && inventory.length > 0) { %>
+      <% 
+        let grandTotal = 0;
+        let categories = {};
+        
+        // Group by categories
+        inventory.forEach(item => {
+          if (!categories[item.category]) {
+            categories[item.category] = {
+              items: [],
+              totalValue: 0,
+              totalQuantity: 0
+            };
+          }
+          categories[item.category].items.push(item);
+          categories[item.category].totalValue += item.price * item.quantity;
+          categories[item.category].totalQuantity += item.quantity;
+          grandTotal += item.price * item.quantity;
+        });
+      %>
+      
+      <div class="inventory-section">
+        <div class="section-header">
+          <h3 class="section-title">Inventory Items</h3>
+          <div class="section-actions">
+            <div class="btn btn-outline">
+              <i class="fas fa-sort"></i>
+              Sort
+            </div>
+            <div class="btn btn-outline">
+              <i class="fas fa-filter"></i>
+              Filter
+            </div>
+          </div>
+        </div>
+        <div class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th>Item Code</th>
+                <th>Item Name</th>
+                <th>Category</th>
+                <th>Location</th>
+                <th>Quantity</th>
+                <th>Status</th>
+                <th>Unit Price (₱)</th>
+                <th>Total Value (₱)</th>
+                <th>Last Updated</th>
+                <th>Date Added</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% 
+                // Display by category
+                Object.keys(categories).forEach(categoryName => {
+                  const categoryData = categories[categoryName];
+              %>
+                <tr class="category-header">
+                  <td colspan="11">
+                    <i class="fas fa-folder"></i>
+                    <%= categoryName %> (<%= categoryData.items.length %> items, <%= categoryData.totalQuantity %> units, ₱<%= categoryData.totalValue.toFixed(2) %>)
+                  </td>
+                </tr>
+                <% categoryData.items.forEach((item, index) => { 
+                  let totalValue = item.price * item.quantity;
+                  let stockStatus = item.quantity === 0 ? 'out' : (item.quantity < 10 ? 'low' : 'in-stock');
+                %>
+                  <tr>
+                    <td><%= 'ITM' + (1000 + index) %></td>
+                    <td><%= item.name %></td>
+                    <td><%= item.category %></td>
+                    <td><%= ['Warehouse A', 'Warehouse B', 'Store 1', 'Store 2'][Math.floor(Math.random() * 4)] %></td>
+                    <td><%= item.quantity %></td>
+                    <td>
+                      <% if (stockStatus === 'in-stock') { %>
+                        <span class="status status-in-stock">In Stock</span>
+                      <% } else if (stockStatus === 'low') { %>
+                        <span class="status status-low">Low Stock</span>
+                      <% } else { %>
+                        <span class="status status-out">Out of Stock</span>
+                      <% } %>
+                    </td>
+                    <td>₱<%= item.price.toFixed(2) %></td>
+                    <td>₱<%= totalValue.toFixed(2) %></td>
+                    <td><%= new Date(Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000).toLocaleDateString() %></td>
+                    <td><%= item.createdAt ? item.createdAt.toDateString() : new Date(Date.now() - Math.floor(Math.random() * 90) * 24 * 60 * 60 * 1000).toLocaleDateString() %></td>
+                    <td>
+                      <div class="table-actions">
+                        <button class="action-btn" title="View Details">
+                          <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="action-btn" title="Edit Item">
+                          <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="action-btn" title="Delete Item">
+                          <i class="fas fa-trash"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                <% }); %>
+              <% }); %>
+              <tr class="total-row">
+                <td colspan="6" style="text-align: right;">Grand Total:</td>
+                <td></td>
+                <td>₱<%= grandTotal.toFixed(2) %></td>
+                <td colspan="3"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Summary Section -->
+      <div class="summary-section">
+        <div class="summary-card">
+          <h3 class="summary-title">Category Summary</h3>
+          <ul class="summary-list">
+            <% Object.keys(categories).forEach(categoryName => { %>
+              <li class="summary-item">
+                <span class="summary-label"><%= categoryName %></span>
+                <span class="summary-value">₱<%= categories[categoryName].totalValue.toFixed(2) %></span>
+              </li>
+            <% }); %>
+            <li class="summary-item">
+              <span class="summary-label"><strong>Total</strong></span>
+              <span class="summary-value"><strong>₱<%= grandTotal.toFixed(2) %></strong></span>
+            </li>
+          </ul>
+        </div>
+        
+        <div class="summary-card">
+          <h3 class="summary-title">Inventory Status</h3>
+          <ul class="summary-list">
+            <li class="summary-item">
+              <span class="summary-label">In Stock Items</span>
+              <span class="summary-value"><%= inventory.filter(item => item.quantity >= 10).length %></span>
+            </li>
+            <li class="summary-item">
+              <span class="summary-label">Low Stock Items</span>
+              <span class="summary-value"><%= inventory.filter(item => item.quantity < 10 && item.quantity > 0).length %></span>
+            </li>
+            <li class="summary-item">
+              <span class="summary-label">Out of Stock Items</span>
+              <span class="summary-value"><%= inventory.filter(item => item.quantity === 0).length %></span>
+            </li>
+            <li class="summary-item">
+              <span class="summary-label"><strong>Total Items</strong></span>
+              <span class="summary-value"><strong><%= inventory.length %></strong></span>
+            </li>
+          </ul>
+        </div>
+        
+        <div class="summary-card">
+          <h3 class="summary-title">Inventory Metrics</h3>
+          <ul class="summary-list">
+            <li class="summary-item">
+              <span class="summary-label">Average Item Value</span>
+              <span class="summary-value">₱<%= (grandTotal / inventory.length).toFixed(2) %></span>
+            </li>
+            <li class="summary-item">
+              <span class="summary-label">Highest Value Item</span>
+              <span class="summary-value">₱<%= Math.max(...inventory.map(item => item.price)).toFixed(2) %></span>
+            </li>
+            <li class="summary-item">
+              <span class="summary-label">Lowest Value Item</span>
+              <span class="summary-value">₱<%= Math.min(...inventory.map(item => item.price)).toFixed(2) %></span>
+            </li>
+            <li class="summary-item">
+              <span class="summary-label">Total Categories</span>
+              <span class="summary-value"><%= Object.keys(categories).length %></span>
+            </li>
+          </ul>
+        </div>
+      </div>
+      
+      <!-- Pagination -->
+      <div class="pagination">
+        <div class="page-item">
+          <i class="fas fa-chevron-left"></i>
+        </div>
+        <div class="page-item active">1</div>
+        <div class="page-item">2</div>
+        <div class="page-item">3</div>
+        <div class="page-item">
+          <i class="fas fa-chevron-right"></i>
+        </div>
+      </div>
+    <% } else { %>
+      <div class="inventory-section">
+        <div class="section-header">
+          <h3 class="section-title">Inventory Items</h3>
+        </div>
+        <div style="padding: 3rem; text-align: center;">
+          <i class="fas fa-box-open" style="font-size: 3rem; color: var(--gray-300); margin-bottom: 1rem;"></i>
+          <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem;">No inventory data found</h3>
+          <p style="color: var(--gray-500);">Try adjusting your filters or add new inventory items.</p>
+          <button class="btn btn-primary" style="margin-top: 1rem;">
+            <i class="fas fa-plus"></i>
+            Add New Item
+          </button>
+        </div>
+      </div>
+    <% } %>
+  </div>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-text">
+        © <%= new Date().getFullYear() %> InventoryPro. All rights reserved.
+      </div>
+      <div class="footer-links">
+        <a href="#" class="footer-link">Help</a>
+        <a href="#" class="footer-link">Privacy Policy</a>
+        <a href="#" class="footer-link">Terms of Service</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
