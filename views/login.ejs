@@ -5,12 +5,15 @@
 <style>
     body {
         font-family: Arial, sans-serif;
-        background-color: #f4f4f4;
+        background-position: center 30px; /* 20px mula sa taas */
+        background: url('/log.jpg') no-repeat center center fixed;
+        background-size: 800px;
         margin: 0;
         padding: 0;
         display: flex;
         flex-direction: column;
         align-items: center;
+        min-height: 100vh;
     }
 
     /* Navigation Bar */
@@ -46,16 +49,19 @@
         border-radius: 5px;
     }
 
-    /* Form Container */
+    /* Form Container (Blurred) */
     .form-container {
-        background: white;
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(1px);
         padding: 30px;
         border-radius: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
         text-align: center;
-        margin-top: 50px;
+        margin-top: 90px;
         max-width: 400px;
         width: 100%;
+        border: 1px solid rgba(255, 255, 255, 0.3);
     }
 
     .lg-form div {
@@ -76,6 +82,7 @@
         border: 1px solid #ccc;
         border-radius: 5px;
         font-size: 1rem;
+        background-color: rgba(255, 255, 255, 0.8);
     }
 
     input:focus {
@@ -113,28 +120,39 @@
     .register-link a:hover {
         text-decoration: underline;
     }
+
+    /* Password toggle button */
+    .password-wrapper {
+        position: relative;
+    }
+
+    .toggle-password {
+        position: absolute;
+        right: 10px;
+        top: 37px;
+        cursor: pointer;
+        user-select: none;
+        font-size: 1.2rem;
+        color: black;
+        background: transparent;
+        border: none;
+        padding: 0;
+        line-height: 1;
+    }
 </style>
 
-<!-- Navigation Bar -->
-<!-- <nav class="navbar">
-    <ul>
-        <li><a href="/">Home</a></li>
-        <li><a href="/auth/register">Register</a></li>
-        <li><a href="/auth/login">Login</a></li>
-    </ul>
-</nav> -->
-
-<!-- Login Form (NO HEADER) -->
+<!-- Login Form -->
 <div class="form-container">
     <h1>Login</h1>
     <form action="/auth/login" method="post" class="lg-form">
         <div>
             <label for="email">Email/Username</label>
-            <input type="email" name="email" id="email" />
+            <input type="email" name="email" id="email" required />
         </div>
-        <div>
+        <div class="password-wrapper">
             <label for="password">Password</label>
-            <input type="password" name="password" id="password" />
+            <input type="password" name="password" id="password" required />
+            <button type="button" class="toggle-password" aria-label="Show password">&#128065;</button>
         </div>
         <div>
             <input type="submit" value="Login" />
@@ -144,5 +162,16 @@
         <p>Don't have an account? <a href="/auth/register">Register</a></p>
     </div>
 </div>
+
+<script>
+    const togglePasswordBtn = document.querySelector('.toggle-password');
+    const passwordInput = document.querySelector('#password');
+
+    togglePasswordBtn.addEventListener('click', () => {
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+        // icon stays the same black eye, no toggle icon change
+    });
+</script>
 
 <%- include('./layouts/footer') %>

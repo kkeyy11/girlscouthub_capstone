@@ -421,27 +421,33 @@
           </div>
           
           <div class="form-row">
-            <div class="form-col form-col-md-6">
-              <div class="form-group">
-                <label for="category" class="form-label">Category</label>
-                <select id="category" name="category" class="form-control">
-                  <option value="" disabled>Select a category</option>
-                  <option value="electronics" <%= product.category === 'electronics' ? 'selected' : '' %>>Electronics</option>
-                  <option value="clothing" <%= product.category === 'clothing' ? 'selected' : '' %>>Clothing</option>
-                  <option value="food" <%= product.category === 'food' ? 'selected' : '' %>>Food & Beverages</option>
-                  <option value="home" <%= product.category === 'home' ? 'selected' : '' %>>Home & Garden</option>
-                  <option value="other" <%= product.category === 'other' ? 'selected' : '' %>>Other</option>
-                </select>
-              </div>
-            </div>
+  <div class="form-col form-col-md-6">
+    <div class="form-group">
+      <label for="category" class="form-label">Category</label>
+      <select id="category" name="category" class="form-control">
+        <option value="">-- Select Category --</option>
+        <option value="Uniform" <%= product.category === 'Uniform' ? 'selected' : '' %>>Uniform</option>
+        <option value="Camping Gear" <%= product.category === 'Camping Gear' ? 'selected' : '' %>>Camping Gear</option>
+        <option value="Accessories" <%= product.category === 'Accessories' ? 'selected' : '' %>>Accessories</option>
+        <option value="Badges" <%= product.category === 'Badges' && product.subcategory === 'TWINKLER BADGES' ? 'selected' : '' %>>TWINKLER BADGES</option>
+        <option value="Badges" <%= product.category === 'Badges' && product.subcategory === 'STAR BADGES' ? 'selected' : '' %>>STAR BADGES</option>
+        <option value="Badges" <%= product.category === 'Badges' && product.subcategory === 'JUNIOR BADGES' ? 'selected' : '' %>>JUNIOR BADGES</option>
+        <option value="Badges" <%= product.category === 'Badges' && product.subcategory === 'SENIOR BADGES' ? 'selected' : '' %>>SENIOR BADGES</option>
+        <option value="Badges" <%= product.category === 'Badges' && product.subcategory === 'CADET BADGES' ? 'selected' : '' %>>CADET BADGES</option>
+        <option value="Badges" <%= product.category === 'Badges' && product.subcategory === 'SPECIAL BADGES' ? 'selected' : '' %>>SPECIAL BADGES</option>
+      </select>
+    </div>
+  </div>
+</div>
+
             
-            <div class="form-col form-col-md-6">
+            <!-- <div class="form-col form-col-md-6">
               <div class="form-group">
                 <label for="sku" class="form-label">SKU</label>
                 <input type="text" id="sku" name="sku" class="form-control" value="<%= product.sku || '' %>" placeholder="SKU-12345">
               </div>
             </div>
-          </div>
+          </div> -->
           
           <div class="form-group">
             <label for="description" class="form-label">Description</label>

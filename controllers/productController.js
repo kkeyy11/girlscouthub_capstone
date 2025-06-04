@@ -5,30 +5,50 @@ exports.getAddProduct = (req, res) => {
 };
 
 exports.postAddProduct = async (req, res) => {
-    const { name, price, quantity } = req.body;
-    const product = new Product({ name, price, quantity });
-    await product.save();
-    res.redirect('/products');
-  };
-  
-  exports.addProduct = async (req, res) => {
-    const { name, category, description, quantity, price, supplier, dateAcquired } = req.body;
-    const image = req.file ? '/uploads/' + req.file.filename : ''; // path to use in src
-  
+  try {
+    const { name, category, subcategory, variant, description, quantity, price, supplier, dateAcquired } = req.body;
+
     const product = new Product({
       name,
       category,
+      subcategory,
+      variant,
       description,
       quantity,
       price,
       supplier,
-      dateAcquired,
-      image
+      dateAcquired
     });
-  
+
     await product.save();
     res.redirect('/products/add');
-  };
+  } catch (error) {
+    console.error('Error saving product:', error);
+    res.status(500).send('Failed to save product');
+  }
+};
+
+
+
+  
+  // exports.addProduct = async (req, res) => {
+  //   const { name, category, description, quantity, price, supplier, dateAcquired } = req.body;
+  //   const image = req.file ? '/uploads/' + req.file.filename : ''; // path to use in src
+  
+  //   const product = new Product({
+  //     name,
+  //     category,
+  //     description,
+  //     quantity,
+  //     price,
+  //     supplier,
+  //     dateAcquired,
+  //     image
+  //   });
+  
+  //   await product.save();
+  //   res.redirect('/products/add');
+  // };
   
   
 

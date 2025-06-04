@@ -1,4 +1,156 @@
 <%- include('./layouts/header') %>
+<%- include('./layouts/navbar') %>
 
-<h1>INDEX PAGE</h1>
+<main style="margin-left: 220px; padding: 30px; background-color: #f8f9fa; min-height: 100vh;">
+  <div class="container" style="max-width: 960px; margin: 0 auto;">
+    <h1 class="mb-5 fw-bold text-dark text-center">📊 Dashboard Overview</h1>
 
+    <!-- Summary Cards -->
+    <div class="row g-4 mb-5">
+      <div class="col-md-4">
+        <div class="card shadow-sm border-start border-4 border-primary">
+          <div class="card-body">
+            <h6 class="card-title text-muted">Total Appointments</h6>
+            <h2 class="card-text text-primary fw-semibold"><%= appointmentCount %></h2>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card shadow-sm border-start border-4 border-success">
+          <div class="card-body">
+            <h6 class="card-title text-muted">Total Districts</h6>
+            <h2 class="card-text text-success fw-semibold"><%= districtCount %></h2>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card shadow-sm border-start border-4 border-warning">
+          <div class="card-body">
+            <h6 class="card-title text-muted">Total Products</h6>
+            <h2 class="card-text text-warning fw-semibold"><%= productCount %></h2>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Graphs Section: Charts Side-by-Side -->
+    <div class="row justify-content-center mb-5">
+      <!-- Appointment Status Chart -->
+      <div class="col-md-6 mb-4">
+        <div class="card shadow-sm">
+          <div class="card-header bg-white fw-bold text-secondary text-center">
+            Appointment Status Distribution
+          </div>
+          <div class="card-body d-flex justify-content-center align-items-center" style="min-height: 350px;">
+            <div style="width: 250px; height: 250px;">
+              <canvas id="appointmentChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product Categories Chart -->
+      <div class="col-md-6 mb-4">
+        <div class="card shadow-sm">
+          <div class="card-header bg-white fw-bold text-secondary text-center">
+            Product Categories
+          </div>
+          <div class="card-body d-flex justify-content-center align-items-center" style="min-height: 350px;">
+            <div style="width: 250px; height: 250px;">
+              <canvas id="productChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- Custom Styling -->
+<style>
+  canvas {
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  .card {
+    border-radius: 12px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  }
+</style>
+
+<!-- Chart Configuration -->
+<script>
+  const appointmentCtx = document.getElementById('appointmentChart').getContext('2d');
+  const productCtx = document.getElementById('productChart').getContext('2d');
+
+  const appointmentStatusCounts = <%- JSON.stringify(appointmentStatusCounts) %>;
+  const productCategories = <%- JSON.stringify(productCategories) %>;
+
+  // Doughnut Chart: Appointment Status
+  new Chart(appointmentCtx, {
+    type: 'doughnut',
+    data: {
+      labels: appointmentStatusCounts.map(item => item._id),
+      datasets: [{
+        label: 'Appointments',
+        data: appointmentStatusCounts.map(item => item.count),
+        backgroundColor: ['#007bff', '#28a745', '#ffc107', '#dc3545'],
+        borderColor: '#fff',
+        borderWidth: 2
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            boxWidth: 15,
+            font: { size: 12 }
+          }
+        }
+      }
+    }
+  });
+
+  // Bar Chart: Product Categories
+  new Chart(productCtx, {
+    type: 'bar',
+    data: {
+      labels: productCategories.map(item => item._id),
+      datasets: [{
+        label: 'Products',
+        data: productCategories.map(item => item.count),
+        backgroundColor: '#6610f2',
+        borderRadius: 6
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: {
+            stepSize: 1
+          }
+        }
+      },
+      plugins: {
+        legend: {
+          display: false
+        }
+      }
+    }
+  });
+</script>

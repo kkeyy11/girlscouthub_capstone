@@ -8,7 +8,7 @@ const authController = {
     },
 
     postLogin: passport.authenticate('local', {
-        successReturnToOrRedirect: "/",
+        successReturnToOrRedirect: "/appointment",
         failureRedirect: "/auth/login",
         failureFlash: true,
     }),

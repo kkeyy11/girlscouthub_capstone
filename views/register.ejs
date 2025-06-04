@@ -5,12 +5,15 @@
 <style>
     body {
         font-family: Arial, sans-serif;
-        background-color: #f4f4f4;
+        background-position: center 30px;
+        background: url('/log.jpg') no-repeat center center fixed;
+        background-size: 800px;
         margin: 0;
         padding: 0;
         display: flex;
         flex-direction: column;
         align-items: center;
+        min-height: 100vh;
     }
 
     /* Navigation Bar */
@@ -46,16 +49,20 @@
         border-radius: 5px;
     }
 
-    /* Form Container */
+    /* Form Container (Blurred) */
     .form-container {
-        background: white;
+        
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
         padding: 30px;
         border-radius: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
         text-align: center;
         margin-top: 50px;
         max-width: 400px;
-        width: 100%;
+        width: 50%;
+        border: 1px solid rgba(255, 255, 255, 0.3);
     }
 
     .lg-form div {
@@ -76,6 +83,7 @@
         border: 1px solid #ccc;
         border-radius: 5px;
         font-size: 1rem;
+        background-color: rgba(255, 255, 255, 0.8);
     }
 
     input:focus {
@@ -115,30 +123,21 @@
     }
 </style>
 
-<!-- Navigation Bar -->
-<!-- <nav class="navbar">
-    <ul>
-        <li><a href="/">Home</a></li>
-        <li><a href="/auth/register">Register</a></li>
-        <li><a href="/auth/login">Login</a></li>
-    </ul>
-</nav> -->
-
-<!-- Registration Form (NO HEADER) -->
+<!-- Registration Form -->
 <div class="form-container">
     <h1>Register</h1>
     <form action="/auth/register" method="post" class="lg-form">
         <div>
             <label for="email">Email/Username</label>
-            <input type="text" name="email" id="email" value="<%= locals.email ? email : '' %>" />
+            <input type="text" name="email" id="email" value="<%= locals.email ? email : '' %>" required />
         </div>
         <div>
             <label for="password">Password</label>
-            <input type="password" name="password" id="password" />
+            <input type="password" name="password" id="password" required />
         </div>
         <div>
             <label for="password2">Confirm Password</label>
-            <input type="password" name="password2" id="password2" />
+            <input type="password" name="password2" id="password2" required />
         </div>
         <div>
             <input type="submit" value="Register" />
