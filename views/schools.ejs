@@ -1,32 +1,126 @@
-<%- include('./layouts/header') %>
+<!-- <%- include('./layouts/header') %>
+
+<style>
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #e0f7fa, #ffffff);
+    margin: 0;
+    padding: 0;
+  }
+
+  main {
+    max-width: 1200px;
+    margin: 50px auto;
+    padding: 0 20px;
+  }
+
+  h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 20px;
+  }
+
+  .btn-create {
+    display: inline-block;
+    margin-bottom: 30px;
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.3s;
+  }
+
+  .btn-create:hover {
+    background-color: #388e3c;
+  }
+
+  .school-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+  }
+
+  .school-card {
+    background: rgba(255, 255, 255, 0.75);
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    backdrop-filter: blur(10px);
+    transition: transform 0.2s ease;
+    position: relative;
+  }
+
+  .school-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgba(0,0,0,0.1);
+  }
+
+  .school-name {
+    font-size: 18px;
+    font-weight: 700;
+    color: #222;
+    margin-bottom: 10px;
+  }
+
+  .district-badge {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    font-size: 13px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    display: inline-block;
+    margin-bottom: 15px;
+  }
+
+  .school-actions a {
+    text-decoration: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 14px;
+    margin-right: 8px;
+    display: inline-block;
+    transition: 0.3s ease;
+  }
+
+  .btn-edit {
+    background-color: #ff9800;
+    color: white;
+  }
+
+  .btn-edit:hover {
+    background-color: #e68900;
+  }
+
+  .btn-delete {
+    background-color: #f44336;
+    color: white;
+  }
+
+  .btn-delete:hover {
+    background-color: #d32f2f;
+  }
+</style>
 
 <main>
-    <h1>School Management</h1>
-    <a href="/school/create" class="btn btn-create">Add New School</a>
+  <h1>School Management</h1>
+  <a href="/school/create" class="btn-create">+ Add New School</a>
 
-    <div class="table-container">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>School Name</th>
-                    <th>District</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <% schools.forEach(school => { %>
-                    <tr>
-                        <td><%= school.name %></td>
-                        <td><%= school.district_name %></td>
-                        <td>
-                            <a href="/school/edit/<%= school.id %>" class="btn btn-edit">Edit</a>
-                            <a href="/school/delete/<%= school.id %>" class="btn btn-delete">Delete</a>
-                        </td>
-                    </tr>
-                <% }); %>
-            </tbody>
-        </table>
-    </div>
+  <div class="school-grid">
+    <% schools.forEach(school => { %>
+      <div class="school-card">
+        <div class="school-name"><%= school.name %></div>
+        <div class="district-badge"><%= school.district_name %></div>
+        <div class="school-actions">
+          <a href="/school/edit/<%= school.id %>" class="btn-edit">✏️ Edit</a>
+          <a href="/school/delete/<%= school.id %>" class="btn-delete" onclick="return confirm('Are you sure you want to delete this school?')">🗑️ Delete</a>
+        </div>
+      </div>
+    <% }) %>
+  </div>
 </main>
 
-<%- include('./layouts/footer') %>
+<%- include('./layouts/footer') %> -->

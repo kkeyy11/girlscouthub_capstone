@@ -14,24 +14,19 @@ const adminController = {
         }
     },
 
-    // Get all appointments with user emails
-    getAllAppointments: async (req, res, next) => {
-        try {
-            const appointments = await Appointment.find().populate('user', 'email');
-            res.render('admin-appointments-list', { appointments });
-        } catch (error) {
-            next(error);
-        }
-    },
+    
+    // Get all appointments with user email and profile image
+getAllAppointments: async (req, res, next) => {
+    try {
+        const appointments = await Appointment.find().populate('user', 'firstName lastName email profileImage');
+        res.render('admin-appointments-list', { appointments });
+    } catch (error) {
+        next(error);
+    }
+},
 
-    getAllAppointments: async (req, res, next) => {
-        try {
-            const appointments = await Appointment.find().populate('user', 'email');
-            res.render('admin-appointments-list', { appointments });
-        } catch (error) {
-            next(error);
-        }
-    },
+
+   
 
     // Update appointment status and send email notification
     updateAppointmentStatus: async (req, res, next) => {
@@ -62,6 +57,19 @@ const adminController = {
             next(error);
         }
     },
+
+    // Delete appointment
+deleteAppointment: async (req, res, next) => {
+    const { id } = req.params;
+    try {
+        await Appointment.findByIdAndDelete(id);
+        req.flash('success', 'Appointment deleted successfully.');
+        res.redirect('/admin/appointments');
+    } catch (error) {
+        next(error);
+    }
+},
+
 
     // getInventory: async (req, res, next) => {
     //     try {

@@ -1,61 +1,176 @@
 const User = require('../models/user.model');
 const { validationResult } = require('express-validator');
 const passport = require('passport');
+const crypto = require('crypto');
+const nodemailer = require('nodemailer');
 
 const authController = {
-    getLogin: (req, res) => {
-        res.render('login');
-    },
+  getLogin: (req, res) => {
+    res.render('login');
+  },
 
-    postLogin: passport.authenticate('local', {
-        successReturnToOrRedirect: "/appointment",
-        failureRedirect: "/auth/login",
-        failureFlash: true,
-    }),
+  getRegister: (req, res) => {
+    res.render('register');
+  },
 
-    getRegister: (req, res) => {
-        res.render('register');
-    },
-
-    postRegister: async (req, res, next) => {
-        try {
-            const errors = validationResult(req);
-            if (!errors.isEmpty()) {
-                errors.array().forEach(error => {
-                    req.flash('error', error.msg);
-                });
-                res.render('register', {
-                    email: req.body.email,
-                    messages: req.flash(),
-                });
-                return;
-            }
-            
-            const { email } = req.body;
-            const doesExist = await User.findOne({ email });
-            if (doesExist) {
-                req.flash('error', 'Email already exists');
-                res.redirect('/auth/register');
-                return;
-            }
-
-            const user = new User(req.body);
-            await user.save();
-            req.flash('success', `${user.email} registered successfully, you can now login`);
-            res.redirect('/auth/login');
-        } catch (error) {
-            next(error);
-        }
-    },
-
-    logout: (req, res, next) => {
-        req.logout((err) => {
-            if (err) {
-                return next(err);
-            }
-            res.redirect('/');
+  postRegister: async (req, res, next) => {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        errors.array().forEach(error => {
+          req.flash('error', error.msg);
         });
+        return res.render('register', {
+          email: req.body.email,
+          messages: req.flash(),
+        });
+      }
+
+      const { firstName, middleName, lastName, email, password } = req.body;
+      const existingUser = await User.findOne({ email });
+
+      if (existingUser) {
+        req.flash('error', 'Email already registered.');
+        return res.redirect('/auth/register');
+      }
+
+      const user = new User({
+        firstName,
+        middleName,
+        lastName,
+        email,
+        password
+      });
+
+      if (req.file) {
+        user.profileImage = req.file.filename;
+      }
+
+      user.verificationToken = crypto.randomBytes(32).toString('hex');
+      user.isVerified = false;
+      await user.save();
+
+      // Send email verification
+      const verifyUrl = `${req.protocol}://${req.get('host')}/auth/verify-email/${user.verificationToken}`;
+      await sendEmail(user.email, 'Verify your email', `Click to verify: ${verifyUrl}`);
+
+      req.flash('success', 'Registered successfully. Check your email to verify.');
+      res.redirect('/auth/login');
+    } catch (err) {
+      next(err);
     }
+  },
+
+  verifyEmail: async (req, res) => {
+    try {
+      const user = await User.findOne({ verificationToken: req.params.token });
+      if (!user) {
+        req.flash('error', 'Invalid or expired verification token.');
+        return res.redirect('/auth/login');
+      }
+
+      user.isVerified = true;
+      user.verificationToken = undefined;
+      await user.save();
+
+      req.flash('success', 'Email verified. You can now log in.');
+      res.redirect('/auth/login');
+    } catch (err) {
+      res.status(500).send('Server error');
+    }
+  },
+
+  logout: (req, res, next) => {
+    req.logout(err => {
+      if (err) return next(err);
+      res.redirect('/');
+    });
+  },
+
+  getForgotPassword: (req, res) => {
+    res.render('forgot-password');
+  },
+
+  postForgotPassword: async (req, res) => {
+    try {
+      const user = await User.findOne({ email: req.body.email });
+      if (!user) {
+        req.flash('error', 'Email not found.');
+        return res.redirect('/auth/forgot-password');
+      }
+
+      user.resetToken = crypto.randomBytes(32).toString('hex');
+      user.resetTokenExpire = Date.now() + 3600000; // 1 hour
+      await user.save();
+
+      const resetUrl = `${req.protocol}://${req.get('host')}/auth/reset-password/${user.resetToken}`;
+      await sendEmail(user.email, 'Reset Password', `Reset your password: ${resetUrl}`);
+
+      req.flash('success', 'Reset link sent to your email.');
+      res.redirect('/auth/login');
+    } catch (err) {
+      res.status(500).send('Server error');
+    }
+  },
+
+  getResetPassword: async (req, res) => {
+    const user = await User.findOne({
+      resetToken: req.params.token,
+      resetTokenExpire: { $gt: Date.now() }
+    });
+
+    if (!user) {
+      req.flash('error', 'Token expired or invalid.');
+      return res.redirect('/auth/forgot-password');
+    }
+
+    res.render('reset-password', { token: req.params.token });
+  },
+
+  postResetPassword: async (req, res) => {
+    const { password, password2 } = req.body;
+
+    if (password !== password2) {
+      req.flash('error', 'Passwords do not match.');
+      return res.redirect('back');
+    }
+
+    const user = await User.findOne({
+      resetToken: req.params.token,
+      resetTokenExpire: { $gt: Date.now() }
+    });
+
+    if (!user) {
+      req.flash('error', 'Invalid or expired token.');
+      return res.redirect('/auth/forgot-password');
+    }
+
+    user.password = password;
+    user.resetToken = undefined;
+    user.resetTokenExpire = undefined;
+    await user.save();
+
+    req.flash('success', 'Password reset. Please log in.');
+    res.redirect('/auth/login');
+  }
 };
+
+// Utility: send email using nodemailer
+async function sendEmail(to, subject, text) {
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS
+    }
+  });
+
+  await transporter.sendMail({
+    from: `"GSP System" <${process.env.EMAIL_USER}>`,
+    to,
+    subject,
+    text
+  });
+}
 
 module.exports = authController;

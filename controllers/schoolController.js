@@ -1,47 +1,42 @@
-const School = require('../models/school.model');
-const District = require('../models/district.model');
+const School = require('../models/School');
+const Troop = require('../models/Troop');
 
-exports.createSchool = async (req, res, next) => {
-  const { name, districtId } = req.body;
-  try {
-    const newSchool = new School({ name, district: districtId });
-    await newSchool.save();
-    req.flash('success', 'School added successfully!');
-    res.redirect('/admin/schools/' + districtId);
-  } catch (error) {
-    next(error);
-  }
+exports.addSchool = async (req, res) => {
+  const { name, schoolId, principal, districtId } = req.body;
+  await School.create({ name, schoolId, principal, district: districtId });
+  res.redirect(`/districts/${districtId}`);
 };
 
-exports.getSchools = async (req, res, next) => {
-  const { districtId } = req.params;
-  try {
-    const schools = await School.find({ district: districtId });
-    const district = await District.findById(districtId);
-    res.render('schools', { schools, district });
-  } catch (error) {
-    next(error);
-  }
+exports.getSchoolTroops = async (req, res) => {
+  const school = await School.findById(req.params.id);
+  const troops = await Troop.find({ school: school._id });
+  res.render('school-troops', { school, troops });
 };
 
-exports.updateSchool = async (req, res, next) => {
-  const { schoolId, name, districtId } = req.body;
-  try {
-    await School.findByIdAndUpdate(schoolId, { name, district: districtId });
-    req.flash('success', 'School updated successfully!');
-    res.redirect('/admin/schools/' + districtId);
-  } catch (error) {
-    next(error);
-  }
+exports.editSchoolForm = async (req, res) => {
+  const school = await School.findById(req.params.id);
+  res.render('edit-school', { school });
 };
 
-exports.deleteSchool = async (req, res, next) => {
-  const { schoolId } = req.params;
-  try {
-    await School.findByIdAndDelete(schoolId);
-    req.flash('success', 'School deleted successfully!');
-    res.redirect('/admin/schools');
-  } catch (error) {
-    next(error);
-  }
+exports.updateSchool = async (req, res) => {
+  const { name, schoolId, principal } = req.body;
+
+  // ✅ Update school and then fetch it back to get district ID
+  await School.findByIdAndUpdate(req.params.id, {
+    name,
+    schoolId,
+    principal
+  });
+
+  const updatedSchool = await School.findById(req.params.id);
+  res.redirect(`/districts/${updatedSchool.district}`);
 };
+
+
+exports.deleteSchool = async (req, res) => {
+  const school = await School.findById(req.params.id);
+  const districtId = req.body.districtId;
+  await School.findByIdAndDelete(req.params.id);
+  res.redirect(`/districts/${districtId}`);
+};
+

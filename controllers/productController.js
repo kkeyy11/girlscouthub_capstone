@@ -3,12 +3,9 @@ const Product = require('../models/product');
 exports.getAddProduct = (req, res) => {
   res.render('addProduct');
 };
-
 exports.postAddProduct = async (req, res) => {
   try {
-    const { name, category, subcategory, variant, description, quantity, price, supplier, dateAcquired } = req.body;
-
-    const product = new Product({
+    const {
       name,
       category,
       subcategory,
@@ -18,16 +15,31 @@ exports.postAddProduct = async (req, res) => {
       price,
       supplier,
       dateAcquired
+    } = req.body;
+
+    // Get image file path from multer
+    const imagePath = req.file ? "/uploads/" + req.file.filename : null;
+
+    const product = new Product({
+      name,
+      category,
+      subcategory: subcategory || null,
+      variant: variant || null,
+      description,
+      quantity,
+      price,
+      supplier,
+      dateAcquired,
+      image: imagePath // Save image path to MongoDB
     });
 
     await product.save();
-    res.redirect('/products/add');
+    res.redirect('/manage-products'); // Redirect to the product add form or list
   } catch (error) {
     console.error('Error saving product:', error);
     res.status(500).send('Failed to save product');
   }
 };
-
 
 
   

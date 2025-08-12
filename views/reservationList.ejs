@@ -1,53 +1,76 @@
 <%- include('./layouts/header') %>
+<%- include('./layouts/navbar') %>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Reservation List</title>
+<main style="margin-left: 220px; padding: 80px 30px 30px; min-height: 100vh; background-color: #f5f5f5;">
+
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
+    h1 {
+      font-size: 1.8rem;
+      color: #2c3e50;
+      text-align: center;
+      margin-bottom: 30px;
     }
+
     h2 {
       margin-top: 40px;
+      color: #1a202c;
+      font-size: 1.3rem;
+      border-bottom: 2px solid #cbd5e0;
+      padding-bottom: 6px;
     }
+
     table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 10px;
+      background: #fff;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+      border-radius: 10px;
+      overflow: hidden;
     }
+
     th, td {
-      border: 1px solid #ccc;
-      padding: 10px;
+      border: 1px solid #e2e8f0;
+      padding: 12px;
       text-align: left;
+      font-size: 14px;
     }
+
     th {
-      background-color: #f2f2f2;
+      background-color: #f1f5f9;
+      color: #2d3748;
     }
+
+    ul {
+      margin: 0;
+      padding-left: 20px;
+    }
+
     button {
-      padding: 5px 10px;
-      background-color: #4CAF50;
+      padding: 6px 12px;
+      background-color: #38a169;
       color: white;
       border: none;
+      border-radius: 5px;
+      font-size: 13px;
       cursor: pointer;
+      transition: background-color 0.2s;
     }
+
     button:hover {
-      background-color: #45a049;
+      background-color: #2f855a;
     }
+
     .approved {
       color: green;
       font-weight: bold;
     }
   </style>
-</head>
-<body>
 
-  <h1>Reservation Management</h1>
+  <h1><i class="fas fa-clipboard-list"></i> Reservation Management</h1>
 
   <!-- Pending Reservations Section -->
-  <h2>Pending Reservations</h2>
+  <h2><i class="fas fa-hourglass-half"></i> Pending Reservations</h2>
   <% if (reservations.length === 0) { %>
     <p>No pending reservations.</p>
   <% } else { %>
@@ -84,40 +107,40 @@
   <% } %>
 
   <!-- Approved Reservations Section -->
-<h2>Approved Reservations</h2>
-<% if (typeof approvedReservations !== 'undefined' && approvedReservations.length === 0) { %>
-  <p>No approved reservations yet.</p>
-<% } else if (typeof approvedReservations !== 'undefined' && approvedReservations.length > 0) { %>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Email</th>
-        <th>Items</th>
-        <th>Date Reserved</th>
-        <th>Status</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% approvedReservations.forEach(res => { %>
-        <tr class="approved">
-          <td><%= res.reservedBy %></td>
-          <td><%= res.email %></td>
-          <td>
-            <ul>
-              <% res.items.forEach(item => { %>
-                <li><%= item.name %> (x<%= item.quantity %>)</li>
-              <% }) %>
-            </ul>
-          </td>
-          <td><%= new Date(res.dateReserved).toLocaleString() %></td>
-          <td class="approved">Approved</td>
+  <h2><i class="fas fa-check-circle"></i> Approved Reservations</h2>
+  <% if (typeof approvedReservations !== 'undefined' && approvedReservations.length === 0) { %>
+    <p>No approved reservations yet.</p>
+  <% } else if (typeof approvedReservations !== 'undefined' && approvedReservations.length > 0) { %>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Items</th>
+          <th>Date Reserved</th>
+          <th>Status</th>
         </tr>
-      <% }) %>
-    </tbody>
-  </table>
-<% } %>
+      </thead>
+      <tbody>
+        <% approvedReservations.forEach(res => { %>
+          <tr>
+            <td><%= res.reservedBy %></td>
+            <td><%= res.email %></td>
+            <td>
+              <ul>
+                <% res.items.forEach(item => { %>
+                  <li><%= item.name %> (x<%= item.quantity %>)</li>
+                <% }) %>
+              </ul>
+            </td>
+            <td><%= new Date(res.dateReserved).toLocaleString() %></td>
+            <td class="approved">Approved</td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  <% } %>
 
+</main>
 
-</body>
-</html>
+<%- include('./layouts/footer') %>

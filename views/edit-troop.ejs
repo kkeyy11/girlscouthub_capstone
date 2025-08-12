@@ -1,0 +1,9 @@
+<h1>Edit Troop</h1>
+<form action="/troops/edit/<%= troop._id %>" method="POST">
+  <input type="text" name="troopLeader" value="<%= troop.troopLeader %>" required>
+  <input type="text" name="coLeader" value="<%= troop.coLeader %>" required>
+  <input type="text" name="troopNumber" value="<%= troop.troopNumber %>" required>
+  <input type="text" name="ageLevel" value="<%= troop.ageLevel %>" required>
+  <input type="text" name="barangayCommittee" value="<%= troop.barangayCommittee %>" required>
+  <button type="submit">Save</button>
+</form>

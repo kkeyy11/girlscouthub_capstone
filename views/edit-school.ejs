@@ -1,0 +1,7 @@
+<h1>Edit School</h1>
+<form action="/schools/edit/<%= school._id %>" method="POST">
+  <input type="text" name="name" value="<%= school.name %>" required>
+  <input type="text" name="schoolId" value="<%= school.schoolId %>" required>
+  <input type="text" name="principal" value="<%= school.principal %>" required>
+  <button type="submit">Save</button>
+</form>

@@ -1,151 +1,657 @@
-<% if (locals.user) { %>
-    <%- include('./layouts/header') %>
-<% } %>
+<%- include('./layouts/header') %>
 
 <style>
+  :root {
+    --primary: #059669;
+    --primary-light: #10b981;
+    --primary-dark: #047857;
+    --secondary: #34d399;
+    --accent: #6ee7b7;
+    --dark: #1f2937;
+    --gray-50: #f9fafb;
+    --gray-100: #f3f4f6;
+    --gray-200: #e5e7eb;
+    --gray-300: #d1d5db;
+    --gray-400: #9ca3af;
+    --gray-500: #6b7280;
+    --gray-600: #4b5563;
+    --gray-700: #374151;
+    --gray-800: #1f2937;
+    --gray-900: #111827;
+    --white: #ffffff;
+    --text: #1f2937;
+    --text-light: #6b7280;
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    --radius: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 50%, var(--secondary) 100%);
+    background-attachment: fixed;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+    padding-top: 100px; /* Reduced from 120px */
+  }
+
+  /* Animated background elements */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="bg-pattern" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1.5" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23bg-pattern)"/></svg>');
+    opacity: 0.3;
+    z-index: -1;
+  }
+
+  /* Floating shapes */
+  body::after {
+    content: '';
+    position: fixed;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at 20% 80%, rgba(255,255,255,0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255,255,255,0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(255,255,255,0.05) 0%, transparent 50%);
+    animation: float 20s ease-in-out infinite;
+    z-index: -1;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translate(0, 0) rotate(0deg); }
+    33% { transform: translate(30px, -30px) rotate(120deg); }
+    66% { transform: translate(-20px, 20px) rotate(240deg); }
+  }
+
+  .form-container {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    padding: 24px; /* Reduced from 40px */
+    border-radius: var(--radius-lg); /* Reduced from radius-xl */
+    box-shadow: var(--shadow-lg); /* Reduced from shadow-xl */
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    text-align: center;
+    width: 100%;
+    max-width: 520px; /* Reduced from 650px */
+    position: relative;
+    animation: slideInUp 0.8s ease-out;
+    overflow: hidden;
+    margin-bottom: 30px; /* Reduced from 40px */
+  }
+
+  @keyframes slideInUp {
+    from {
+      opacity: 0;
+      transform: translateY(50px) scale(0.9);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  /* Decorative elements */
+  .form-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px; /* Reduced from 4px */
+    background: linear-gradient(90deg, var(--primary), var(--primary-light), var(--secondary), var(--accent));
+    background-size: 300% 100%;
+    animation: gradientShift 3s ease-in-out infinite;
+  }
+
+  @keyframes gradientShift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+
+  .form-container h1 {
+    color: var(--text);
+    margin-bottom: 20px; /* Reduced from 32px */
+    font-size: 2rem; /* Reduced from 2.5rem */
+    font-weight: 700;
+    position: relative;
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: fadeInDown 1s ease-out 0.3s both;
+  }
+
+  @keyframes fadeInDown {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .form-container h1::after {
+    content: '';
+    position: absolute;
+    bottom: -8px; /* Reduced from -12px */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50px; /* Reduced from 60px */
+    height: 3px; /* Reduced from 4px */
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    border-radius: 2px;
+    animation: expandWidth 1s ease-out 0.8s both;
+  }
+
+  @keyframes expandWidth {
+    from { width: 0; }
+    to { width: 50px; }
+  }
+
+  .lg-form {
+    text-align: left;
+  }
+
+  /* ROW LAYOUT STYLES - COMPACT */
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px; /* Reduced from 20px */
+    margin-bottom: 18px; /* Reduced from 24px */
+    animation: fadeInLeft 0.6s ease-out both;
+  }
+
+  .form-row.single {
+    grid-template-columns: 1fr;
+  }
+
+  .form-row:nth-child(1) { animation-delay: 0.4s; }
+  .form-row:nth-child(2) { animation-delay: 0.5s; }
+  .form-row:nth-child(3) { animation-delay: 0.6s; }
+  .form-row:nth-child(4) { animation-delay: 0.7s; }
+  .form-row:nth-child(5) { animation-delay: 0.8s; }
+  .form-row:nth-child(6) { animation-delay: 0.9s; }
+
+  @keyframes fadeInLeft {
+    from {
+      opacity: 0;
+      transform: translateX(-30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  .form-group {
+    position: relative;
+  }
+
+  label {
+    font-weight: 600;
+    color: var(--text);
+    display: block;
+    margin-bottom: 6px; /* Reduced from 8px */
+    font-size: 0.85rem; /* Reduced from 0.95rem */
+    transition: color 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px; /* Reduced from 8px */
+  }
+
+  label::before {
+    content: '';
+    width: 3px; /* Reduced from 4px */
+    height: 3px; /* Reduced from 4px */
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    border-radius: 50%;
+    transition: all 0.3s ease;
+  }
+
+  .form-group:focus-within label::before {
+    transform: scale(1.5);
+    box-shadow: 0 0 8px rgba(5, 150, 105, 0.4);
+  }
+
+  .form-group:focus-within label {
+    color: var(--primary);
+  }
+
+  input {
+    width: 100%;
+    padding: 12px 16px; /* Reduced from 16px 20px */
+    border-radius: var(--radius); /* Reduced radius */
+    border: 2px solid var(--gray-200);
+    font-size: 0.9rem; /* Reduced from 1rem */
+    font-family: 'Inter', sans-serif;
+    transition: all 0.3s ease;
+    background: var(--white);
+    position: relative;
+  }
+
+  input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1); /* Reduced from 4px */
+    transform: translateY(-1px); /* Reduced from -2px */
+  }
+
+  input:hover:not(:focus) {
+    border-color: var(--gray-300);
+    transform: translateY(-0.5px); /* Reduced from -1px */
+  }
+
+  /* File input styling */
+  input[type="file"] {
+    padding: 10px 14px; /* Reduced from 12px 16px */
+    background: var(--gray-50);
+    border: 2px dashed var(--gray-300);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.85rem; /* Reduced font size */
+  }
+
+  input[type="file"]:hover {
+    border-color: var(--primary);
+    background: rgba(5, 150, 105, 0.05);
+  }
+
+  input[type="file"]:focus {
+    border-style: solid;
+    border-color: var(--primary);
+    background: var(--white);
+  }
+
+  /* Submit button - COMPACT */
+  input[type="submit"] {
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    font-size: 1rem; /* Reduced from 1.1rem */
+    padding: 14px 24px; /* Reduced from 18px 32px */
+    margin-top: 12px; /* Reduced from 16px */
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+
+  input[type="submit"]::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--primary-light), var(--secondary));
+    transition: left 0.3s ease;
+    z-index: -1;
+  }
+
+  input[type="submit"]:hover::before {
+    left: 0;
+  }
+
+  input[type="submit"]:hover {
+    transform: translateY(-2px); /* Reduced from -3px */
+    box-shadow: var(--shadow-lg);
+  }
+
+  input[type="submit"]:active {
+    transform: translateY(-1px);
+  }
+
+  /* Flash messages - COMPACT */
+  .flash-messages {
+    margin-bottom: 18px; /* Reduced from 24px */
+    animation: shake 0.5s ease-in-out;
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+  }
+
+  .flash-messages p {
+    color: #dc2626;
+    font-weight: 600;
+    margin-bottom: 6px; /* Reduced from 8px */
+    padding: 10px 14px; /* Reduced from 12px 16px */
+    background: rgba(220, 38, 38, 0.1);
+    border: 1px solid rgba(220, 38, 38, 0.2);
+    border-radius: var(--radius);
+    border-left: 3px solid #dc2626; /* Reduced from 4px */
+    animation: slideInRight 0.5s ease-out;
+    font-size: 0.85rem; /* Reduced font size */
+  }
+
+  @keyframes slideInRight {
+    from {
+      opacity: 0;
+      transform: translateX(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  /* Login link - COMPACT */
+  .login-link {
+    margin-top: 20px; /* Reduced from 32px */
+    font-size: 0.9rem; /* Reduced from 1rem */
+    color: var(--text-light);
+    animation: fadeIn 1.2s ease-out;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .login-link a {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 600;
+    position: relative;
+    transition: all 0.3s ease;
+  }
+
+  .login-link a::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    transition: width 0.3s ease;
+  }
+
+  .login-link a:hover::after {
+    width: 100%;
+  }
+
+  .login-link a:hover {
+    color: var(--primary-light);
+    transform: translateY(-1px);
+  }
+
+  /* Loading state for submit button */
+  .loading {
+    pointer-events: none;
+    opacity: 0.7;
+  }
+
+  .loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 16px; /* Reduced from 20px */
+    height: 16px; /* Reduced from 20px */
+    margin: -8px 0 0 -8px; /* Adjusted for smaller size */
+    border: 2px solid transparent;
+    border-top: 2px solid white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  /* Responsive design - COMPACT */
+  @media (max-width: 768px) {
     body {
-        font-family: Arial, sans-serif;
-        background-position: center 30px;
-        background: url('/log.jpg') no-repeat center center fixed;
-        background-size: 800px;
-        margin: 0;
-        padding: 0;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        min-height: 100vh;
+      padding: 12px; /* Reduced from 16px */
+      padding-top: 60px; /* Reduced from 80px */
     }
 
-    /* Navigation Bar */
-    .navbar {
-        width: 100%;
-        background-color: #007a3d;
-        padding: 10px 0;
-        text-align: center;
-    }
-
-    .navbar ul {
-        list-style-type: none;
-        margin: 0;
-        padding: 0;
-    }
-
-    .navbar ul li {
-        display: inline;
-        margin: 0 20px;
-    }
-
-    .navbar ul li a {
-        color: white;
-        text-decoration: none;
-        font-size: 1.2rem;
-        font-weight: bold;
-        padding: 10px 15px;
-        transition: background 0.3s, border-radius 0.3s;
-    }
-
-    .navbar ul li a:hover {
-        background-color: #005f2d;
-        border-radius: 5px;
-    }
-
-    /* Form Container (Blurred) */
     .form-container {
-        
-        background: rgba(255, 255, 255, 0.2);
-        backdrop-filter: blur(5px);
-        -webkit-backdrop-filter: blur(5px);
-        padding: 30px;
-        border-radius: 10px;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
-        text-align: center;
-        margin-top: 50px;
-        max-width: 400px;
-        width: 50%;
-        border: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 20px; /* Reduced from 32px 24px */
+      max-width: 100%;
     }
 
-    .lg-form div {
-        margin-bottom: 15px;
-        text-align: left;
+    .form-container h1 {
+      font-size: 1.8rem; /* Reduced from 2rem */
+      margin-bottom: 16px; /* Reduced from 24px */
     }
 
-    label {
-        display: block;
-        font-weight: bold;
-        margin-bottom: 5px;
-        color: #007a3d;
+    /* Stack columns on mobile */
+    .form-row {
+      grid-template-columns: 1fr;
+      gap: 12px; /* Reduced from 16px */
+      margin-bottom: 16px; /* Reduced from 20px */
     }
 
     input {
-        width: 100%;
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        font-size: 1rem;
-        background-color: rgba(255, 255, 255, 0.8);
-    }
-
-    input:focus {
-        border-color: #007a3d;
-        outline: none;
-        box-shadow: 0 0 5px rgba(0, 122, 61, 0.5);
+      padding: 10px 14px; /* Reduced from 14px 16px */
     }
 
     input[type="submit"] {
-        background-color: #007a3d;
-        color: white;
-        border: none;
-        padding: 12px;
-        font-size: 1rem;
-        font-weight: bold;
-        cursor: pointer;
-        transition: background 0.3s;
-        border-radius: 5px;
+      padding: 12px 20px; /* Reduced from 16px 24px */
+      font-size: 0.9rem; /* Reduced from 1rem */
+    }
+  }
+
+  @media (max-width: 480px) {
+    body {
+      padding-top: 40px; /* Reduced from 60px */
     }
 
-    input[type="submit"]:hover {
-        background-color: #005f2d;
+    .form-container {
+      padding: 16px; /* Reduced from 24px 20px */
     }
 
-    .login-link {
-        margin-top: 15px;
+    .form-container h1 {
+      font-size: 1.6rem; /* Reduced from 1.8rem */
     }
 
-    .login-link a {
-        color: #007a3d;
-        font-weight: bold;
-        text-decoration: none;
+    .form-row {
+      margin-bottom: 14px; /* Reduced from 16px */
     }
+  }
 
-    .login-link a:hover {
-        text-decoration: underline;
-    }
+  /* Add smooth transitions for all interactive elements */
+  * {
+    transition: all 0.3s ease;
+  }
+
+  /* Custom scrollbar for mobile */
+  ::-webkit-scrollbar {
+    width: 6px; /* Reduced from 8px */
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--gray-100);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    border-radius: 3px; /* Reduced from 4px */
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, var(--primary-light), var(--secondary));
+  }
+
+  /* Add a subtle top section for visual balance */
+  .top-spacer {
+    height: 40px; /* Reduced from 60px */
+    background: linear-gradient(180deg, rgba(255,255,255,0.1) 0%, transparent 100%);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: -1;
+    pointer-events: none;
+  }
 </style>
 
-<!-- Registration Form -->
+<div class="top-spacer"></div>
+
 <div class="form-container">
-    <h1>Register</h1>
-    <form action="/auth/register" method="post" class="lg-form">
-        <div>
-            <label for="email">Email/Username</label>
-            <input type="text" name="email" id="email" value="<%= locals.email ? email : '' %>" required />
-        </div>
-        <div>
-            <label for="password">Password</label>
-            <input type="password" name="password" id="password" required />
-        </div>
-        <div>
-            <label for="password2">Confirm Password</label>
-            <input type="password" name="password2" id="password2" required />
-        </div>
-        <div>
-            <input type="submit" value="Register" />
-        </div>
-    </form>
-    <div class="login-link">
-        <p>Already have an account? <a href="/auth/login">Login</a></p>
+  <h1>Create Account</h1>
+  
+  <% if (messages && messages.error) { %>
+    <div class="flash-messages">
+      <% messages.error.forEach(msg => { %>
+        <p><i class="fas fa-exclamation-triangle"></i> <%= msg %></p>
+      <% }) %>
     </div>
+  <% } %>
+  
+  <form action="/auth/register" method="POST" enctype="multipart/form-data" class="lg-form" id="registerForm">
+    <!-- Row 1: First Name & Last Name -->
+    <div class="form-row">
+      <div class="form-group">
+        <label for="firstName">
+          <i class="fas fa-user"></i> First Name
+        </label>
+        <input type="text" name="firstName" id="firstName" placeholder="Enter your first name" required />
+      </div>
+      
+      <div class="form-group">
+        <label for="lastName">
+          <i class="fas fa-user"></i> Last Name
+        </label>
+        <input type="text" name="lastName" id="lastName" placeholder="Enter your last name" required />
+      </div>
+    </div>
+    
+    <!-- Row 2: Middle Name (full width) -->
+    <div class="form-row single">
+      <div class="form-group">
+        <label for="middleName">
+          <i class="fas fa-user-circle"></i> Middle Name <span style="color: var(--text-light); font-weight: 400;">(optional)</span>
+        </label>
+        <input type="text" name="middleName" id="middleName" placeholder="Enter your middle name" />
+      </div>
+    </div>
+    
+    <!-- Row 3: Email (full width) -->
+    <div class="form-row single">
+      <div class="form-group">
+        <label for="email">
+          <i class="fas fa-envelope"></i> Email Address
+        </label>
+        <input type="email" name="email" id="email" value="<%= locals.email || '' %>" placeholder="Enter your email address" required />
+      </div>
+    </div>
+    
+    <!-- Row 4: Password & Confirm Password -->
+    <div class="form-row">
+      <div class="form-group">
+        <label for="password">
+          <i class="fas fa-lock"></i> Password
+        </label>
+        <input type="password" name="password" id="password" placeholder="Create a strong password" required />
+      </div>
+      
+      <div class="form-group">
+        <label for="password2">
+          <i class="fas fa-lock"></i> Confirm Password
+        </label>
+        <input type="password" name="password2" id="password2" placeholder="Confirm your password" required />
+      </div>
+    </div>
+    
+    <!-- Row 5: Profile Image (full width) -->
+    <div class="form-row single">
+      <div class="form-group">
+        <label for="profileImage">
+          <i class="fas fa-camera"></i> Profile Image <span style="color: var(--text-light); font-weight: 400;">(optional)</span>
+        </label>
+        <input type="file" name="profileImage" id="profileImage" accept="image/*" />
+      </div>
+    </div>
+    
+    <!-- Row 6: Submit Button (full width) -->
+    <div class="form-row single">
+      <div class="form-group">
+        <input type="submit" value="Create Account" id="submitBtn" />
+      </div>
+    </div>
+  </form>
+  
+  <div class="login-link">
+    Already have an account? <a href="/auth/login">Sign in here</a>
+  </div>
 </div>
+
+<script>
+  // Add loading state to submit button
+  document.getElementById('registerForm').addEventListener('submit', function() {
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.classList.add('loading');
+    submitBtn.value = 'Creating Account...';
+    submitBtn.disabled = true;
+  });
+
+  // Add real-time password confirmation validation
+  const password = document.getElementById('password');
+  const password2 = document.getElementById('password2');
+
+  function validatePasswords() {
+    if (password2.value && password.value !== password2.value) {
+      password2.setCustomValidity('Passwords do not match');
+      password2.style.borderColor = '#dc2626';
+    } else {
+      password2.setCustomValidity('');
+      password2.style.borderColor = '';
+    }
+  }
+
+  password.addEventListener('input', validatePasswords);
+  password2.addEventListener('input', validatePasswords);
+
+  // Add smooth focus transitions
+  document.querySelectorAll('input').forEach(input => {
+    input.addEventListener('focus', function() {
+      this.parentElement.style.transform = 'translateX(4px)';
+    });
+    
+    input.addEventListener('blur', function() {
+      this.parentElement.style.transform = 'translateX(0)';
+    });
+  });
+
+  // File input preview
+  document.getElementById('profileImage').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+      const label = this.previousElementSibling;
+      label.innerHTML = `<i class="fas fa-check-circle" style="color: var(--primary);"></i> ${file.name}`;
+    }
+  });
+</script>
 
 <%- include('./layouts/footer') %>

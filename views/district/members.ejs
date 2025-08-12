@@ -8,335 +8,295 @@
   <title>Members in District: <%= district.name %></title>
 
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
-
-  <!-- jsPDF library for PDF export -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
   <style>
-    /* Container */
-    .members-container {
-      max-width: 960px;
-      margin: 40px auto;
-      background: #fff;
-      padding: 25px 30px;
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgb(0 0 0 / 0.1);
+    body {
+      background: #f4f7f6;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      padding-top: 80px;
     }
 
-    /* Header */
-    .members-container h2 {
-      margin: 0 0 20px;
-      font-weight: 700;
-      font-size: 1.8rem;
-      color: #2f5233;
-      display: flex;
-      align-items: center;
-      gap: 10px;
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 30px;
     }
 
-    /* Back Button */
-    .btn-back {
-      display: inline-block;
-      background-color: #2f5233;
-      color: white;
-      text-decoration: none;
-      padding: 10px 18px;
-      border-radius: 5px;
-      font-weight: 600;
-      font-size: 0.9rem;
-      margin-bottom: 25px;
-      transition: background-color 0.3s ease;
-      user-select: none;
-    }
-    .btn-back i {
-      margin-right: 6px;
-    }
-    .btn-back:hover {
-      background-color: #4b784a;
+    .toggle-box {
+      background: linear-gradient(135deg, #46dfb1, #80ee98);
+      color: #fff;
+      padding: 20px;
+      text-align: center;
+      border-radius: 10px;
+      font-weight: bold;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 8px rgb(0 0 0 / 0.1);
+      transition: background-color 0.3s;
     }
 
-    /* Controls container - search bar and buttons */
-    .controls {
+    .toggle-box:hover {
+      background: #60eebf;
+    }
+
+    .top-controls,
+    .members-container {
+      display: none;
+    }
+
+    .top-controls {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 20px;
-      gap: 15px;
-      flex-wrap: wrap;
     }
 
-    /* Search bar */
     .search-bar {
-      flex: 1 1 300px;
-      max-width: 350px;
       position: relative;
+      width: 230px;
     }
 
-    .search-bar input[type="text"] {
+    .search-bar input {
       width: 100%;
-      padding: 10px 38px 10px 12px;
+      padding: 6px 30px 6px 10px;
       border: 1.5px solid #ccc;
       border-radius: 5px;
-      font-size: 1rem;
-      transition: border-color 0.3s ease;
+      font-size: 0.85rem;
     }
-    .search-bar input[type="text"]:focus {
-      border-color: #2f5233;
-      outline: none;
-    }
+
     .search-bar i {
       position: absolute;
-      right: 12px;
+      right: 10px;
       top: 50%;
       transform: translateY(-50%);
       color: #999;
-      pointer-events: none;
-      font-size: 1.1rem;
+      font-size: 0.85rem;
     }
 
-    /* Export dropdown container */
     .export-dropdown {
       position: relative;
-      display: inline-block;
-      user-select: none;
     }
 
     .export-btn {
       background-color: #2f5233;
       color: white;
-      border: none;
-      padding: 9px 16px;
+      padding: 7px 14px;
       border-radius: 5px;
+      border: none;
+      font-size: 0.85rem;
       font-weight: 600;
-      font-size: 0.9rem;
       cursor: pointer;
       display: flex;
       align-items: center;
       gap: 6px;
-      transition: background-color 0.3s ease;
-    }
-    .export-btn:hover {
-      background-color: #4b784a;
     }
 
-    /* Dropdown menu */
     .export-dropdown-content {
       display: none;
       position: absolute;
       right: 0;
       background-color: #fff;
       min-width: 160px;
-      box-shadow: 0 4px 8px rgb(0 0 0 / 0.1);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
       border-radius: 5px;
       z-index: 1;
-      user-select: none;
+      flex-direction: column;
+    }
+
+    .export-dropdown.show .export-dropdown-content {
+      display: flex;
     }
 
     .export-dropdown-content button {
-      color: #2f5233;
       padding: 10px 16px;
-      text-align: left;
-      border: none;
-      background: none;
       width: 100%;
-      font-size: 0.95rem;
+      text-align: left;
+      background: none;
+      border: none;
+      font-size: 0.85rem;
+      color: #2f5233;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      transition: background-color 0.2s ease;
       border-bottom: 1px solid #eee;
     }
-    .export-dropdown-content button:last-child {
-      border-bottom: none;
-    }
+
     .export-dropdown-content button:hover {
       background-color: #f0f7ec;
-      color: #4b784a;
     }
 
-    /* Show dropdown on active */
-    .export-dropdown.show .export-dropdown-content {
-      display: block;
+    .members-container {
+      background: #fff;
+      padding: 25px 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgb(0 0 0 / 0.1);
+      overflow-x: auto;
     }
 
-    /* Table styles */
     table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 0.95rem;
-      box-shadow: 0 3px 6px rgb(0 0 0 / 0.1);
-      border-radius: 8px;
+      font-size: 0.78rem;
+      min-width: 850px;
+      background-color: #fff;
+      border-radius: 6px;
       overflow: hidden;
     }
-    thead tr {
-      background-color: #2f5233;
+
+    thead th {
+      background: linear-gradient(135deg, #46dfb1, #80ee98);
       color: white;
-      text-align: left;
-      font-weight: 700;
-    }
-    thead tr th {
-      padding: 12px 15px;
-      border-bottom: 2px solid #4b784a;
-    }
-    tbody tr {
-      border-bottom: 1px solid #ddd;
-      transition: background-color 0.2s ease;
-      cursor: default;
-    }
-    tbody tr:hover {
-      background-color: #f0f7ec;
-    }
-    tbody tr td {
-      padding: 10px 15px;
-      vertical-align: middle;
-      color: #333;
-    }
-
-    /* No members text */
-    .no-members {
-      font-size: 1.1rem;
-      color: #555;
-      margin-top: 30px;
+      padding: 8px 10px;
       text-align: center;
-      font-style: italic;
+      text-transform: uppercase;
     }
 
-    /* Responsive tweaks */
-    @media (max-width: 600px) {
-      .controls {
-        flex-direction: column;
-        align-items: stretch;
-      }
-      .search-bar {
-        max-width: 100%;
-      }
-      .export-dropdown {
-        width: 100%;
-      }
-      .export-btn {
-        width: 100%;
-        justify-content: center;
-      }
-      .export-dropdown-content {
-        min-width: 100%;
-        right: 0;
-      }
+    tbody td {
+      padding: 6px 10px;
+      text-align: center;
+      max-width: 150px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    tbody tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    tbody tr:nth-child(odd) {
+      background-color: #e8f8f2;
+    }
+
+    .no-members {
+      text-align: center;
+      margin-top: 30px;
+      color: #555;
+      font-style: italic;
     }
   </style>
 </head>
 <body>
 
-  <div class="members-container">
-    <h2><i class="fas fa-users"></i> District: <%= district.name %></h2>
-   <a href="/districts" class="btn-back"><i class="fas fa-arrow-left"></i> Back to District List</a>
-<a href="/troopmembers" class="btn-back" style="margin-left: 10px; background-color: #4b784a;">
-  <i class="fas fa-list"></i> Troop List
-</a>
+  <div class="container">
+    <!-- Four Toggle Buttons -->
+    <div class="toggle-box" data-school="BNHS">🏫 BNHS</div>
+    <div class="toggle-box" data-school="CNHS">🏫 CNHS</div>
+    <div class="toggle-box" data-school="OMNHS">🏫 OMNHS</div>
+    <div class="toggle-box" data-school="CVHS">🏫 CVHS</div>
 
-
-
-    <!-- Controls: Search bar + Export dropdown button -->
-    <div class="controls">
+    <!-- Hidden Controls -->
+    <div class="top-controls" id="topControls">
       <div class="search-bar">
-        <input type="text" id="searchInput" placeholder="Search members by name..." />
+        <input type="text" id="searchInput" placeholder="Search members..." />
         <i class="fas fa-search"></i>
       </div>
-
-      <div class="export-dropdown" id="exportDropdown">
-        <button class="export-btn" id="exportBtn">
-          <i class="fas fa-file-export"></i> Export <i class="fas fa-caret-down"></i>
-        </button>
-        <div class="export-dropdown-content">
-          <button id="exportCSV"><i class="fas fa-file-csv"></i> Export CSV</button>
-          <button id="exportExcel"><i class="fas fa-file-excel"></i> Export Excel</button>
-          <button id="exportPDF"><i class="fas fa-file-pdf"></i> Export PDF</button>
+      <div style="display: flex; gap: 12px; align-items: center;">
+        <div class="export-dropdown" id="exportDropdown">
+          <button class="export-btn" id="exportBtn">
+            <i class="fas fa-file-export"></i> Export <i class="fas fa-caret-down"></i>
+          </button>
+          <div class="export-dropdown-content">
+            <button id="exportCSV"><i class="fas fa-file-csv"></i> CSV</button>
+            <button id="exportExcel"><i class="fas fa-file-excel"></i> Excel</button>
+            <button id="exportPDF"><i class="fas fa-file-pdf"></i> PDF</button>
+          </div>
         </div>
       </div>
     </div>
 
-    <% if (members.length === 0) { %>
-      <p class="no-members">No members in this district.</p>
-    <% } else { %>
-      <table id="membersTable">
-        <thead>
-          <tr>
-            <th><i class="fas fa-user"></i> Name</th>
-            <th><i class="fas fa-birthday-cake"></i> Date of Birth</th>
-            <th><i class="fas fa-map-marker-alt"></i> Address</th>
-            <th><i class="fas fa-phone"></i> Contact Number</th>
-            <th><i class="fas fa-users"></i> Troop #</th>
-            <th><i class="fas fa-school"></i> School</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% members.forEach(m => { %>
+    <!-- Members Table -->
+    <div class="members-container" id="membersContainer">
+      <h2><i class="fas fa-users"></i> District: <%= district.name %></h2>
+
+      <% if (members.length === 0) { %>
+        <p class="no-members">No members in this district.</p>
+      <% } else { %>
+        <table id="membersTable">
+          <thead>
             <tr>
-              <td><%= m.name %></td>
-              <td><%= m.dateOfBirth.toDateString() %></td>
-              <td><%= m.address %></td>
-              <td><%= m.contactNumber %></td>
-              <td><%= m.troopNumber %></td>
-              <td><%= m.school %></td>
+              <th>Name</th>
+              <th>Date of Birth</th>
+              <th>Address</th>
+              <th>Contact Number</th>
+              <th>Troop #</th>
+              <th>School</th>
             </tr>
-          <% }) %>
-        </tbody>
-      </table>
-    <% } %>
+          </thead>
+          <tbody>
+            <% members.forEach(m => { %>
+              <tr>
+                <td><%= m.name %></td>
+                <td><%= m.dateOfBirth.toDateString() %></td>
+                <td><%= m.address %></td>
+                <td><%= m.contactNumber %></td>
+                <td><%= m.troopNumber %></td>
+                <td><%= m.school %></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      <% } %>
+    </div>
   </div>
 
   <script>
-    // Toggle dropdown visibility
-    document.getElementById('exportBtn').addEventListener('click', function (e) {
+    const toggleBoxes = document.querySelectorAll('.toggle-box');
+    const topControls = document.getElementById('topControls');
+    const membersContainer = document.getElementById('membersContainer');
+    const exportBtn = document.getElementById('exportBtn');
+    const exportDropdown = document.getElementById('exportDropdown');
+    const searchInput = document.getElementById('searchInput');
+
+    toggleBoxes.forEach(box => {
+      box.addEventListener('click', () => {
+        // Hide all toggle buttons
+        toggleBoxes.forEach(btn => btn.style.display = 'none');
+
+        // Show search/export and table
+        topControls.style.display = 'flex';
+        membersContainer.style.display = 'block';
+      });
+    });
+
+    exportBtn.addEventListener('click', function (e) {
       e.stopPropagation();
-      const dropdown = document.getElementById('exportDropdown');
-      dropdown.classList.toggle('show');
+      exportDropdown.classList.toggle('show');
     });
 
-    // Close dropdown if clicked outside
-    window.addEventListener('click', () => {
-      const dropdown = document.getElementById('exportDropdown');
-      dropdown.classList.remove('show');
+    window.addEventListener('click', function (e) {
+      if (!exportDropdown.contains(e.target)) {
+        exportDropdown.classList.remove('show');
+      }
     });
 
-    // Search filter functionality
-    document.getElementById('searchInput').addEventListener('input', function () {
+    searchInput.addEventListener('input', function () {
       const filter = this.value.toLowerCase();
       const rows = document.querySelectorAll('#membersTable tbody tr');
       rows.forEach(row => {
-        const nameCell = row.querySelector('td:first-child').textContent.toLowerCase();
-        if (nameCell.indexOf(filter) > -1) {
-          row.style.display = '';
-        } else {
-          row.style.display = 'none';
-        }
+        const name = row.querySelector('td:first-child').textContent.toLowerCase();
+        row.style.display = name.includes(filter) ? '' : 'none';
       });
     });
 
-    // Helper: get visible rows from table
     function getVisibleRows() {
-      return Array.from(document.querySelectorAll('#membersTable tbody tr')).filter(row => row.style.display !== 'none');
+      return Array.from(document.querySelectorAll('#membersTable tbody tr'))
+        .filter(row => row.style.display !== 'none');
     }
 
-    // Convert table data to CSV string
     function tableToCSV() {
       const rows = getVisibleRows();
-      let csv = [];
-
-      // Add header
-      const headers = Array.from(document.querySelectorAll('#membersTable thead th')).map(th => `"${th.textContent.trim()}"`);
-      csv.push(headers.join(','));
-
-      // Add rows
+      const headers = Array.from(document.querySelectorAll('#membersTable thead th'))
+        .map(th => `"${th.textContent.trim()}"`);
+      const csvRows = [headers.join(',')];
       rows.forEach(row => {
-        const cols = Array.from(row.querySelectorAll('td')).map(td => `"${td.textContent.trim()}"`);
-        csv.push(cols.join(','));
+        const cols = Array.from(row.querySelectorAll('td'))
+          .map(td => `"${td.textContent.trim()}"`);
+        csvRows.push(cols.join(','));
       });
-      return csv.join('\n');
+      return csvRows.join('\n');
     }
 
-    // Export CSV
     document.getElementById('exportCSV').addEventListener('click', () => {
       const csv = tableToCSV();
       const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -344,10 +304,8 @@
       link.href = URL.createObjectURL(blob);
       link.download = 'members.csv';
       link.click();
-      closeDropdown();
     });
 
-    // Export Excel (simple CSV renamed .xls)
     document.getElementById('exportExcel').addEventListener('click', () => {
       const csv = tableToCSV();
       const blob = new Blob([csv], { type: 'application/vnd.ms-excel;charset=utf-8;' });
@@ -355,50 +313,33 @@
       link.href = URL.createObjectURL(blob);
       link.download = 'members.xls';
       link.click();
-      closeDropdown();
     });
 
-    // Export PDF using jsPDF
     document.getElementById('exportPDF').addEventListener('click', () => {
       const { jsPDF } = window.jspdf;
-      const doc = new jsPDF();
+      const doc = new jsPDF({ orientation: 'landscape' });
 
       const rows = getVisibleRows();
-      const headers = Array.from(document.querySelectorAll('#membersTable thead th')).map(th => th.textContent.trim());
+      const headers = Array.from(document.querySelectorAll('#membersTable thead th'))
+        .map(th => th.textContent.trim());
+      const body = rows.map(row =>
+        Array.from(row.querySelectorAll('td')).map(td => td.textContent.trim())
+      );
 
-      // Build data for autoTable
-      const bodyData = rows.map(row => Array.from(row.querySelectorAll('td')).map(td => td.textContent.trim()));
-
-      // Use autoTable plugin if available, else fallback
       if (doc.autoTable) {
         doc.autoTable({
           head: [headers],
-          body: bodyData,
-          startY: 20,
+          body: body,
           styles: { fontSize: 8 },
-          headStyles: { fillColor: [47, 82, 51] },
-          margin: { top: 10 },
+          headStyles: { fillColor: [70, 223, 177] },
+          startY: 20,
         });
       } else {
-        // Simple text fallback (basic)
         doc.text('Members List', 14, 15);
-        let y = 20;
-        doc.setFontSize(8);
-        doc.text(headers.join(' | '), 14, y);
-        y += 6;
-        bodyData.forEach(row => {
-          doc.text(row.join(' | '), 14, y);
-          y += 6;
-        });
       }
+
       doc.save('members.pdf');
-      closeDropdown();
     });
-
-    function closeDropdown() {
-      document.getElementById('exportDropdown').classList.remove('show');
-    }
   </script>
-
 </body>
 </html>

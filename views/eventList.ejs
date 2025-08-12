@@ -1,230 +1,317 @@
 <%- include('./layouts/header') %>
+<%- include('./layouts/navbar') %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Event List</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link rel="stylesheet" href="/css/eventlist.css"> <!-- LINK TO SEPARATE CSS -->
-    
-    <style>
-        /* Global Styles */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Event List</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f7f6;
+      padding: 20px;
+    }
 
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f4f7f6;
-            color: #333;
-            padding: 20px;
-        }
+    h1 {
+      text-align: center;
+      color: #388e3c;
+      margin-bottom: 30px;
+    }
 
-        h1 {
-            text-align: center;
-            font-size: 2.5rem;
-            color: #388e3c;
-            margin-bottom: 30px;
-        }
+    .notification-container {
+      position: relative;
+      text-align: right;
+      margin-bottom: 20px;
+    }
 
-        /* Notification Bell */
-        .notification-container {
-            position: relative;
-            text-align: right;
-            margin-bottom: 20px;
-        }
+    .notification-bell {
+      font-size: 2rem;
+      color: #388e3c;
+      cursor: pointer;
+    }
 
-        .notification-bell {
-            font-size: 2rem;
-            color: #388e3c;
-            cursor: pointer;
-            transition: 0.3s;
-        }
+    .notification-bell.shake {
+      animation: shake 0.5s infinite;
+    }
 
-        .notification-bell:hover {
-            color: #66bb6a;
-        }
+    @keyframes shake {
+      0% { transform: rotate(0); }
+      25% { transform: rotate(10deg); }
+      50% { transform: rotate(-10deg); }
+      75% { transform: rotate(10deg); }
+      100% { transform: rotate(0); }
+    }
 
-        .notification-count {
-            position: absolute;
-            top: -5px;
-            right: -10px;
-            background-color: #f44336;
-            color: white;
-            font-size: 1rem;
-            padding: 3px 7px;
-            border-radius: 50%;
-            font-weight: bold;
-        }
+    .notification-count {
+      position: absolute;
+      top: -5px;
+      right: -10px;
+      background: red;
+      color: white;
+      font-size: 0.8rem;
+      padding: 2px 6px;
+      border-radius: 50%;
+    }
 
-        /* Notification Dropdown */
-        .notification-dropdown {
-            display: none;
-            position: absolute;
-            top: 40px;
-            right: 0;
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            width: 300px;
-            z-index: 9999;
-            padding: 10px;
-        }
+    .notification-dropdown {
+      display: none;
+      position: absolute;
+      top: 40px;
+      right: 0;
+      background: white;
+      width: 320px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      border-radius: 10px;
+      z-index: 999;
+    }
 
-        .notification-dropdown ul {
-            list-style: none;
-            padding: 0;
-        }
+    .notification-tabs {
+      display: flex;
+      justify-content: space-around;
+      border-bottom: 1px solid #ccc;
+      background: #f0f0f0;
+      border-radius: 10px 10px 0 0;
+    }
 
-        .notification-dropdown li {
-            background-color: #f9f9f9;
-            border-radius: 5px;
-            margin-bottom: 10px;
-            padding: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: 0.3s;
-        }
+    .notification-tab {
+      padding: 10px;
+      cursor: pointer;
+      flex: 1;
+      text-align: center;
+      font-weight: bold;
+    }
 
-        .notification-dropdown li:hover {
-            background-color: #e8f5e9;
-        }
+    .notification-tab.active {
+      background: white;
+      border-bottom: 2px solid #388e3c;
+    }
 
-        .notification-dropdown li div {
-            color: #333;
-            font-size: 1rem;
-        }
+    .notification-list {
+      max-height: 300px;
+      overflow-y: auto;
+      padding: 10px;
+    }
 
-        .dismiss-btn {
-            background-color: #f44336;
-            color: white;
-            border: none;
-            padding: 6px 10px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
+    .notification-item {
+      padding: 10px;
+      border-radius: 8px;
+      background: #f9f9f9;
+      margin-bottom: 10px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    }
 
-        .dismiss-btn:hover {
-            background-color: #d32f2f;
-        }
+    .notification-item.unread {
+      border-left: 4px solid #388e3c;
+      background: #e8f5e9;
+    }
 
-        /* Table Styling */
-        .event-table {
-            width: 100%;
-            border-collapse: collapse;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-            overflow: hidden;
-        }
+    .notification-actions {
+      text-align: right;
+      margin-top: 8px;
+    }
 
-        .event-table thead {
-            background-color: #388e3c;
-            color: white;
-        }
+    .notification-actions button {
+      font-size: 0.75rem;
+      padding: 4px 8px;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      background: #388e3c;
+      color: white;
+    }
 
-        .event-table th,
-        .event-table td {
-            padding: 12px;
-            text-align: left;
-        }
+    #toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #4caf50;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 5px;
+      display: none;
+      z-index: 1000;
+    }
 
-        .event-table th {
-            font-weight: bold;
-        }
+    .event-table-container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
 
-        .event-table tbody tr {
-            background-color: #f9f9f9;
-            transition: background-color 0.3s ease;
-        }
+    table.event-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
 
-        .event-table tbody tr:hover {
-            background-color: #e0f7e0;
-        }
+    .event-table th, .event-table td {
+      padding: 12px;
+      text-align: left;
+    }
 
-        .event-table td i {
-            margin-right: 8px;
-        }
+    .event-table thead {
+      background-color: #388e3c;
+      color: white;
+    }
 
-        .event-table td,
-        .event-table th {
-            font-size: 1rem;
-        }
-    </style>
+    .event-table tbody tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+
+    .event-table tbody tr:hover {
+      background-color: #e0f2e0;
+    }
+
+    @media (max-width: 600px) {
+      .notification-dropdown {
+        width: 95%;
+        right: 2.5%;
+      }
+
+      .event-table-container {
+        padding: 10px;
+      }
+    }
+  </style>
 </head>
 <body>
-    <h1>Upcoming Events</h1>
 
-    <!-- Notification Bell -->
-    <div class="notification-container">
-        <i class="fa fa-bell notification-bell"></i>
-        <span class="notification-count" id="notif-count"><%= notificationsCount %></span>
+<h1>Upcoming Events</h1>
 
-        <!-- Notification Dropdown -->
-        <div class="notification-dropdown" id="notificationDropdown">
-            <ul id="notification-list">
-                <% events.forEach(event => { %>
-                    <% if (!event.dismissed) { %>
-                        <li id="event-<%= event._id %>">
-                            <div>
-                                <strong><%= event.title %></strong> - <%= event.date.toDateString() %> <br>
-                                <small>Location: <%= event.location %></small> <br>
-                                <small>Description: <%= event.description %></small>
-                            </div>
-                            <button class="dismiss-btn" data-id="<%= event._id %>">Dismiss</button>
-                        </li>
-                    <% } %>
-                <% }); %>
-            </ul>
-        </div>
+<div class="notification-container">
+  <i class="fa fa-bell notification-bell"></i>
+  <% if (notificationsCount > 0) { %>
+    <span class="notification-count" id="notif-count"><%= notificationsCount %></span>
+  <% } %>
+
+  <div class="notification-dropdown" id="notificationDropdown">
+    <div class="notification-tabs">
+      <div class="notification-tab active" data-tab="unread">Unread</div>
+      <div class="notification-tab" data-tab="all">All</div>
     </div>
+    <div class="notification-list" id="notificationList">
+      <!-- JS will populate here -->
+    </div>
+  </div>
+</div>
 
-    <!-- Event Table -->
-    <table class="event-table">
-        <thead>
-            <tr>
-                <th><i class="fa fa-calendar-alt"></i> Event</th>
-                <th><i class="fa fa-map-marker-alt"></i> Location</th>
-                <th><i class="fa fa-info-circle"></i> Description</th>
-                <th><i class="fa fa-clock"></i> Date</th>
-            </tr>
-        </thead>
-        <tbody>
-            <% events.forEach(event => { %>
-                <tr>
-                    <td><%= event.title %></td>
-                    <td><%= event.location %></td>
-                    <td><%= event.description %></td>
-                    <td><%= event.date.toDateString() %></td>
-                </tr>
-            <% }); %>
-        </tbody>
-    </table>
+<div class="event-table-container">
+  <table class="event-table">
+    <thead>
+      <tr>
+        <th>Event</th>
+        <th>Location</th>
+        <th>Description</th>
+        <th>Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% events.forEach(event => { %>
+        <tr>
+          <td><%= event.title %></td>
+          <td><%= event.location %></td>
+          <td><%= event.description %></td>
+          <td><%= event.date.toDateString() %></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
 
-    <script>
-        $(document).ready(function () {
-            // Toggle Notification Dropdown
-            $('.notification-bell').click(function () {
-                $('#notificationDropdown').toggle();
-            });
+<div id="toast">Action complete</div>
 
-            // Dismiss Notification
-            $('.dismiss-btn').click(function () {
-                let eventId = $(this).data('id');
-                $.post(/events/dismiss/${eventId}, function (response) {
-                    if (response.success) {
-                        $(#event-${eventId}).remove();
-                        let count = parseInt($('#notif-count').text()) - 1;
-                        $('#notif-count').text(count >= 0 ? count : 0);
-                    }
-                });
-            });
-        });
-    </script>
+<script>
+  const events = <%- JSON.stringify(events) %>;
+
+  $(document).ready(function () {
+    if (parseInt($('#notif-count').text()) > 0) {
+      $('.notification-bell').addClass('shake');
+    }
+
+    $('.notification-bell').click(() => {
+      $('#notificationDropdown').toggle();
+      renderNotifications('unread');
+    });
+
+    $(document).click(function (e) {
+      if (!$(e.target).closest('.notification-container').length) {
+        $('#notificationDropdown').hide();
+      }
+    });
+
+    $('.notification-tab').click(function () {
+      $('.notification-tab').removeClass('active');
+      $(this).addClass('active');
+      const tab = $(this).data('tab');
+      renderNotifications(tab);
+    });
+
+    function renderNotifications(filter) {
+      const container = $('#notificationList');
+      container.empty();
+
+      const filtered = events.filter(ev => {
+        return filter === 'all' || !ev.read;
+      });
+
+      if (filtered.length === 0) {
+        container.append('<p style="text-align:center;color:#666;">No notifications</p>');
+        return;
+      }
+
+      filtered.forEach(event => {
+        const item = $(`
+          <div class="notification-item ${!event.read ? 'unread' : ''}" id="event-${event._id}">
+            <div><strong>${event.title}</strong></div>
+            <small>${event.description}</small><br/>
+            <small><i>${new Date(event.date).toDateString()} - ${event.location}</i></small>
+            <div class="notification-actions">
+              <button class="toggle-read-btn" data-id="${event._id}" data-read="${event.read}">
+                Mark as ${event.read ? 'Unread' : 'Read'}
+              </button>
+            </div>
+          </div>
+        `);
+        container.append(item);
+      });
+    }
+
+    $(document).on('click', '.toggle-read-btn', function () {
+      const btn = $(this);
+      const eventId = btn.data('id');
+      const currentRead = btn.data('read');
+      const url = currentRead ? `/events/mark-as-unread/${eventId}` : `/events/mark-as-read/${eventId}`;
+
+      $.post(url, function (res) {
+        if (res.success) {
+          const event = events.find(e => e._id === eventId);
+          if (event) event.read = !currentRead;
+
+          const newCount = events.filter(e => !e.read).length;
+          if (newCount > 0) {
+            $('#notif-count').text(newCount).show();
+            $('.notification-bell').addClass('shake');
+          } else {
+            $('#notif-count').hide();
+            $('.notification-bell').removeClass('shake');
+          }
+
+          renderNotifications($('.notification-tab.active').data('tab'));
+          showToast(`Marked as ${currentRead ? 'Unread' : 'Read'}`);
+        }
+      });
+    });
+
+    function showToast(msg) {
+      $('#toast').text(msg).fadeIn(400).delay(2000).fadeOut(400);
+    }
+  });
+</script>
+
 </body>
 </html>

@@ -127,9 +127,11 @@
 <body>
   <div class="container">
     <h2>Add Product</h2>
-
     <div class="form-container">
-      <form action="/add" method="POST">
+      <!-- <form action="/add" method="POST"> -->
+        <form action="/products/add" method="POST" enctype="multipart/form-data">
+  <input type="file" name="image" accept="image/*">
+
         <!-- Basic Information Section -->
         <div class="form-section">
           <div class="form-section-title">Basic Information</div>

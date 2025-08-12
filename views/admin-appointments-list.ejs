@@ -1,215 +1,1061 @@
 <%- include('./layouts/header') %>
+<%- include('./layouts/navbar') %>
 
 <style>
-  body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #ffffff;
-    color: #333;
+:root {
+  --primary: #059669;
+  --primary-light: #10b981;
+  --primary-dark: #047857;
+  --secondary: #34d399;
+  --accent: #6ee7b7;
+  --dark: #1f2937;
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-400: #9ca3af;
+  --gray-500: #6b7280;
+  --gray-600: #4b5563;
+  --gray-700: #374151;
+  --gray-800: #1f2937;
+  --gray-900: #111827;
+  --white: #ffffff;
+  --text: #1f2937;
+  --text-light: #6b7280;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --radius: 6px;
+  --radius-lg: 10px;
+  --radius-xl: 14px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+main {
+  margin-left: 220px;
+  padding: 80px 20px 20px; /* More compact and moved lower */
+  min-height: 100vh;
+  background: linear-gradient(135deg, var(--gray-50) 0%, var(--white) 50%, rgba(5, 150, 105, 0.05) 100%);
+  font-family: 'Inter', sans-serif;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Animated background */
+main::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="bg-pattern" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1.5" fill="rgba(5,150,105,0.05)"/></pattern></defs><rect width="100" height="100" fill="url(%23bg-pattern)"/></svg>');
+  opacity: 0.3;
+  z-index: -1;
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: 24px; /* More compact */
+  animation: fadeInDown 0.8s ease-out;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.page-title {
+  font-size: 1.8rem; /* More compact */
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.page-title::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  border-radius: 2px;
+  animation: expandWidth 1s ease-out 0.5s both;
+}
+
+@keyframes expandWidth {
+  from { width: 0; }
+  to { width: 60px; }
+}
+
+.page-title i {
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.table-section {
+  max-width: 1100px; /* More compact */
+  margin: 0 auto;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xl);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 24px; /* More compact */
+  overflow: hidden;
+  position: relative;
+  animation: slideInUp 0.8s ease-out 0.3s both;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.table-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary), var(--primary-light), var(--secondary));
+  background-size: 200% 100%;
+  animation: gradientShift 3s ease-in-out infinite;
+}
+
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px; /* More compact */
+  margin-bottom: 20px; /* More compact */
+  animation: fadeIn 0.8s ease-out 0.5s both;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.filter-buttons {
+  display: flex;
+  gap: 6px; /* More compact */
+  flex-wrap: wrap;
+}
+
+.filter-buttons button {
+  padding: 6px 12px; /* More compact */
+  font-size: 0.8rem; /* More compact */
+  font-weight: 500;
+  border-radius: var(--radius);
+  border: 2px solid var(--gray-200);
+  background: var(--white);
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.filter-buttons button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  transition: left 0.3s ease;
+  z-index: -1;
+}
+
+.filter-buttons button:hover::before,
+.filter-buttons button.active::before {
+  left: 0;
+}
+
+.filter-buttons button:hover,
+.filter-buttons button.active {
+  color: white;
+  border-color: var(--primary);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow);
+}
+
+.search-bar {
+  position: relative;
+}
+
+.search-bar input {
+  padding: 8px 12px 8px 36px; /* More compact */
+  border: 2px solid var(--gray-200);
+  border-radius: var(--radius);
+  font-size: 0.85rem; /* More compact */
+  font-family: 'Inter', sans-serif;
+  width: 240px; /* More compact */
+  transition: all 0.3s ease;
+  background: var(--white);
+}
+
+.search-bar input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+  transform: translateY(-1px);
+}
+
+.search-bar::before {
+  content: '\f002';
+  font-family: 'Font Awesome 6 Free';
+  font-weight: 900;
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-light);
+  font-size: 0.8rem;
+}
+
+.table-container {
+  overflow-x: auto;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  animation: fadeIn 0.8s ease-out 0.7s both;
+}
+
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.85rem; /* More compact */
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+thead th {
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  color: white;
+  padding: 12px 10px; /* More compact */
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.8rem; /* More compact */
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+tbody tr {
+  background: var(--white);
+  transition: all 0.3s ease;
+  border-bottom: 1px solid var(--gray-100);
+}
+
+tbody tr:hover {
+  background: rgba(5, 150, 105, 0.05);
+  transform: translateX(3px);
+  box-shadow: var(--shadow-sm);
+}
+
+tbody tr:last-child {
+  border-bottom: none;
+}
+
+tbody td {
+  padding: 10px; /* More compact */
+  vertical-align: middle;
+  font-size: 0.85rem; /* More compact */
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* More compact */
+}
+
+.profile-image {
+  width: 28px; /* More compact */
+  height: 28px; /* More compact */
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--gray-200);
+  transition: all 0.3s ease;
+}
+
+.profile-image:hover {
+  border-color: var(--primary);
+  transform: scale(1.1);
+}
+
+.profile-icon {
+  font-size: 28px; /* More compact */
+  color: var(--gray-300);
+  transition: all 0.3s ease;
+}
+
+.profile-icon:hover {
+  color: var(--primary);
+  transform: scale(1.1);
+}
+
+.hover-name {
+  font-weight: 500;
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.hover-name:hover {
+  color: var(--primary);
+  text-decoration: underline;
+}
+
+.status-badge {
+  padding: 4px 10px; /* More compact */
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.7rem; /* More compact */
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-badge.pending {
+  background: rgba(245, 158, 11, 0.1);
+  color: #f59e0b;
+  border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+.status-badge.confirmed {
+  background: rgba(5, 150, 105, 0.1);
+  color: var(--primary);
+  border: 1px solid rgba(5, 150, 105, 0.2);
+}
+
+.status-badge.completed {
+  background: rgba(34, 197, 94, 0.1);
+  color: #22c55e;
+  border: 1px solid rgba(34, 197, 94, 0.2);
+}
+
+.status-badge.cancelled {
+  background: rgba(220, 38, 38, 0.1);
+  color: #dc2626;
+  border: 1px solid rgba(220, 38, 38, 0.2);
+}
+
+.actions-cell {
+  position: relative;
+  padding: 8px !important;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 4px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.action-btn {
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.action-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  transform: scale(0);
+  transition: transform 0.3s ease;
+  z-index: -1;
+}
+
+.action-btn:hover::before {
+  transform: scale(1);
+}
+
+.action-btn:hover {
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+
+.btn-confirm {
+  background: rgba(5, 150, 105, 0.1);
+  color: var(--primary);
+  border: 1px solid rgba(5, 150, 105, 0.2);
+}
+
+.btn-confirm::before {
+  background: var(--primary);
+}
+
+.btn-complete {
+  background: rgba(34, 197, 94, 0.1);
+  color: #22c55e;
+  border: 1px solid rgba(34, 197, 94, 0.2);
+}
+
+.btn-complete::before {
+  background: #22c55e;
+}
+
+.btn-cancel {
+  background: rgba(245, 158, 11, 0.1);
+  color: #f59e0b;
+  border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+.btn-cancel::before {
+  background: #f59e0b;
+}
+
+.btn-delete {
+  background: rgba(220, 38, 38, 0.1);
+  color: #dc2626;
+  border: 1px solid rgba(220, 38, 38, 0.2);
+}
+
+.btn-delete::before {
+  background: #dc2626;
+}
+
+.action-btn:active {
+  transform: translateY(0) scale(0.95);
+}
+
+/* Loading state for buttons */
+.action-btn.loading {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.action-btn.loading::after {
+  content: '';
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border: 2px solid transparent;
+  border-top: 2px solid currentColor;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Responsive adjustments for action buttons */
+@media (max-width: 768px) {
+  .action-buttons {
+    gap: 2px;
+  }
+  
+  .action-btn {
+    width: 24px;
+    height: 24px;
+    font-size: 0.6rem;
+  }
+}
+
+/* Modal Styles */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
+  justify-content: center;
+  align-items: center;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.modal.show {
+  display: flex;
+}
+
+.modal-content {
+  background: var(--white);
+  padding: 24px; /* More compact */
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xl);
+  width: 90%;
+  max-width: 400px; /* More compact */
+  position: relative;
+  animation: slideInModal 0.3s ease-out;
+}
+
+@keyframes slideInModal {
+  from {
+    opacity: 0;
+    transform: translateY(-50px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.modal-close {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: var(--text-light);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.modal-close:hover {
+  background: var(--gray-100);
+  color: var(--text);
+  transform: rotate(90deg);
+}
+
+.modal-content h3 {
+  font-size: 1.2rem; /* More compact */
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 16px; /* More compact */
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--primary);
+}
+
+.modal-content p {
+  margin-bottom: 10px; /* More compact */
+  font-size: 0.9rem; /* More compact */
+  color: var(--text);
+}
+
+.modal-content strong {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+/* Empty state */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-light);
+}
+
+.empty-state i {
+  font-size: 4rem;
+  margin-bottom: 20px;
+  color: var(--gray-300);
+}
+
+.empty-state h3 {
+  font-size: 1.3rem;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+
+.empty-state p {
+  font-size: 0.9rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  main {
+    margin-left: 0;
+    padding: 60px 16px 16px;
   }
 
-  h1.calendar-title, h1.table-title {
-    text-align: center;
-    font-size: 2.2rem;
-    margin-top: 40px;
-    margin-bottom: 20px;
-    color: #2c3e50;
+  .page-title {
+    font-size: 1.5rem;
   }
 
-  /* Calendar Section */
-  .calendar-wrapper {
-    max-width: 1100px;
-    margin: 0 auto 50px auto;
-    background: #ffffff;
-    padding: 30px;
-    border-radius: 16px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  .table-section {
+    padding: 20px;
   }
 
-  .calendar-grid {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr); /* Monday–Friday */
-    gap: 1px;
+  .top-bar {
+    flex-direction: column;
+    align-items: stretch;
   }
 
-  .day-header {
-    background-color: #f7f7f7;
-    padding: 16px;
-    text-align: center;
-    font-weight: bold;
-    border-bottom: 2px solid #ccc;
-    font-size: 1rem;
-    color: #2c3e50;
-  }
-
-  .calendar-cell {
-    background: #ffffff;
-    border: 1px solid #e0e0e0;
-    min-height: 140px;
-    padding: 10px;
-    position: relative;
-  }
-
-  .calendar-cell .date {
-    font-size: 14px;
-    font-weight: 600;
-    color: #333;
-    margin-bottom: 8px;
-  }
-
-  .appointment {
-    background-color: #d1e7dd;
-    color: #0f5132;
-    padding: 6px 8px;
-    font-size: 13px;
-    border-radius: 6px;
-    margin-bottom: 5px;
-    word-wrap: break-word;
-  }
-
-  .no-appointments {
-    font-size: 13px;
-    color: #aaa;
-    margin-top: 10px;
-  }
-
-  /* Table Section */
-  .table-container {
-    display: flex;
+  .filter-buttons {
     justify-content: center;
-    margin: 0 auto 60px auto;
-    max-width: 1100px;
   }
 
-  .table {
+  .search-bar input {
     width: 100%;
-    border-collapse: collapse;
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
-    background: #ffffff;
   }
 
-  .table thead {
-    background-color: #f0f0f0;
-    color: #2c3e50;
+  .table-container {
+    font-size: 0.8rem;
   }
 
-  .table th,
-  .table td {
-    padding: 14px 16px;
-    text-align: left;
-    font-size: 15px;
+  .user-info {
+    flex-direction: column;
+    gap: 4px;
   }
 
-  .table th {
-    font-weight: bold;
-    border-bottom: 2px solid #ddd;
+  .modal-content {
+    width: 95%;
+    padding: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  main {
+    padding: 50px 12px 12px;
   }
 
-  .table tbody tr {
-    border-bottom: 1px solid #f0f0f0;
-    transition: background-color 0.2s ease;
+  .table-section {
+    padding: 16px;
   }
 
-  .table tbody tr:hover {
-    background-color: #f9f9f9;
+  .filter-buttons {
+    gap: 4px;
   }
 
-  .table td i {
-    margin-right: 6px;
+  .filter-buttons button {
+    padding: 4px 8px;
+    font-size: 0.75rem;
   }
+
+  thead th, tbody td {
+    padding: 8px 6px;
+  }
+
+  .profile-image, .profile-icon {
+    width: 24px;
+    height: 24px;
+    font-size: 24px;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--gray-100);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, var(--primary-light), var(--secondary));
+}
 </style>
 
-<!-- Monthly Calendar View -->
-<h1 class="calendar-title">📅 Monthly Appointment Calendar (Weekdays Only)</h1>
-<div class="calendar-wrapper">
-  <div class="calendar-grid">
-    <% const weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']; %>
-    <% weekdays.forEach(day => { %>
-      <div class="day-header"><%= day %></div>
-    <% }); %>
-
-    <% 
-      const currentDate = new Date();
-      const year = currentDate.getFullYear();
-      const month = currentDate.getMonth();
-      const firstDayOfMonth = new Date(year, month, 1);
-      const lastDayOfMonth = new Date(year, month + 1, 0);
-      const daysInMonth = lastDayOfMonth.getDate();
-
-      let cells = [];
-      for (let day = 1; day <= daysInMonth; day++) {
-        const date = new Date(year, month, day);
-        const dayOfWeek = date.getDay(); // 0 = Sunday, 6 = Saturday
-        if (dayOfWeek >= 1 && dayOfWeek <= 5) {
-          cells.push(date);
-        }
-      }
-
-      cells.forEach(date => {
-        const dateStr = date.toISOString().slice(0, 10);
-    %>
-      <div class="calendar-cell">
-        <div class="date"><%= date.getDate() %></div>
-        <% 
-          let hasAppointment = false;
-          appointments.forEach(appt => {
-            const apptDate = new Date(appt.date).toISOString().slice(0, 10);
-            if (apptDate === dateStr) {
-              hasAppointment = true;
-        %>
-          <div class="appointment">
-            <%= appt.time %> – <%= appt.description %>
-          </div>
-        <% }}); %>
-        <% if (!hasAppointment) { %>
-          <div class="no-appointments">No appointments</div>
-        <% } %>
-      </div>
-    <% }); %>
+<main>
+  <div class="page-header">
+    <h1 class="page-title">
+      <i class="fas fa-calendar-check"></i>
+      Appointments
+    </h1>
   </div>
-</div>
 
-<!-- Table View -->
-<h1 class="table-title"><i class="fas fa-calendar-check"></i> Appointment List</h1>
-<div class="table-container">
-  <table class="table">
-    <thead>
-      <tr>
-        <th><i class="fas fa-user"></i> User</th>
-        <th><i class="fas fa-calendar-alt"></i> Date</th>
-        <th><i class="fas fa-clock"></i> Time</th>
-        <th><i class="fas fa-info-circle"></i> Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% appointments.forEach(appointment => { %>
-    <tr>
-        <td><%= appointment.user.email %></td>
-        <td><%= appointment.date %></td>
-        <td><%= appointment.time %></td>
-        <td><%= appointment.status %></td>
-        <td>
-            <!-- Action buttons to update status -->
-            <form action="/admin/appointments/update-status/<%= appointment._id %>/Confirmed" method="POST">
-                <button type="submit" class="btn btn-success">Confirm</button>
-            </form>
-            <form action="/admin/appointments/update-status/<%= appointment._id %>/Completed" method="POST">
-                <button type="submit" class="btn btn-primary">Complete</button>
-            </form>
-            <form action="/admin/appointments/update-status/<%= appointment._id %>/Cancelled" method="POST">
-                <button type="submit" class="btn btn-danger">Cancel</button>
-            </form>
-        </td>
-    </tr>
-<% }) %>
+  <div class="table-section">
+    <div class="top-bar">
+      <div class="filter-buttons">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="today">Today</button>
+        <button class="filter-btn" data-filter="week">This Week</button>
+        <button class="filter-btn" data-filter="month">This Month</button>
+      </div>
+      <div class="search-bar">
+        <input type="text" id="searchInput" placeholder="Search appointments...">
+      </div>
+    </div>
 
-    </tbody>
-  </table>
-</div>
+    <% if (appointments && appointments.length > 0) { %>
+      <div class="table-container">
+        <table id="appointmentTable">
+          <thead>
+            <tr>
+              <th>Full Name</th>
+              <th>Email</th>
+              <th>Date</th>
+              <th>Time</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% appointments.forEach(appointment => { %>
+              <% if (appointment.user) { %>
+                <tr class="appointment-row"
+                    data-name="<%= appointment.user.firstName + ' ' + appointment.user.lastName %>"
+                    data-email="<%= appointment.user.email %>"
+                    data-date="<%= new Date(appointment.date).toISOString() %>"
+                    data-time="<%= appointment.time %>"
+                    data-status="<%= appointment.status %>">
+                  <td>
+                    <div class="user-info">
+                      <% if (appointment.user.profileImage) { %>
+                        <img src="/uploads/<%= appointment.user.profileImage %>" alt="Profile" class="profile-image">
+                      <% } else { %>
+                        <i class="fas fa-user-circle profile-icon"></i>
+                      <% } %>
+                      <span class="hover-name"><%= appointment.user.firstName %> <%= appointment.user.lastName %></span>
+                    </div>
+                  </td>
+                  <td><%= appointment.user.email %></td>
+                  <td><%= new Date(appointment.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) %></td>
+                  <td><%= appointment.time %></td>
+                  <td>
+                    <span class="status-badge <%= appointment.status.toLowerCase() %>">
+                      <%= appointment.status %>
+                    </span>
+                  </td>
+                  <td class="actions-cell">
+  <div class="action-buttons">
+    <button class="action-btn btn-confirm" onclick="updateStatus('<%= appointment._id %>', 'Confirmed')" title="Confirm Appointment">
+      <i class="fas fa-check"></i>
+    </button>
+    <button class="action-btn btn-complete" onclick="updateStatus('<%= appointment._id %>', 'Completed')" title="Mark as Completed">
+      <i class="fas fa-check-double"></i>
+    </button>
+    <button class="action-btn btn-cancel" onclick="updateStatus('<%= appointment._id %>', 'Cancelled')" title="Cancel Appointment">
+      <i class="fas fa-times"></i>
+    </button>
+    <button class="action-btn btn-delete" onclick="deleteAppointment('<%= appointment._id %>')" title="Delete Appointment">
+      <i class="fas fa-trash"></i>
+    </button>
+  </div>
+</td>
+                </tr>
+              <% } %>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+    <% } else { %>
+      <div class="empty-state">
+        <i class="fas fa-calendar-times"></i>
+        <h3>No Appointments Found</h3>
+        <p>There are no appointments to display at the moment.</p>
+      </div>
+    <% } %>
+  </div>
 
-<!-- Font Awesome -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+  <!-- Details Modal -->
+  <div class="modal" id="detailsModal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+      <h3>Appointment Details</h3>
+      <p><strong>Name:</strong> <span id="detailName"></span></p>
+      <p><strong>Email:</strong> <span id="detailEmail"></span></p>
+      <p><strong>Date:</strong> <span id="detailDate"></span></p>
+      <p><strong>Time:</strong> <span id="detailTime"></span></p>
+      <p><strong>Status:</strong> <span id="detailStatus"></span></p>
+    </div>
+  </div>
+</main>
+
+<script>
+// Remove the old dropdown functions and add these new ones:
+
+function updateStatus(appointmentId, status) {
+  const button = event.target.closest('.action-btn');
+  
+  // Add loading state
+  button.classList.add('loading');
+  button.disabled = true;
+  
+  // Create form and submit
+  const form = document.createElement('form');
+  form.method = 'POST';
+  form.action = `/admin/appointments/update-status/${appointmentId}/${status}`;
+  form.style.display = 'none';
+  
+  document.body.appendChild(form);
+  form.submit();
+}
+
+function deleteAppointment(appointmentId) {
+  if (confirm('Are you sure you want to delete this appointment? This action cannot be undone.')) {
+    const button = event.target.closest('.action-btn');
+    
+    // Add loading state
+    button.classList.add('loading');
+    button.disabled = true;
+    
+    // Create form and submit
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = `/admin/appointments/delete/${appointmentId}`;
+    form.style.display = 'none';
+    
+    document.body.appendChild(form);
+    form.submit();
+  }
+}
+
+// Add success feedback
+function showSuccessMessage(message) {
+  const toast = document.createElement('div');
+  toast.className = 'success-toast';
+  toast.innerHTML = `
+    <i class="fas fa-check-circle"></i>
+    <span>${message}</span>
+  `;
+  
+  document.body.appendChild(toast);
+  
+  setTimeout(() => {
+    toast.classList.add('show');
+  }, 100);
+  
+  setTimeout(() => {
+    toast.classList.remove('show');
+    setTimeout(() => {
+      document.body.removeChild(toast);
+    }, 300);
+  }, 3000);
+}
+
+// Add CSS for success toast
+const toastStyle = document.createElement('style');
+toastStyle.textContent = `
+  .success-toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: var(--primary);
+    color: white;
+    padding: 12px 16px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    z-index: 10000;
+    transform: translateX(100%);
+    opacity: 0;
+    transition: all 0.3s ease;
+  }
+  
+  .success-toast.show {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  
+  .success-toast i {
+    font-size: 1rem;
+  }
+`;
+document.head.appendChild(toastStyle);
+
+function toggleDropdown(button) {
+  // Close all other dropdowns
+  document.querySelectorAll('.dropdown-menu').forEach(menu => {
+    if (menu !== button.nextElementSibling) {
+      menu.style.display = 'none';
+    }
+  });
+  
+  // Toggle current dropdown
+  const menu = button.nextElementSibling;
+  menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+}
+
+// Close dropdowns when clicking outside
+window.addEventListener('click', function (e) {
+  if (!e.target.matches('.dropdown-toggle')) {
+    document.querySelectorAll('.dropdown-menu').forEach(menu => {
+      menu.style.display = 'none';
+    });
+  }
+});
+
+// Search functionality
+document.getElementById("searchInput").addEventListener("keyup", function () {
+  const value = this.value.toLowerCase();
+  document.querySelectorAll(".appointment-row").forEach(row => {
+    const text = row.innerText.toLowerCase();
+    row.style.display = text.includes(value) ? "" : "none";
+  });
+});
+
+// Filter functionality
+document.querySelectorAll('.filter-btn').forEach(button => {
+  button.addEventListener('click', function () {
+    // Update active button
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    this.classList.add('active');
+    
+    const filter = this.dataset.filter;
+    const now = new Date();
+    const rows = document.querySelectorAll('.appointment-row');
+    
+    rows.forEach(row => {
+      const rowDate = new Date(row.dataset.date);
+      let show = true;
+      
+      if (filter === 'today') {
+        const todayStr = now.toISOString().split('T')[0];
+        show = row.dataset.date.startsWith(todayStr);
+      } else if (filter === 'week') {
+        const start = new Date(now);
+        start.setDate(now.getDate() - now.getDay() + 1);
+        const end = new Date(start);
+        end.setDate(start.getDate() + 6);
+        show = rowDate >= start && rowDate <= end;
+      } else if (filter === 'month') {
+        const start = new Date(now.getFullYear(), now.getMonth(), 1);
+        const end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+        show = rowDate >= start && rowDate <= end;
+      }
+      
+      row.style.display = (filter === 'all' || show) ? '' : 'none';
+    });
+  });
+});
+
+// Modal functionality
+let isHovering = false;
+
+document.querySelectorAll('.hover-name').forEach(nameEl => {
+  nameEl.addEventListener('mouseenter', function () {
+    const row = this.closest('tr');
+    document.getElementById('detailName').innerText = row.dataset.name;
+    document.getElementById('detailEmail').innerText = row.dataset.email;
+    document.getElementById('detailDate').innerText = new Date(row.dataset.date).toLocaleDateString();
+    document.getElementById('detailTime').innerText = row.dataset.time;
+    document.getElementById('detailStatus').innerText = row.dataset.status;
+    
+    document.getElementById('detailsModal').classList.add('show');
+    isHovering = true;
+  });
+  
+  nameEl.addEventListener('mouseleave', function () {
+    isHovering = false;
+    setTimeout(() => {
+      if (!isHovering) {
+        document.getElementById('detailsModal').classList.remove('show');
+      }
+    }, 200);
+  });
+});
+
+document.getElementById('detailsModal').addEventListener('mouseenter', () => {
+  isHovering = true;
+});
+
+document.getElementById('detailsModal').addEventListener('mouseleave', () => {
+  isHovering = false;
+  setTimeout(() => {
+    if (!isHovering) {
+      document.getElementById('detailsModal').classList.remove('show');
+    }
+  }, 200);
+});
+
+function closeModal() {
+  document.getElementById('detailsModal').classList.remove('show');
+}
+
+// Close modal with Escape key
+document.addEventListener('keydown', function(event) {
+  if (event.key === 'Escape') {
+    closeModal();
+  }
+});
+
+// Add smooth scroll behavior
+document.documentElement.style.scrollBehavior = 'smooth';
+
+// Initialize animations
+document.addEventListener('DOMContentLoaded', function() {
+  // Add staggered animation to table rows
+  const rows = document.querySelectorAll('.appointment-row');
+  rows.forEach((row, index) => {
+    row.style.animationDelay = `${0.1 + (index * 0.05)}s`;
+    row.style.animation = 'slideInLeft 0.6s ease-out both';
+  });
+});
+
+// Add CSS for row animations
+const style = document.createElement('style');
+style.textContent = `
+  @keyframes slideInLeft {
+    from {
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+`;
+document.head.appendChild(style);
+</script>
+
 <%- include('./layouts/footer') %>

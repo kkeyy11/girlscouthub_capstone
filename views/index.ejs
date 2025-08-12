@@ -1,156 +1,631 @@
 <%- include('./layouts/header') %>
 <%- include('./layouts/navbar') %>
 
-<main style="margin-left: 220px; padding: 30px; background-color: #f8f9fa; min-height: 100vh;">
-  <div class="container" style="max-width: 960px; margin: 0 auto;">
-    <h1 class="mb-5 fw-bold text-dark text-center">📊 Dashboard Overview</h1>
 
-    <!-- Summary Cards -->
-    <div class="row g-4 mb-5">
-      <div class="col-md-4">
-        <div class="card shadow-sm border-start border-4 border-primary">
-          <div class="card-body">
-            <h6 class="card-title text-muted">Total Appointments</h6>
-            <h2 class="card-text text-primary fw-semibold"><%= appointmentCount %></h2>
-          </div>
-        </div>
+
+<style>
+body, main {
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #f5f7fa;
+}
+main {
+  margin-left: 220px;
+  padding: 80px 20px 30px;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+/* 🌟 SUMMARY CARDS WITH DARK GREEN STYLE AND WHITE TEXT */
+.summary-grid {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 240px;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 5px;
+}
+
+.custom-card {
+  background: linear-gradient(135deg, #1b5e20, #2e7d32);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 8px;
+  color: #fff;
+}
+
+.custom-card h2, .custom-card p {
+  color: #fff;
+}
+
+.custom-card h2 {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.custom-card p {
+  margin: 4px 0 0;
+  font-size: 10px;
+  text-align: center;
+}
+
+
+/* 🌟 CHARTS CONTAINER */
+.charts-container {
+  display: flex;
+  gap: 20px;
+  width: 82%;
+  max-width: 100%;
+}
+.chart-card-left {
+  flex: 2;
+  min-width: 0;
+  height: 320px;
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+.chart-card-right {
+  flex: 1;
+  min-width: 0;
+  height: 320px;
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+.chart-header {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1b5e20;
+  margin-bottom: 15px;
+}
+
+/* 🌟 TABLE */
+.appointments-section table {
+  width: 82%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+.appointments-section th {
+  background-color: #1b5e20;
+  color: white;
+  text-align: left;
+  padding: 12px;
+}
+.appointments-section td {
+  padding: 12px;
+  border-top: 1px solid #eee;
+}
+
+/* General fonts & colors */
+h2, .chart-header {
+  color: #1b5e20;
+}
+</style>
+<main style="
+  <%= user 
+    ? 'margin-left: 220px; padding: 80px 30px 30px; background-color: #f8f9fa; max-width: none;' 
+    : 'margin: 0; padding: 0; background-color: #2f5233; max-width: 100%;' %>
+  min-height: 100vh;
+  position: relative;
+  width: 100%;
+
+<%= user && user.role && user.role.toLowerCase() === 'admin'
+    ? 'margin-left: 220px; padding: 80px 30px 30px; background-color: #f8f9fa; max-width: none;'
+    : 'margin: 0; padding: 0; background-color: #f5f7fa; max-width: 100%;'
+  %>
+  min-height: 100vh;
+  position: relative;
+  width: 100%;
+
+<main>
+<% if (user && user.role && user.role.toLowerCase() === 'admin') { %>
+  <div class="container" style="max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 30px;">
+
+    <!-- ✅ SUMMARY CARDS -->
+    <div class="summary-grid">
+      <div class="custom-card">
+        <h2><%= districtCount %></h2>
+        <p>Total Districts</p>
       </div>
-      <div class="col-md-4">
-        <div class="card shadow-sm border-start border-4 border-success">
-          <div class="card-body">
-            <h6 class="card-title text-muted">Total Districts</h6>
-            <h2 class="card-text text-success fw-semibold"><%= districtCount %></h2>
-          </div>
-        </div>
+      <div class="custom-card">
+        <h2><%= latestAppointments?.length || 0 %></h2>
+        <p>Total Appointments</p>
       </div>
-      <div class="col-md-4">
-        <div class="card shadow-sm border-start border-4 border-warning">
-          <div class="card-body">
-            <h6 class="card-title text-muted">Total Products</h6>
-            <h2 class="card-text text-warning fw-semibold"><%= productCount %></h2>
-          </div>
-        </div>
+      <div class="custom-card">
+        <h2><%= productCount %></h2>
+        <p>Total Products</p>
+      </div>
+      <div class="custom-card">
+        <h2><%= events.length %></h2>
+        <p>Upcoming Events</p>
       </div>
     </div>
 
-    <!-- Graphs Section: Charts Side-by-Side -->
-    <div class="row justify-content-center mb-5">
-      <!-- Appointment Status Chart -->
-      <div class="col-md-6 mb-4">
-        <div class="card shadow-sm">
-          <div class="card-header bg-white fw-bold text-secondary text-center">
-            Appointment Status Distribution
-          </div>
-          <div class="card-body d-flex justify-content-center align-items-center" style="min-height: 350px;">
-            <div style="width: 250px; height: 250px;">
-              <canvas id="appointmentChart"></canvas>
-            </div>
-          </div>
-        </div>
+    <!-- ✅ CHARTS -->
+    <div class="charts-container">
+      <div class="chart-card-left">
+        <div class="chart-header">Sales Report</div>
+        <canvas id="productChart"></canvas>
       </div>
-
-      <!-- Product Categories Chart -->
-      <div class="col-md-6 mb-4">
-        <div class="card shadow-sm">
-          <div class="card-header bg-white fw-bold text-secondary text-center">
-            Product Categories
-          </div>
-          <div class="card-body d-flex justify-content-center align-items-center" style="min-height: 350px;">
-            <div style="width: 250px; height: 250px;">
-              <canvas id="productChart"></canvas>
-            </div>
-          </div>
-        </div>
+      <div class="chart-card-right">
+        <div class="chart-header">Top Districts</div>
+        <canvas id="districtChart"></canvas>
       </div>
     </div>
+
+    <!-- ✅ LATEST APPOINTMENTS -->
+    <section class="appointments-section">
+      <h2>Appointment</h2>
+      <% if (latestAppointments && latestAppointments.length > 0) { %>
+        <table>
+          <thead>
+            <tr>
+              <th>User</th>
+              <th>Date</th>
+              <th>Time</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% latestAppointments.forEach(app => { %>
+              <tr>
+                <td><%= app.user ? app.user.firstName + ' ' + app.user.lastName : 'N/A' %></td>
+                <td><%= app.date.toDateString() %></td>
+                <td><%= app.time %></td>
+                <td><%= app.status %></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      <% } else { %>
+         <p>No recent appointments found.</p>
+      <% } %>
+    </section>
+
   </div>
+
+<% } else if (user) { %>
+  <!-- 🌸 GIRL SCOUT MINDORO USER DASHBOARD -->
+<!-- 🌸 V0-Style Girl Scout Mindoro User Dashboard -->
+<div style="font-family: 'Poppins', sans-serif; background-color: #f5f7fa; color: #333;">
+
+  <!-- 🌟 HERO SECTION -->
+  <section style="
+    width: 100%;
+    min-height: 80vh;
+    background: linear-gradient(to right, rgba(47, 82, 51, 0.85), rgba(47, 82, 51, 0.7)),
+                url('/image/bg1.png') center/cover no-repeat;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 40px 20px;
+    color: white;
+  ">
+    <h1 style="font-size: 48px; font-weight: 600; margin-bottom: 20px;">
+      Welcome, <%= user.firstName || 'Girl Scout' %>! 🌿
+    </h1>
+    <p style="font-size: 20px; max-width: 700px; opacity: 0.9;">
+      Empowering young girls in Mindoro through leadership, service, and sisterhood.
+    </p>
+    <a href="#features" style="
+      display: inline-block;
+      margin-top: 30px;
+      background: #ffcc00;
+      color: #2f5233;
+      padding: 14px 28px;
+      font-weight: 500;
+      border-radius: 30px;
+      text-decoration: none;
+      transition: all 0.3s;
+    " onmouseover="this.style.background='#e6b800'" onmouseout="this.style.background='#ffcc00'">
+      Explore Your Dashboard
+    </a>
+  </section>
+
+  <!-- 🌿 FEATURES -->
+  <section id="features" style="padding: 80px 20px; background: #ffffff;">
+    <div style="
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 30px;
+    ">
+      <% const features = [
+        { icon: 'fas fa-hand-holding-heart', title: 'Leadership', desc: 'Develop skills and confidence to lead your troop and community.' },
+        { icon: 'fas fa-seedling', title: 'Growth', desc: 'Every badge earned is a step toward self-discovery and resilience.' },
+        { icon: 'fas fa-users', title: 'Sisterhood', desc: 'Form lifelong friendships in a caring, inclusive environment.' },
+        { icon: 'fas fa-hiking', title: 'Adventure', desc: 'Explore the outdoors and discover your strengths.' }
+      ]; %>
+      <% features.forEach(f => { %>
+        <div style="
+          background: #f9faf9;
+          border: 1px solid #e0e0e0;
+          border-radius: 12px;
+          padding: 30px 20px;
+          text-align: center;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+          transition: transform 0.2s ease;
+        " onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='none'">
+          <i class="<%= f.icon %>" style="font-size: 36px; color: #2f5233; margin-bottom: 15px;"></i>
+          <h3 style="font-size: 20px; font-weight: 600; margin-bottom: 10px;"><%= f.title %></h3>
+          <p style="font-size: 15px; opacity: 0.85;"><%= f.desc %></p>
+        </div>
+      <% }) %>
+    </div>
+  </section>
+
+  <!-- 🏆 BADGES EXAMPLES -->
+<section style="background: #f0f4f0; padding: 80px 20px;">
+  <h2 style="text-align: center; color: #2f5233; font-size: 32px; font-weight: 600; margin-bottom: 40px;">
+    🏆 Badge Examples
+  </h2>
+  <div style="
+    max-width: 1000px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    text-align: center;
+  ">
+    <% const exampleBadges = [
+      { icon: '/image/community.jpg', title: 'Community Service', desc: 'Awarded for volunteering and helping your local community.' },
+      { icon: '/image/cam pro.jpg', title: 'Camping Pro', desc: 'Earned by completing outdoor camping adventures.' },
+      { icon: '/image/lead star.jpg', title: 'Leadership Star', desc: 'Given to scouts who demonstrate strong leadership skills.' },
+      { icon: '/image/first aid.jpg', title: 'First Aid Ready', desc: 'Given for learning essential first aid skills.' }
+    ]; %>
+    <% exampleBadges.forEach(badge => { %>
+      <div style="
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      ">
+        <img src="<%= badge.icon %>" alt="<%= badge.title %>" style="width: 60px; height: 60px; margin-bottom: 10px;">
+        <h4 style="color: #2f5233; font-size: 16px; font-weight: 500; margin-bottom: 6px;"><%= badge.title %></h4>
+        <p style="font-size: 14px; opacity: 0.85;"><%= badge.desc %></p>
+      </div>
+    <% }) %>
+  </div>
+</section>
+
+
+  <!-- 📅 EVENTS -->
+  <section style="background: #ffffff; padding: 80px 20px;">
+    <h2 style="text-align: center; color: #2f5233; font-size: 32px; font-weight: 600; margin-bottom: 40px;">📅 Upcoming Events</h2>
+    <% if (events && events.length > 0) { %>
+      <div style="
+        max-width: 1200px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 25px;
+      ">
+        <% events.slice(0, 4).forEach(event => { %>
+          <div style="
+            background: #f9faf9;
+            border-radius: 12px;
+            border-left: 4px solid #2f5233;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+          ">
+            <div style="font-size: 14px; color: #666;"><%= event.date.toDateString() %> • <%= event.time %></div>
+            <h3 style="font-size: 18px; color: #2f5233; margin: 10px 0;"><%= event.title %></h3>
+            <p><strong>📍</strong> <%= event.location %></p>
+            <p style="font-size: 14px; opacity: 0.8;"><%= event.description %></p>
+          </div>
+        <% }) %>
+      </div>
+    <% } else { %>
+      <p style="text-align: center; color: #2f5233;">No upcoming events.</p>
+    <% } %>
+  </section>
+
+  <!-- 📸 GALLERY -->
+  <section style="background: #ffffff; padding: 80px 20px;">
+  <h2 style="text-align: center; color: #2f5233; font-size: 32px; font-weight: 600; margin-bottom: 40px;">
+    📸 Recent Memories
+  </h2>
+  <div id="memoryCarousel" class="carousel slide" data-bs-ride="carousel" style="max-width: 1000px; margin: 0 auto;">
+    <div class="carousel-inner" style="border-radius: 12px; overflow: hidden;">
+      <% const carouselImages = [
+        { src: '/image/bg1.jpg', caption: 'Tree Planting Activity' },
+        { src: '/image/Community.jpg', caption: 'Camping in Naujan' },
+        { src: '/image/b1.jpg', caption: 'Leadership Workshop' },
+        { src: '/image/lead.jpg', caption: 'Badge Award Ceremony' }
+      ]; %>
+      <% carouselImages.forEach((img, index) => { %>
+        <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
+          <img src="<%= img.src %>" class="d-block w-100" alt="<%= img.caption %>" style="object-fit: cover; height: 400px;">
+          <div class="carousel-caption d-none d-md-block" style="background: rgba(0,0,0,0.4); border-radius: 6px;">
+            <h5><%= img.caption %></h5>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#memoryCarousel" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#memoryCarousel" data-bs-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Next</span>
+    </button>
+  </div>
+</section>
+
+
+  <!-- 💬 TESTIMONIALS -->
+  <section style="background: #ffffff; padding: 80px 20px;">
+    <h2 style="text-align: center; color: #2f5233; font-size: 32px; font-weight: 600; margin-bottom: 40px;">💬 What Scouts Say</h2>
+    <div style="
+      max-width: 800px;
+      margin: 0 auto;
+      display: grid;
+      gap: 20px;
+    ">
+      <div style="
+        background: #f9faf9;
+        border-left: 4px solid #2f5233;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      ">
+        <p style="font-style: italic; opacity: 0.85;">"Joining the Girl Scouts has made me confident and taught me the value of helping others."</p>
+        <p style="margin-top: 10px; font-weight: 500; color: #2f5233;">– Maria, Cadette</p>
+      </div>
+      <div style="
+        background: #f9faf9;
+        border-left: 4px solid #2f5233;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      ">
+        <p style="font-style: italic; opacity: 0.85;">"I love earning badges and learning new things with my troop!"</p>
+        <p style="margin-top: 10px; font-weight: 500; color: #2f5233;">– Angela, Brownie</p>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+
+
+<% } else { %>
+<!-- 🌟 FULLSCREEN GIRL SCOUT HUB LANDING PAGE -->
+<div style="font-family: 'Segoe UI', sans-serif; margin:0; padding:0;">
+
+  <!-- 🌟 CAROUSEL SECTION -->
+  <div id="girlScoutCarousel" class="carousel slide" data-bs-ride="carousel" style="
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+  ">
+    <div class="carousel-inner" style="width:100%; height:100%;">
+      <div class="carousel-item active">
+        <img src="/image/bg.png" class="d-block w-100" alt="Girl Scout 1" style="width:100%; height:100vh; object-fit:cover;">
+      </div>
+      <div class="carousel-item">
+        <img src="/image/bg2.jpg" class="d-block w-100" alt="Girl Scout 2" style="width:100%; height:100vh; object-fit:cover;">
+      </div>
+      <div class="carousel-item">
+        <img src="/image/bg3.jpg" class="d-block w-100" alt="Girl Scout 3" style="width:100%; height:100vh; object-fit:cover;">
+      </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#girlScoutCarousel" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#girlScoutCarousel" data-bs-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    </button>
+
+    <!-- 🌟 HERO OVERLAY CONTENT -->
+    <section style="
+      position:absolute;
+      top:0;
+      left:0;
+      width:100vw;
+      height:100vh;
+      background:rgba(47,82,51,0.6);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      flex-direction:column;
+      color:white;
+      text-align:center;
+      padding:40px 20px;
+      z-index:5;
+    ">
+      <h1 style="font-size:48px; margin-bottom:20px;">Welcome to Girl Scout Hub</h1>
+      <p style="font-size:18px; max-width:700px;">
+        Empowering girls through leadership, community, and sisterhood.
+      </p>
+      <a href="#events" style="
+        margin-top:30px;
+        background:white;
+        color:#2f5233;
+        padding:14px 30px;
+        border-radius:30px;
+        font-weight:bold;
+        text-decoration:none;
+      ">
+        View Upcoming Events
+      </a>
+    </section>
+  </div>
+
+  <!-- 📅 EVENTS SECTION -->
+  <section id="events" style="padding:60px 20px; width:100%; background-color:#e0f2e5;">
+    <h2 style="font-size:32px; color:#2f5233; text-align:center; margin-bottom:30px;">📅 Upcoming Events</h2>
+
+    <% if (events && events.length > 0) { %>
+      <div style="
+        display:grid;
+        grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+        gap:25px;
+        max-width:1200px;
+        margin:0 auto;
+      ">
+        <% events.slice(0,3).forEach(event => { %>
+          <div style="
+            background:#ffffff;
+            border-left:6px solid #2f5233;
+            border-radius:12px;
+            padding:20px;
+            box-shadow:0 4px 10px rgba(0,0,0,0.06);
+            text-align:left;
+          ">
+            <div style="font-size:14px; color:#666;"><%= event.date.toDateString() %> • <%= event.time %></div>
+            <h3 style="color:#2f5233; margin:10px 0;"><%= event.title %></h3>
+            <p style="margin:5px 0;"><strong>📍</strong> <%= event.location %></p>
+            <p style="font-size:14px; color:#555;"><%= event.description %></p>
+          </div>
+        <% }) %>
+      </div>
+    <% } else { %>
+      <p style="text-align:center; color:#2f5233;">No upcoming events.</p>
+    <% } %>
+  </section>
+
+  <!-- 🧭 ABOUT CTA SECTION -->
+  <section style="background-color:#d2e7d7; width:100%; padding:60px 20px;">
+    <div style="max-width:1000px; margin:0 auto; text-align:center;">
+      <h2 style="color:#2f5233; margin-bottom:20px;">Why Join the Girl Scouts?</h2>
+      <p style="font-size:16px; max-width:800px; margin:0 auto; color:#2f5233;">
+        Join a movement that builds girls of courage, confidence, and character. From earning badges to helping the community—Girl Scouts create real impact.
+      </p>
+      <a href="auth/register" style="
+        margin-top:30px;
+        display:inline-block;
+        background:#2f5233;
+        color:white;
+        padding:12px 28px;
+        border-radius:30px;
+        font-weight:bold;
+        text-decoration:none;
+      ">
+        Join Now
+      </a>
+    </div>
+  </section>
+
+  <!-- 🌿 ABOUT PLANTING SECTION -->
+  <section style="background-color:#f3f8f4; width:100%; padding:60px 20px;">
+    <div style="max-width:1200px; margin:0 auto;">
+      <h2 style="color:#2f5233; text-align:center; margin-bottom:40px;">🌿 About Planting</h2>
+      <div style="
+        display:flex;
+        flex-wrap:wrap;
+        justify-content:center;
+        gap:20px;
+      ">
+        <% const plantingCards = [
+          {title:'Tree Planting', description:'Helping restore the environment through planting native trees in school and community spaces.'},
+          {title:'Gardening', description:'Promoting food security and responsibility by maintaining troop gardens with fresh vegetables and herbs.'},
+          {title:'Composting', description:'Teaching waste reduction and proper biodegradable waste handling through composting practices.'},
+          {title:'Environmental Awareness', description:'Learning about biodiversity, climate action, and sustainable living to protect our future planet.'}
+        ]; %>
+        <% plantingCards.forEach(card => { %>
+          <div style="
+            background:white;
+            border-radius:12px;
+            box-shadow:0 4px 10px rgba(0,0,0,0.06);
+            overflow:hidden;
+            flex:1 1 calc(25% - 20px);
+            min-width:250px;
+            max-width:270px;
+          ">
+            <img src="/image/bg2.jpg" alt="<%= card.title %>" style="width:100%; height:180px; object-fit:cover;">
+            <div style="padding:15px;">
+              <h3 style="color:#2f5233; font-size:18px;"><%= card.title %></h3>
+              <p style="font-size:14px; color:#444;"><%= card.description %></p>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    </div>
+  </section>
+
+  <!-- 📩 FOOTER -->
+  <footer style="background-color:#2f5233; color:white; text-align:center; padding:30px 20px; width:100%;">
+    <p>&copy; <%= new Date().getFullYear() %> Girl Scout Hub. All rights reserved.</p>
+  </footer>
+
+</div>
+<% } %>
+
 </main>
 
-<!-- Chart.js CDN -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<!-- Custom Styling -->
-<style>
-  canvas {
-    width: 100% !important;
-    height: 100% !important;
-  }
-
-  .card {
-    border-radius: 12px;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-  }
-
-  .card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
-  }
-</style>
-
-<!-- Chart Configuration -->
 <script>
-  const appointmentCtx = document.getElementById('appointmentChart').getContext('2d');
-  const productCtx = document.getElementById('productChart').getContext('2d');
+const productCtx = document.getElementById('productChart')?.getContext('2d');
+const productCategories = <%- JSON.stringify(productCategories || []) %>;
+const productLabels = productCategories.map(cat => cat._id);
+const productValues = productCategories.map(cat => cat.count);
 
-  const appointmentStatusCounts = <%- JSON.stringify(appointmentStatusCounts) %>;
-  const productCategories = <%- JSON.stringify(productCategories) %>;
-
-  // Doughnut Chart: Appointment Status
-  new Chart(appointmentCtx, {
-    type: 'doughnut',
-    data: {
-      labels: appointmentStatusCounts.map(item => item._id),
-      datasets: [{
-        label: 'Appointments',
-        data: appointmentStatusCounts.map(item => item.count),
-        backgroundColor: ['#007bff', '#28a745', '#ffc107', '#dc3545'],
-        borderColor: '#fff',
-        borderWidth: 2
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: {
-          position: 'bottom',
-          labels: {
-            boxWidth: 15,
-            font: { size: 12 }
-          }
-        }
-      }
-    }
-  });
-
-  // Bar Chart: Product Categories
+if (productCtx) {
   new Chart(productCtx, {
-    type: 'bar',
+    type: 'line',
     data: {
-      labels: productCategories.map(item => item._id),
+      labels: productLabels,
       datasets: [{
         label: 'Products',
-        data: productCategories.map(item => item.count),
-        backgroundColor: '#6610f2',
-        borderRadius: 6
+        data: productValues,
+        borderColor: '#1b5e20',
+        backgroundColor: 'rgba(27, 94, 32, 0.2)',
+        tension: 0.4,
+        pointBackgroundColor: '#1b5e20',
+        fill: true,
       }]
     },
     options: {
-      responsive: true,
+      plugins: { legend: { display: false }},
       maintainAspectRatio: false,
       scales: {
-        y: {
-          beginAtZero: true,
-          ticks: {
-            stepSize: 1
-          }
-        }
-      },
-      plugins: {
-        legend: {
-          display: false
-        }
+        y: { beginAtZero: true, grid: { color: '#d7d7d7' }},
+        x: { grid: { color: '#eeeeee' }}
       }
     }
   });
+}
+
+const districtCtx = document.getElementById('districtChart')?.getContext('2d');
+const topDistricts = <%- JSON.stringify(topDistricts || []) %>;
+const districtLabels = topDistricts.map(d => d.name);
+const districtCounts = topDistricts.map(d => d.schoolCount);
+
+if (districtCtx) {
+  new Chart(districtCtx, {
+    type: 'doughnut',
+    data: {
+      labels: districtLabels,
+      datasets: [{
+        data: districtCounts,
+        backgroundColor: ['#1b5e20', '#43a047', '#66bb6a'],
+        borderColor: 'white',
+        borderWidth: 2,
+      }]
+    },
+    options: {
+      plugins: { legend: { position: 'bottom' }},
+      cutout: '65%',
+      maintainAspectRatio: false,
+    }
+  });
+}
 </script>

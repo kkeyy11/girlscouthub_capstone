@@ -1,175 +1,695 @@
 <%- include('./layouts/header') %>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>Create Announcement</title>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<%- include('./layouts/navbar') %>
+
+<style>
+:root {
+  --primary: #059669;
+  --primary-light: #10b981;
+  --primary-dark: #047857;
+  --secondary: #34d399;
+  --accent: #6ee7b7;
+  --dark: #1f2937;
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-400: #9ca3af;
+  --gray-500: #6b7280;
+  --gray-600: #4b5563;
+  --gray-700: #374151;
+  --gray-800: #1f2937;
+  --gray-900: #111827;
+  --white: #ffffff;
+  --text: #1f2937;
+  --text-light: #6b7280;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --radius: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+main {
+  margin-left: 220px;
+  padding: 60px 20px 20px; /* More compact */
+  min-height: 100vh;
+  background: linear-gradient(135deg, var(--gray-50) 0%, var(--white) 50%, rgba(5, 150, 105, 0.05) 100%);
+  font-family: 'Inter', sans-serif;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Animated background elements */
+main::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="bg-pattern" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1.5" fill="rgba(5,150,105,0.05)"/></pattern></defs><rect width="100" height="100" fill="url(%23bg-pattern)"/></svg>');
+  opacity: 0.3;
+  z-index: -1;
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: 24px; /* More compact */
+  animation: fadeInDown 0.8s ease-out;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.page-title {
+  font-size: 2rem; /* Slightly smaller */
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 700;
+  margin-bottom: 8px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.page-title i {
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-10px); }
+  60% { transform: translateY(-5px); }
+}
+
+.page-title::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  border-radius: 2px;
+  animation: expandWidth 1s ease-out 0.5s both;
+}
+
+@keyframes expandWidth {
+  from { width: 0; }
+  to { width: 60px; }
+}
+
+.page-subtitle {
+  color: var(--text-light);
+  font-size: 0.95rem;
+  margin-top: 12px;
+  animation: fadeIn 1s ease-out 0.3s both;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.form-container {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  max-width: 480px; /* More compact */
+  margin: 0 auto;
+  padding: 28px; /* More compact */
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xl);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+  overflow: hidden;
+  animation: slideInUp 0.8s ease-out 0.3s both;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Decorative gradient border */
+.form-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary), var(--primary-light), var(--secondary), var(--accent));
+  background-size: 300% 100%;
+  animation: gradientShift 3s ease-in-out infinite;
+}
+
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px; /* More compact */
+}
+
+.form-group {
+  position: relative;
+  animation: slideInLeft 0.6s ease-out both;
+}
+
+.form-group:nth-child(1) { animation-delay: 0.4s; }
+.form-group:nth-child(2) { animation-delay: 0.5s; }
+.form-group:nth-child(3) { animation-delay: 0.6s; }
+.form-group:nth-child(4) { animation-delay: 0.7s; }
+.form-group:nth-child(5) { animation-delay: 0.8s; }
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.form-group i {
+  position: absolute;
+  top: 50%;
+  left: 14px;
+  transform: translateY(-50%);
+  color: var(--primary);
+  font-size: 0.9rem;
+  z-index: 2;
+  transition: all 0.3s ease;
+}
+
+.form-group.textarea i {
+  top: 18px;
+  transform: none;
+}
+
+.form-group:focus-within i {
+  color: var(--primary-light);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.form-group.textarea:focus-within i {
+  transform: scale(1.1);
+}
+
+.form-input {
+  width: 100%;
+  padding: 12px 14px 12px 42px; /* More compact */
+  border: 2px solid var(--gray-200);
+  border-radius: var(--radius-lg);
+  font-size: 0.9rem; /* More compact */
+  font-family: 'Inter', sans-serif;
+  transition: all 0.3s ease;
+  background: var(--white);
+  position: relative;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(5, 150, 105, 0.1);
+  transform: translateY(-2px);
+}
+
+.form-input:hover:not(:focus) {
+  border-color: var(--gray-300);
+  transform: translateY(-1px);
+}
+
+.form-textarea {
+  height: 100px; /* More compact */
+  resize: vertical;
+  min-height: 80px;
+  max-height: 200px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px; /* More compact */
+}
+
+.submit-btn {
+  padding: 14px 20px; /* More compact */
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  color: white;
+  font-size: 1rem; /* More compact */
+  font-weight: 600;
+  border: none;
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+.submit-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, var(--primary-light), var(--secondary));
+  transition: left 0.3s ease;
+  z-index: -1;
+}
+
+.submit-btn:hover::before {
+  left: 0;
+}
+
+.submit-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-xl);
+}
+
+.submit-btn:active {
+  transform: translateY(-1px);
+}
+
+.submit-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.submit-btn i {
+  transition: transform 0.3s ease;
+}
+
+.submit-btn:hover i {
+  transform: translateX(2px);
+}
+
+/* Loading state */
+.loading {
+  pointer-events: none;
+}
+
+.loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin: -10px 0 0 -10px;
+  border: 2px solid transparent;
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Success message */
+.success-message {
+  background: rgba(5, 150, 105, 0.1);
+  border: 1px solid rgba(5, 150, 105, 0.2);
+  border-left: 4px solid var(--primary);
+  color: var(--primary);
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  margin-bottom: 20px;
+  display: none;
+  animation: slideInDown 0.5s ease-out;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.success-message.show {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.success-message i {
+  font-size: 1rem;
+}
+
+/* Form validation styles */
+.form-input:invalid:not(:placeholder-shown) {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+}
+
+.form-input:valid:not(:placeholder-shown) {
+  border-color: var(--primary);
+}
+
+/* Floating labels effect */
+.form-group {
+  position: relative;
+}
+
+.form-label {
+  position: absolute;
+  left: 42px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-light);
+  font-size: 0.9rem;
+  pointer-events: none;
+  transition: all 0.3s ease;
+  background: var(--white);
+  padding: 0 4px;
+}
+
+.form-group.textarea .form-label {
+  top: 18px;
+  transform: none;
+}
+
+.form-input:focus + .form-label,
+.form-input:not(:placeholder-shown) + .form-label {
+  top: -8px;
+  left: 38px;
+  font-size: 0.75rem;
+  color: var(--primary);
+  font-weight: 500;
+}
+
+.form-group.textarea .form-input:focus + .form-label,
+.form-group.textarea .form-input:not(:placeholder-shown) + .form-label {
+  top: -8px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  main {
+    margin-left: 0;
+    padding: 40px 16px 16px;
+  }
+
+  .form-container {
+    padding: 24px;
+    max-width: 100%;
+  }
+
+  .page-title {
+    font-size: 1.6rem;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .form-input {
+    padding: 11px 12px 11px 38px;
+  }
+
+  .submit-btn {
+    padding: 12px 18px;
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-title {
+    font-size: 1.4rem;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .form-container {
+    padding: 20px;
+  }
+
+  .form {
+    gap: 16px;
+  }
+
+  .form-input {
+    font-size: 0.85rem;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--gray-100);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, var(--primary-light), var(--secondary));
+}
+
+/* Add subtle animations for better UX */
+.form-container:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-xl);
+}
+
+/* Focus ring for accessibility */
+.form-input:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.submit-btn:focus-visible {
+  outline: 2px solid var(--primary-light);
+  outline-offset: 2px;
+}
+</style>
+
+<main>
+  <div class="page-header">
+    <h1 class="page-title">
+      <i class="fas fa-bullhorn"></i>
+      Girl Scouts Announcements
+    </h1>
+    <p class="page-subtitle">Create and share important events with your troop</p>
+  </div>
+
+  <!-- Success Message -->
+  <div id="successMessage" class="success-message">
+    <i class="fas fa-check-circle"></i>
+    Event created successfully!
+  </div>
+
+  <div class="form-container">
+    <form action="/admin/event" method="POST" class="form" id="eventForm">
+      <div class="form-group">
+        <i class="fas fa-heading"></i>
+        <input 
+          type="text" 
+          name="title" 
+          placeholder="Event Title" 
+          required 
+          class="form-input"
+          maxlength="100"
+        >
+      </div>
+
+      <div class="form-group textarea">
+        <i class="fas fa-align-left"></i>
+        <textarea 
+          name="description" 
+          placeholder="Event Description" 
+          required 
+          class="form-input form-textarea"
+          maxlength="500"
+        ></textarea>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <i class="fas fa-calendar-alt"></i>
+          <input 
+            type="date" 
+            name="date" 
+            required 
+            class="form-input"
+            min="<%= new Date().toISOString().split('T')[0] %>"
+          >
+        </div>
+        <div class="form-group">
+          <i class="fas fa-clock"></i>
+          <input 
+            type="time" 
+            name="time" 
+            required 
+            class="form-input"
+          >
+        </div>
+      </div>
+
+      <div class="form-group">
+        <i class="fas fa-map-marker-alt"></i>
+        <input 
+          type="text" 
+          name="location" 
+          placeholder="Event Location" 
+          required 
+          class="form-input"
+          maxlength="100"
+        >
+      </div>
+
+      <button type="submit" class="submit-btn" id="submitBtn">
+        <i class="fas fa-paper-plane"></i>
+        Create Announcement
+      </button>
+    </form>
+  </div>
+</main>
+
+<script>
+// Form submission handling
+document.getElementById('eventForm').addEventListener('submit', function(e) {
+  const submitBtn = document.getElementById('submitBtn');
+  
+  // Add loading state
+  submitBtn.classList.add('loading');
+  submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating...';
+  submitBtn.disabled = true;
+  
+  // You can add AJAX submission here if needed
+  // For now, it will submit normally to your backend
+});
+
+// Show success message function
+function showSuccessMessage() {
+  const successMessage = document.getElementById('successMessage');
+  successMessage.classList.add('show');
+  
+  setTimeout(() => {
+    successMessage.classList.remove('show');
+  }, 5000);
+}
+
+// Add smooth focus transitions
+document.querySelectorAll('.form-input').forEach(input => {
+  input.addEventListener('focus', function() {
+    this.parentElement.style.transform = 'translateX(3px)';
+  });
+  
+  input.addEventListener('blur', function() {
+    this.parentElement.style.transform = 'translateX(0)';
+  });
+});
+
+// Auto-resize textarea
+document.querySelector('.form-textarea').addEventListener('input', function() {
+  this.style.height = 'auto';
+  this.style.height = Math.min(this.scrollHeight, 200) + 'px';
+});
+
+// Set minimum date to today
+document.addEventListener('DOMContentLoaded', function() {
+  const dateInput = document.querySelector('input[type="date"]');
+  const today = new Date().toISOString().split('T')[0];
+  dateInput.setAttribute('min', today);
+});
+
+// Character counter for textarea
+const textarea = document.querySelector('.form-textarea');
+const maxLength = textarea.getAttribute('maxlength');
+
+textarea.addEventListener('input', function() {
+  const remaining = maxLength - this.value.length;
+  
+  // You can add a character counter display here if needed
+  if (remaining < 50) {
+    this.style.borderColor = remaining < 10 ? '#dc2626' : '#f59e0b';
+  } else {
+    this.style.borderColor = '';
+  }
+});
+
+// Form validation enhancement
+document.querySelectorAll('.form-input[required]').forEach(input => {
+  input.addEventListener('blur', function() {
+    if (this.value.trim() === '') {
+      this.style.borderColor = '#dc2626';
+    } else {
+      this.style.borderColor = '';
+    }
+  });
+});
+
+// Prevent form submission if validation fails
+document.getElementById('eventForm').addEventListener('submit', function(e) {
+  const requiredInputs = this.querySelectorAll('.form-input[required]');
+  let isValid = true;
+  
+  requiredInputs.forEach(input => {
+    if (input.value.trim() === '') {
+      input.style.borderColor = '#dc2626';
+      isValid = false;
+    }
+  });
+  
+  if (!isValid) {
+    e.preventDefault();
+    alert('Please fill in all required fields.');
     
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-    
-    <!-- Font Awesome -->
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    // Reset button state
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.classList.remove('loading');
+    submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Create Announcement';
+    submitBtn.disabled = false;
+  }
+});
+</script>
 
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: #f5f5f5;
-            color: #222;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        h1 {
-            margin-top: 40px;
-            font-size: 2.5rem;
-            color: #2e7d32;
-            text-align: center;
-        }
-
-        .form-container {
-            background: #ffffff;
-            max-width: 600px;
-            width: 90%;
-            margin: 30px auto;
-            padding: 40px;
-            border-radius: 16px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-        }
-
-        #notification-count {
-            text-align: center;
-            margin-bottom: 20px;
-            font-size: 1rem;
-            color: #1b5e20;
-            font-weight: 600;
-        }
-
-        form {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .input-group {
-            position: relative;
-            margin-bottom: 25px;
-        }
-
-        .input-group i {
-            position: absolute;
-            top: 50%;
-            left: 16px;
-            transform: translateY(-50%);
-            color: #4caf50;
-            font-size: 1rem;
-        }
-
-        .input-group input,
-        .input-group textarea {
-            width: 100%;
-            padding: 14px 16px 14px 44px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            outline: none;
-            font-size: 1rem;
-            background: #fafafa;
-            transition: 0.3s;
-        }
-
-        .input-group input:focus,
-        .input-group textarea:focus {
-            border-color: #66bb6a;
-            background: #ffffff;
-            box-shadow: 0 0 0 3px rgba(102, 187, 106, 0.1);
-        }
-
-        .input-group textarea {
-            resize: none;
-            height: 120px;
-        }
-
-        button {
-            padding: 14px;
-            background-color: #2e7d32;
-            color: white;
-            font-size: 1rem;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: 0.3s;
-            font-weight: bold;
-        }
-
-        button:hover {
-            background-color: #1b5e20;
-            transform: translateY(-1px);
-            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
-        }
-
-        @media (max-width: 640px) {
-            .form-container {
-                padding: 25px;
-            }
-
-            h1 {
-                font-size: 2rem;
-            }
-        }
-    </style>
-</head>
-<body>
-
-    <h1><i class="fas fa-calendar-plus"></i> Create an Announcement</h1>
-
-    <div id="notification-count">
-        <i class="fas fa-bell"></i> Notifications: <%= notificationsCount %>
-    </div>
-
-    <div class="form-container">
-        <form action="/admin/event" method="POST">
-            <div class="input-group">
-                <i class="fas fa-heading"></i>
-                <input type="text" name="title" placeholder="Subject" required>
-            </div>
-
-            <div class="input-group">
-                <i class="fas fa-align-left"></i>
-                <textarea name="description" placeholder="Description" required></textarea>
-            </div>
-
-            <div class="input-group">
-                <i class="fas fa-calendar-alt"></i>
-                <input type="date" name="date" required>
-            </div>
-
-            <div class="input-group">
-                <i class="fas fa-clock"></i>
-                <input type="time" name="time" required>
-            </div>
-
-            <div class="input-group">
-                <i class="fas fa-map-marker-alt"></i>
-                <input type="text" name="location" placeholder="Location" required>
-            </div>
-
-            <div class="input-group">
-                <i class="fas fa-envelope"></i>
-                <input type="email" name="email" placeholder="Enter email for notification" required>
-            </div>
-
-            <button type="submit"><i class="fas fa-paper-plane"></i> Submit Event</button>
-        </form>
-    </div>
-
-</body>
-</html>
-    
+<%- include('./layouts/footer') %>

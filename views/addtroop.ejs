@@ -1,0 +1,10 @@
+<h1>Add Troop</h1>
+<form action="/troops/add" method="POST">
+  <input type="hidden" name="schoolId" value="<%= schoolId %>">
+  <input type="text" name="troopLeader" placeholder="Troop Leader" required>
+  <input type="text" name="coLeader" placeholder="Co-Leader" required>
+  <input type="text" name="troopNumber" placeholder="Troop Number" required>
+  <input type="text" name="ageLevel" placeholder="Age Level Handled" required>
+  <input type="text" name="barangayCommittee" placeholder="Barangay Committee" required>
+  <button type="submit">Save</button>
+</form>

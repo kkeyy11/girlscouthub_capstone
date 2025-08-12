@@ -12,8 +12,8 @@
     const passport = require('passport');
     const MongoStore = require('connect-mongo');
     const connectEnsureLogin = require('connect-ensure-login')
-    const districtRoutes = require('./routes/districtRoutes');
-    const troopMemberRoutes = require('./routes/troopMemberRoutes');
+    // const districtRoutes = require('./routes/districtRoutes');
+    // const troopMemberRoutes = require('./routes/troopMemberRoutes');
     const path = require('path');
     const productRoutes = require('./routes/productRoutes');
     const cartRoutes = require('./routes/cartRoutes');
@@ -58,10 +58,13 @@
     });
 
     //routes
-    app.use('/districts', districtRoutes);
+    // app.use('/districts', districtRoutes);
 
-    app.use('/troopmembers', troopMemberRoutes);
+    // app.use('/troopmembers', troopMemberRoutes);
     app.use('/', require('./routes/review.route')); // Adjust path if needed
+
+    
+    app.use("/uploads", express.static("public/uploads"));
 
 
     //app.use("/", productRoutes);
@@ -102,14 +105,16 @@ app.use('/products', productRoutes);
 
 //app.post('/remove/:id', cartRoutes.removeReservation);
 
-
 app.use(express.urlencoded({ extended: true }));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 
 
+
     app.use('/', require('./routes/index.route'));
     app.use('/auth', require('./routes/auth.route'));
+    app.use('/', require('./routes/troop.route')); 
+
     app.use('/user', connectEnsureLogin.ensureLoggedIn({redirectTo: "/auth/login"}), require('./routes/user.route'));
     app.use('/admin',connectEnsureLogin.ensureLoggedIn({redirectTo: "/auth/login"}), 
     ensureAdmin,
@@ -150,4 +155,4 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
             res.redirect('/');
         }
     };
-    
+     

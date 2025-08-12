@@ -1,159 +1,1082 @@
 <%- include('./layouts/header') %>
+<%- include('./layouts/navbar') %>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
-  body {
-    font-family: Arial, sans-serif;
-    background-color: #eaf6e5;
-    color: #333;
+  * {
     margin: 0;
-    padding: 0 20px;
+    padding: 0;
+    box-sizing: border-box;
   }
 
-  h1, h2 {
+  body {
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    min-height: 100vh;
+    color: #333;
+    position: relative;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.05)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.03)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.04)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .appointment-container {
+    position: relative;
+    z-index: 2;
+    margin-top: 90px;
+    padding: 40px 20px 60px;
+    min-height: calc(100vh - 90px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .page-header {
     text-align: center;
-    color: #388e3c;
+    margin-bottom: 40px;
+    animation: slideDown 0.8s ease-out;
+  }
+
+  .page-header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 12px;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  }
+
+  .page-header p {
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 300;
+  }
+
+  .appointment-card {
+    max-width: 900px;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 24px;
+    box-shadow: 
+      0 20px 40px rgba(0, 0, 0, 0.1),
+      0 0 0 1px rgba(255, 255, 255, 0.2);
+    padding: 50px;
+    animation: slideUp 0.8s ease-out 0.2s both;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    margin-bottom: 40px;
+  }
+
+  .form-section {
+    position: relative;
+  }
+
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 24px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #e2e8f0;
+  }
+
+  .section-title i {
+    width: 24px;
+    height: 24px;
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+  }
+
+  .date-input-wrapper {
+    position: relative;
+    margin-bottom: 20px;
+  }
+
+  .date-input {
+    width: 100%;
+    padding: 16px 20px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 500;
+    background: #f8fafc;
+    transition: all 0.3s ease;
+    color: #2d3748;
+  }
+
+  .date-input:focus {
+    outline: none;
+    border-color: #10b981;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+    transform: translateY(-1px);
+  }
+
+  .time-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .time-slot {
+    padding: 16px 12px;
+    text-align: center;
+    background: #f8fafc;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 14px;
+    color: #4a5568;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .time-slot::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #10b981, #059669);
+    transition: left 0.3s ease;
+    z-index: -1;
+  }
+
+  .time-slot:hover {
+    color: white;
+    border-color: #10b981;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+  }
+
+  .time-slot:hover::before {
+    left: 0;
+  }
+
+  .time-slot.active {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    border-color: #10b981;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+  }
+
+  .time-slot.active::before {
+    left: 0;
+  }
+
+  .description-section {
+    grid-column: 1 / -1;
     margin-top: 20px;
   }
 
-  .appointment-table {
+  .description-input {
     width: 100%;
-    max-width: 900px;
-    margin: 20px auto;
-    border-collapse: collapse;
-    background-color: #fff;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  }
-
-  .appointment-table th, .appointment-table td {
-    padding: 12px 15px;
-    border: 1px solid #c8e6c9;
-    text-align: center;
-  }
-
-  .appointment-table th {
-    background-color: #c8e6c9;
-    color: #388e3c;
-    font-weight: bold;
-  }
-
-  .btn-danger {
-    background-color: #f44336;
-    color: white;
-    border: none;
-    padding: 6px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-  }
-
-  .btn-danger:hover {
-    background-color: #d32f2f;
-  }
-
-  .new-appointment {
-    margin: 40px auto;
-    text-align: center;
-    max-width: 600px;
-    background-color: #f1f9f1;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-  }
-
-  .new-appointment form {
-    text-align: left;
-  }
-
-  .new-appointment label {
-    font-weight: bold;
-    color: #388e3c;
-    display: block;
-    margin: 10px 0 5px;
-  }
-
-  .new-appointment input,
-  .new-appointment select {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border-radius: 5px;
-    border: 1px solid #c8e6c9;
-  }
-
-  .new-appointment button {
-    width: 100%;
-    background-color: #66bb6a;
-    color: white;
-    padding: 12px;
+    padding: 18px 20px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
     font-size: 16px;
+    background: #f8fafc;
+    transition: all 0.3s ease;
+    resize: vertical;
+    min-height: 120px;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .description-input:focus {
+    outline: none;
+    border-color: #10b981;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+  }
+
+  .timezone-note {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #718096;
+    margin-top: 16px;
+    padding: 12px 16px;
+    background: #f7fafc;
+    border-radius: 8px;
+    border-left: 4px solid #10b981;
+  }
+
+  .submit-section {
+    text-align: center;
+    padding-top: 20px;
+    border-top: 1px solid #e2e8f0;
+  }
+
+  .submit-button {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
     border: none;
-    border-radius: 5px;
-    font-weight: bold;
+    padding: 18px 48px;
+    border-radius: 50px;
+    font-size: 16px;
+    font-weight: 600;
     cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+    position: relative;
+    overflow: hidden;
   }
 
-  .new-appointment button:hover {
-    background-color: #388e3c;
+  .submit-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    transition: left 0.3s ease;
+    z-index: -1;
   }
 
+  .submit-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 30px rgba(16, 185, 129, 0.4);
+  }
+
+  .submit-button:hover::before {
+    left: 0;
+  }
+
+  .submit-button:active {
+    transform: translateY(-1px);
+  }
+
+  /* Success Notification */
+  .success-notification {
+    position: fixed;
+    top: 30px;
+    right: 30px;
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    padding: 24px 28px;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
+    z-index: 10000;
+    display: none;
+    animation: slideInRight 0.5s ease-out;
+    max-width: 350px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .success-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .success-icon {
+    width: 24px;
+    height: 24px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .success-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .success-message {
+    font-size: 14px;
+    margin-bottom: 16px;
+    opacity: 0.9;
+  }
+
+  .success-button {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 14px;
+    transition: all 0.2s ease;
+  }
+
+  .success-button:hover {
+    background: rgba(255, 255, 255, 0.3);
+  }
+
+  /* Modal Styles */
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
+    z-index: 20000;
+    display: none;
+    animation: fadeIn 0.3s ease-out;
+  }
+
+  .modal-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+    max-width: 800px;
+    width: 90%;
+    max-height: 80vh;
+    overflow: hidden;
+    z-index: 20001;
+    animation: modalSlideIn 0.4s ease-out;
+  }
+
+  .modal-header {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    padding: 24px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .modal-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .modal-close {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    transition: all 0.2s ease;
+  }
+
+  .modal-close:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: rotate(90deg);
+  }
+
+  .modal-body {
+    padding: 30px;
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+
+  .appointments-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .appointment-item {
+    background: #f8fafc;
+    border: 2px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 24px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .appointment-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(135deg, #10b981, #059669);
+  }
+
+  .appointment-item:hover {
+    border-color: #10b981;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(16, 185, 129, 0.15);
+  }
+
+  .appointment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+  }
+
+  .appointment-date-time {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .appointment-date {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #2d3748;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .appointment-time {
+    font-size: 0.9rem;
+    color: #10b981;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .appointment-status {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .status-pending {
+    background: #fef3cd;
+    color: #92400e;
+    border: 1px solid #f59e0b;
+  }
+
+  .status-confirmed {
+    background: #d1fae5;
+    color: #065f46;
+    border: 1px solid #10b981;
+  }
+
+  .status-completed {
+    background: #dcfce7;
+    color: #166534;
+    border: 1px solid #22c55e;
+  }
+
+  .appointment-description {
+    color: #4a5568;
+    line-height: 1.6;
+    margin-bottom: 16px;
+    padding: 16px;
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+  }
+
+  .appointment-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .action-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .btn-edit {
+    background: #ecfdf5;
+    color: #059669;
+    border: 1px solid #10b981;
+  }
+
+  .btn-edit:hover {
+    background: #10b981;
+    color: white;
+  }
+
+  .btn-cancel {
+    background: #fee2e2;
+    color: #dc2626;
+    border: 1px solid #ef4444;
+  }
+
+  .btn-cancel:hover {
+    background: #ef4444;
+    color: white;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #6b7280;
+  }
+
+  .empty-icon {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    opacity: 0.5;
+    color: #10b981;
+  }
+
+  .empty-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: #374151;
+  }
+
+  .empty-message {
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  /* Animations */
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slideInRight {
+    from {
+      opacity: 0;
+      transform: translateX(100px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes modalSlideIn {
+    from {
+      opacity: 0;
+      transform: translate(-50%, -60%);
+    }
+    to {
+      opacity: 1;
+      transform: translate(-50%, -50%);
+    }
+  }
+
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .appointment-card {
+      padding: 30px 25px;
+      margin: 20px;
+    }
+
+    .form-grid {
+      grid-template-columns: 1fr;
+      gap: 30px;
+    }
+
+    .time-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .page-header h1 {
+      font-size: 2rem;
+    }
+
+    .success-notification {
+      top: 20px;
+      right: 20px;
+      left: 20px;
+      max-width: none;
+    }
+
+    .modal-container {
+      width: 95%;
+      max-height: 90vh;
+    }
+
+    .modal-body {
+      padding: 20px;
+    }
+
+    .appointment-header {
+      flex-direction: column;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .appointment-actions {
+      justify-content: flex-start;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .appointment-container {
+      padding: 20px 15px;
+    }
+
+    .time-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .submit-button {
+      width: 100%;
+      padding: 16px;
+    }
+  }
 </style>
 
-<h1>📋 My Appointments</h1>
+<div class="appointment-container">
+  <div class="page-header">
+    <h1><i class="fas fa-calendar-heart"></i> Schedule Your Appointment</h1>
+    <p>Choose your preferred date and time for a personalized consultation</p>
+  </div>
 
-<!-- Appointment Table -->
-<table class="appointment-table">
-  <thead>
-    <tr>
-      <th>Date</th>
-      <th>Time</th>
-      <th>Description</th>
-      <th>Status</th>
-      <th>Action</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% appointments.forEach(appointment => { %>
-      <tr>
-        <td><%= appointment.date %></td>
-        <td><%= appointment.time %></td>
-        <td><%= appointment.description %></td>
-        <td><%= appointment.status %></td>
-        <td>
-          <% if (appointment.status === 'Pending') { %>
-            <form action="/user/appointments/delete/<%= appointment._id %>" method="POST">
-              <button type="submit" class="btn btn-danger">Cancel</button>
-            </form>
-          <% } else { %>
-            <em>N/A</em>
-          <% } %>
-        </td>
-      </tr>
-    <% }) %>
-  </tbody>
-</table>
+  <div class="appointment-card">
+    <form id="appointmentForm" onsubmit="return submitAppointment(event)">
+      <div class="form-grid">
+        <!-- Date Selection -->
+        <div class="form-section">
+          <div class="section-title">
+            <i class="fas fa-calendar-alt"></i>
+            <span>Select Date</span>
+          </div>
+          <div class="date-input-wrapper">
+            <input type="date" name="date" id="date" class="date-input" required>
+          </div>
+        </div>
 
-<!-- New Appointment Form -->
-<div class="new-appointment">
-  <h2>Book a New Appointment</h2>
-  <form action="/user/appointments" method="POST">
-    <label>Date:
-      <input type="date" name="date" required>
-    </label>
-    <label>Time:
-      <select name="time" required>
-        <% const hours = ['08:00 AM', '09:00 AM', '10:00 AM', '11:00 AM', '12:00 PM', '01:00 PM', '02:00 PM', '03:00 PM', '04:00 PM']; %>
-        <% hours.forEach(h => { %>
-          <option value="<%= h %>"><%= h %></option>
-        <% }) %>
-      </select>
-    </label>
-    <label>Description:
-      <input type="text" name="description" required>
-    </label>
-    <button type="submit">➕ Add Appointment</button>
-  </form>
+        <!-- Time Selection -->
+        <div class="form-section">
+          <div class="section-title">
+            <i class="fas fa-clock"></i>
+            <span>Available Times</span>
+          </div>
+          <div class="time-grid">
+            <% const times = ['09:00 AM', '10:00 AM', '11:00 AM', '12:00 PM', '01:00 PM', '02:00 PM', '03:00 PM', '04:00 PM', '05:00 PM']; %>
+            <% times.forEach(time => { %>
+              <div class="time-slot" onclick="selectTime('<%= time %>', event)">
+                <%= time %>
+              </div>
+            <% }) %>
+          </div>
+          <input type="hidden" name="time" id="selectedTime">
+          <div class="timezone-note">
+            <i class="fas fa-info-circle"></i>
+            <span>All times are in your local timezone</span>
+          </div>
+        </div>
+
+        <!-- Description Section -->
+        <div class="description-section">
+          <div class="section-title">
+            <i class="fas fa-comment-dots"></i>
+            <span>Appointment Details</span>
+          </div>
+          <textarea 
+            name="description" 
+            id="description" 
+            class="description-input" 
+            placeholder="Please describe the reason for your appointment or any specific topics you'd like to discuss..."
+            required
+          ></textarea>
+        </div>
+      </div>
+
+      <div class="submit-section">
+        <button type="submit" class="submit-button">
+          <i class="fas fa-paper-plane"></i>
+          Book My Appointment
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Success Notification -->
+  <div id="success-notification" class="success-notification">
+    <div class="success-header">
+      <div class="success-icon">
+        <i class="fas fa-check"></i>
+      </div>
+      <h3 class="success-title">Appointment Booked!</h3>
+    </div>
+    <p class="success-message">Your appointment has been successfully scheduled. We'll send you a confirmation email shortly.</p>
+    <button onclick="showAppointmentsModal()" class="success-button">
+      View My Appointments
+    </button>
+  </div>
+
+  <!-- Appointments Modal -->
+  <div id="appointments-modal" class="modal-overlay" onclick="closeModal(event)">
+    <div class="modal-container" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <h2 class="modal-title">
+          <i class="fas fa-calendar-check"></i>
+          My Appointments
+        </h2>
+        <button class="modal-close" onclick="closeModal()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div id="appointments-list" class="appointments-list">
+          <!-- Appointments will be loaded here -->
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
+
+<script>
+  // Mock appointments data - replace with actual data from your backend
+  let userAppointments = [
+    {
+      id: 1,
+      date: '2024-01-15',
+      time: '10:00 AM',
+      description: 'General consultation about health insurance options',
+      status: 'confirmed',
+      createdAt: '2024-01-10'
+    },
+    {
+      id: 2,
+      date: '2024-01-20',
+      time: '02:00 PM',
+      description: 'Follow-up meeting to discuss policy details',
+      status: 'pending',
+      createdAt: '2024-01-12'
+    },
+    {
+      id: 3,
+      date: '2024-01-08',
+      time: '11:00 AM',
+      description: 'Initial consultation for life insurance',
+      status: 'completed',
+      createdAt: '2024-01-05'
+    }
+  ];
+
+  // Set minimum date to today
+  document.addEventListener('DOMContentLoaded', function() {
+    const dateInput = document.getElementById('date');
+    const today = new Date().toISOString().split('T')[0];
+    dateInput.min = today;
+  });
+
+  function selectTime(time, event) {
+    // Remove active class from all time slots
+    const timeSlots = document.querySelectorAll('.time-slot');
+    timeSlots.forEach(slot => slot.classList.remove('active'));
+    
+    // Add active class to selected slot
+    event.target.classList.add('active');
+    
+    // Set hidden input value
+    document.getElementById('selectedTime').value = time;
+  }
+
+  function submitAppointment(e) {
+    e.preventDefault();
+    
+    const date = document.getElementById('date').value;
+    const time = document.getElementById('selectedTime').value;
+    const description = document.getElementById('description').value;
+
+    // Validation
+    if (!time) {
+      showError("Please select a time slot.");
+      return false;
+    }
+
+    if (!date) {
+      showError("Please select a date.");
+      return false;
+    }
+
+    if (!description.trim()) {
+      showError("Please provide a reason for your appointment.");
+      return false;
+    }
+
+    // Show loading state
+    const submitButton = document.querySelector('.submit-button');
+    const originalText = submitButton.innerHTML;
+    submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Booking...';
+    submitButton.disabled = true;
+
+    const formData = { date, time, description };
+
+    fetch('/user/appointments', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(formData)
+    })
+    .then(response => {
+      if (response.ok) {
+        // Add new appointment to mock data
+        const newAppointment = {
+          id: userAppointments.length + 1,
+          date: date,
+          time: time,
+          description: description,
+          status: 'pending',
+          createdAt: new Date().toISOString().split('T')[0]
+        };
+        userAppointments.unshift(newAppointment);
+        
+        showSuccess();
+        resetForm();
+      } else {
+        showError("There was an error booking your appointment. Please try again.");
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      showError("There was an error booking your appointment. Please try again.");
+    })
+    .finally(() => {
+      // Reset button state
+      submitButton.innerHTML = originalText;
+      submitButton.disabled = false;
+    });
+
+    return false;
+  }
+
+  function showSuccess() {
+    const notification = document.getElementById('success-notification');
+    notification.style.display = 'block';
+    
+    // Auto hide after 8 seconds
+    setTimeout(() => {
+      notification.style.display = 'none';
+    }, 8000);
+  }
+
+  function showError(message) {
+    // Create error notification
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'success-notification';
+    errorDiv.style.background = 'linear-gradient(135deg, #e53e3e, #c53030)';
+    errorDiv.style.display = 'block';
+    errorDiv.innerHTML = `
+      <div class="success-header">
+        <div class="success-icon">
+          <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <h3 class="success-title">Error</h3>
+      </div>
+      <p class="success-message">${message}</p>
+    `;
+    
+    document.body.appendChild(errorDiv);
+    
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+      errorDiv.remove();
+    }, 5000);
+  }
+
+  function resetForm() {
+    document.getElementById('appointmentForm').reset();
+    const timeSlots = document.querySelectorAll('.time-slot');
+    timeSlots.forEach(slot => slot.classList.remove('active'));
+    document.getElementById('selectedTime').value = '';
+  }
+
+  function showAppointmentsModal() {
+    const modal = document.getElementById('appointments-modal');
+    modal.style.display = 'block';
+    loadAppointments();
+  }
+
+  function closeModal(event) {
+    if (event && event.target !== event.currentTarget) return;
+    const modal = document.getElementById('appointments-modal');
+    modal.style.display = 'none';
+  }
+
+  function loadAppointments() {
+    const appointmentsList = document.getElementById('appointments-list');
+    
+    if (userAppointments.length === 0) {
+      appointmentsList.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">
+            <i class="fas fa-calendar-times"></i>
+          </div>
+          <h3 class="empty-title">No Appointments Yet</h3>
+          <p class="empty-message">You haven't scheduled any appointments yet. Book your first appointment to get started!</p>
+        </div>
+      `;
+      return;
+    }
+
+    // Sort appointments by date (newest first)
+    const sortedAppointments = userAppointments.sort((a, b) => new Date(b.date) - new Date(a.date));
+    
+    appointmentsList.innerHTML = sortedAppointments.map(appointment => {
+      const appointmentDate = new Date(appointment.date);
+      const formattedDate = appointmentDate.toLocaleDateString('en-US', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+
+      const statusClass = `status-${appointment.status}`;
+      const statusText = appointment.status.charAt(0).toUpperCase() + appointment.status.slice(1);
+
+      return `
+        <div class="appointment-item">
+          <div class="appointment-header">
+            <div class="appointment-date-time">
+              <div class="appointment-date">
+                <i class="fas fa-calendar"></i>
+                ${formattedDate}
+              </div>
+              <div class="appointment-time">
+                <i class="fas fa-clock"></i>
+                ${appointment.time}
+              </div>
+            </div>
+            <div class="appointment-status ${statusClass}">
+              ${statusText}
+            </div>
+          </div>
+          <div class="appointment-description">
+            <strong>Reason:</strong> ${appointment.description}
+          </div>
+          <div class="appointment-actions">
+            ${appointment.status === 'pending' ? `
+              <button class="action-btn btn-edit" onclick="editAppointment(${appointment.id})">
+                <i class="fas fa-edit"></i>
+                Reschedule
+              </button>
+              <button class="action-btn btn-cancel" onclick="cancelAppointment(${appointment.id})">
+                <i class="fas fa-times"></i>
+                Cancel
+              </button>
+            ` : ''}
+            ${appointment.status === 'confirmed' ? `
+              <button class="action-btn btn-cancel" onclick="cancelAppointment(${appointment.id})">
+                <i class="fas fa-times"></i>
+                Cancel
+              </button>
+            ` : ''}
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function editAppointment(appointmentId) {
+    // Close modal and scroll to form
+    closeModal();
+    document.querySelector('.appointment-card').scrollIntoView({ behavior: 'smooth' });
+    
+    // Find appointment and populate form
+    const appointment = userAppointments.find(app => app.id === appointmentId);
+    if (appointment) {
+      document.getElementById('date').value = appointment.date;
+      document.getElementById('description').value = appointment.description;
+      
+      // Select the time slot
+      const timeSlots = document.querySelectorAll('.time-slot');
+      timeSlots.forEach(slot => {
+        if (slot.textContent.trim() === appointment.time) {
+          slot.click();
+        }
+      });
+    }
+  }
+
+  function cancelAppointment(appointmentId) {
+    if (confirm('Are you sure you want to cancel this appointment?')) {
+      // Remove appointment from array
+      userAppointments = userAppointments.filter(app => app.id !== appointmentId);
+      
+      // Reload appointments list
+      loadAppointments();
+      
+      // Show success message
+      showError('Appointment cancelled successfully.');
+    }
+  }
+
+  // Close modal when clicking outside
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      closeModal();
+    }
+  });
+</script>
 
 <%- include('./layouts/footer') %>

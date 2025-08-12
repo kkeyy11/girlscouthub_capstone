@@ -2,18 +2,26 @@ const mongoose = require('mongoose');
 
 const reservationSchema = new mongoose.Schema({
   name: String,
+  email: String,
   contact: String,
-  email: { type: String, required: true }, // Add email field
   items: [
     {
-      productId: mongoose.Schema.Types.ObjectId,
+      productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
       name: String,
-      price: Number,
+      description: String,
       quantity: Number,
+      price: Number
     }
   ],
-  status: { type: String, default: 'Pending' },
-  dateReserved: { type: Date, default: Date.now }
+  total: Number,
+  status: {
+    type: String,
+    default: 'Pending'
+  },
+  date: {
+    type: Date,
+    default: Date.now
+  }
 });
 
 module.exports = mongoose.model('Reservation', reservationSchema);
