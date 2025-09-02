@@ -1,5 +1,5 @@
-const Product = require('../models/product');
-const Reservation = require('../models/reservation');
+const Product = require('../models/Product');
+const Reservation = require('../models/Reservation');
 const Notification = require("../models/Notification");
 
 

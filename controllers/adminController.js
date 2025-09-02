@@ -1,6 +1,6 @@
 const User = require('../models/user.model');
-const Appointment = require('../models/appointment.model');
-const Inventory = require('../models/inventory.model');  // Import for future use
+const Appointment = require('../models/Appointment');
+const Inventory = require('../models/Inventory');  // Import for future use
 const { sendAppointmentEmail } = require('../utils/mailer');
 
 const adminController = {

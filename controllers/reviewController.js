@@ -1,4 +1,4 @@
-const Review = require('../models/review.model');
+const Review = require('../models/Review');
 const Sentiment = require('sentiment');
 const sentiment = new Sentiment();
 const { spawn } = require('child_process');

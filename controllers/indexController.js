@@ -1,5 +1,5 @@
-const Appointment = require('../models/appointment.model');
-const Product = require('../models/product');
+const Appointment = require('../models/Appointment');
+const Product = require('../models/Product');
 const Event = require('../models/Event');
 const District = require('../models/District');
 const School = require('../models/School');
