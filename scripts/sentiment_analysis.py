@@ -1,14 +1,14 @@
 import sys
-import joblib
+from transformers import pipeline
 
-# Load joblib model
-model = joblib.load('scripts/sentiment_model.joblib')
+# Load pretrained model (Tagalog + English sentiment)
+classifier = pipeline("sentiment-analysis", model="dost-asti/RoBERTa-tl-sentiment-analysis")
 
-def predict_sentiment(text):
-    sentiment = model.predict([text])[0]
-    return sentiment
+# Get review text from Node.js (join all args to support spaces)
+text = " ".join(sys.argv[1:])
 
-if __name__ == "__main__":
-    input_text = sys.argv[1]
-    result = predict_sentiment(input_text)
-    print(result)
+# Run analysis
+result = classifier(text)[0]
+
+# Print label only and flush
+print(result['label'], flush=True)

@@ -109,6 +109,14 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 
+//BAGO 
+const adminRoutes = require('./routes/adminRoutes');
+app.use('/', adminRoutes);
+
+
+
+
+
 
 
     app.use('/', require('./routes/index.route'));

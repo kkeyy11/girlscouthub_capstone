@@ -87,9 +87,7 @@
       cursor:pointer;
       margin-left:10px;
     }
-    .review-button:hover {
-      background:#2980b9;
-    }
+    .review-button:hover {background:#2980b9;}
     footer {background:var(--dark);color:white;padding:40px 0;margin-top:60px;}
     .footer-container {display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:30px;}
     .footer-col h4 {font-size:1.2rem;margin-bottom:20px;position:relative;}
@@ -100,9 +98,15 @@
     .footer-col ul li a:hover {color:var(--secondary);}
     .copyright {text-align:center;padding-top:30px;border-top:1px solid #444;margin-top:30px;font-size:0.9rem;color:#aaa;}
     .modal {display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);justify-content:center;align-items:center;z-index:999;}
-    .modal-content {background:white;padding:20px;border-radius:8px;max-width:500px;width:90%;}
-    .modal-content textarea {width:100%;padding:10px;border-radius:6px;border:1px solid #ccc;}
-    .modal-content button {margin-top:10px;}
+    .modal-content {
+      background:white;
+      padding:20px;
+      border-radius:8px;
+      max-width:500px;
+      width:90%;
+      max-height:80vh;
+      overflow-y:auto;
+    }
   </style>
 </head>
 <body>
@@ -227,6 +231,9 @@
           </form>
           <% if (r.status === 'Approved') { %>
             <button class="review-button" onclick="openReviewModal('<%= r._id %>')">Leave Review</button>
+            <form method="POST" class="reorderForm" style="display:inline-block;">
+              <button type="button" class="review-button reorderBtn" style="background:#27ae60;" data-id="<%= r._id %>">Re-Order</button>
+            </form>
           <% } %>
         </li>
         <% }); %>
@@ -251,6 +258,171 @@
   </div>
 </div>
 
+<!-- Reorder Confirmation Modal -->
+<!-- <div id="reorderModal" class="modal">
+  <div class="modal-content">
+    <h2>Confirm Re-Order</h2>
+    <p>Are you sure you want to reorder this reservation?</p>
+    <form id="confirmReorderForm" method="POST">
+      <button type="submit" class="submit-button">Yes, Re-Order</button>
+      <button type="button" onclick="closeReorderModal()" class="submit-button" style="background:#e74c3c;margin-top:10px;">Cancel</button>
+    </form>
+  </div>
+</div> -->
+<!-- Enhanced Reorder Confirmation Modal -->
+<!-- Enhanced Reorder Confirmation Modal -->
+<!-- Enhanced Reorder Confirmation Modal -->
+<div id="reorderModal" class="modal">
+  <div class="modal-content" style="max-width: 600px;">
+    <h2>Confirm Re-Order</h2>
+    <p style="margin-bottom: 15px; color: #666;">This will create a new reservation with the following items:</p>
+    <div id="reorderPreview">
+      <!-- Items will be loaded here -->
+    </div>
+    <div style="margin-top: 20px;">
+      <!-- <form id="confirmReorderForm" method="POST">
+        <button type="submit" class="submit-button">Yes, Create Reservation</button>
+        <button type="button" onclick="closeReorderModal()" class="submit-button" style="background:#e74c3c;margin-top:10px;">Cancel</button>
+      </form> -->
+      <form id="confirmReorderForm" method="POST">
+  <input type="hidden" name="notification" value="Customer re-ordered this reservation." />
+  <button type="submit" class="submit-button">Yes, Create Reservation</button>
+  <button type="button" onclick="closeReorderModal()" class="submit-button" style="background:#e74c3c;margin-top:10px;">Cancel</button>
+</form>
+
+    </div>
+  </div>
+</div>
+
+<style>
+.reorder-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  border-bottom: 1px solid var(--gray);
+  background: #f9f9f9;
+  border-radius: 6px;
+  margin-bottom: 10px;
+}
+
+.reorder-item-details {
+  flex: 1;
+}
+
+.reorder-item-name {
+  font-weight: 600;
+  color: var(--dark);
+  margin-bottom: 5px;
+}
+
+.reorder-item-price {
+  color: var(--primary);
+  font-weight: 500;
+}
+
+.reorder-item-qty {
+  background: var(--primary);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  margin-left: 10px;
+}
+
+.reorder-total {
+  text-align: right;
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 2px solid var(--primary);
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.reorder-warning {
+  background: #fff3cd;
+  border: 1px solid #ffeaa7;
+  color: #856404;
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 15px;
+  font-size: 0.9rem;
+}
+</style>
+
+<script>
+// Enhanced reorder functionality
+document.querySelectorAll(".reorderBtn").forEach(btn => {
+  btn.addEventListener("click", async () => {
+    const reservationId = btn.getAttribute("data-id");
+    
+    try {
+      // Fetch reservation details for preview
+      const response = await fetch(`/get-reservation/${reservationId}`);
+      const reservation = await response.json();
+      
+      if (reservation.error) {
+        alert('Error loading reservation details');
+        return;
+      }
+      
+      // Build the preview HTML
+      let previewHTML = '<h3 style="margin-bottom: 15px;">Items for new reservation:</h3>';
+      let total = 0;
+      let hasWarnings = false;
+      let warningMessage = '';
+      
+      reservation.items.forEach(item => {
+        const itemTotal = item.price * item.quantity;
+        total += itemTotal;
+        
+        previewHTML += `
+          <div class="reorder-item">
+            <div class="reorder-item-details">
+              <div class="reorder-item-name">${item.name}</div>
+              <div class="reorder-item-price">₱${item.price.toLocaleString()}</div>
+              ${item.description ? `<div style="font-size:0.85rem;color:#666;margin-top:3px;">${item.description}</div>` : ''}
+            </div>
+            <div class="reorder-item-qty">Qty: ${item.quantity}</div>
+          </div>
+        `;
+        
+        // Check for stock warnings (if available in response)
+        if (item.stockWarning) {
+          hasWarnings = true;
+          warningMessage += `• ${item.name}: ${item.stockWarning}<br>`;
+        }
+      });
+      
+      previewHTML += `<div class="reorder-total">Total: ₱${total.toLocaleString()}</div>`;
+      
+      // Add warnings if any
+      if (hasWarnings) {
+        previewHTML = `<div class="reorder-warning"><strong>Stock Warnings:</strong><br>${warningMessage}</div>` + previewHTML;
+      }
+      
+      // Update modal content
+      document.getElementById("reorderPreview").innerHTML = previewHTML;
+      
+      // Set form action
+      confirmReorderForm.action = `/reorder/${reservationId}`;
+      
+      // Show modal
+      reorderModal.style.display = "flex";
+      
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Error loading reservation details');
+    }
+  });
+});
+
+function closeReorderModal() {
+  reorderModal.style.display = "none";
+}
+</script>
+
 <footer>
   <div class="container footer-container">
     <div class="footer-col"><h4>About Us</h4><ul><li><a href="#">Our Story</a></li></ul></div>
@@ -266,22 +438,35 @@
   const closeHistory = document.getElementById("closeHistory");
   const reviewModal = document.getElementById("reviewModal");
   const reservationIdInput = document.getElementById("reservationId");
+  const reorderModal = document.getElementById("reorderModal");
+  const confirmReorderForm = document.getElementById("confirmReorderForm");
 
   historyButton.onclick = () => historyModal.style.display = "flex";
   closeHistory.onclick = () => historyModal.style.display = "none";
   window.onclick = e => {
     if (e.target === historyModal) historyModal.style.display = "none";
     if (e.target === reviewModal) reviewModal.style.display = "none";
+    if (e.target === reorderModal) reorderModal.style.display = "none";
   };
 
   function openReviewModal(reservationId) {
     reservationIdInput.value = reservationId;
     reviewModal.style.display = "flex";
   }
-
   function closeReviewModal() {
     reviewModal.style.display = "none";
   }
+  function closeReorderModal() {
+    reorderModal.style.display = "none";
+  }
+
+  document.querySelectorAll(".reorderBtn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const reservationId = btn.getAttribute("data-id");
+      confirmReorderForm.action = `/reorder/${reservationId}`;
+      reorderModal.style.display = "flex";
+    });
+  });
 </script>
 </body>
 </html>

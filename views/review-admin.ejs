@@ -5,10 +5,8 @@
 :root {
   --primary: #059669;
   --primary-light: #10b981;
-  --primary-dark: #047857;
   --secondary: #34d399;
   --accent: #6ee7b7;
-  --dark: #1f2937;
   --gray-50: #f9fafb;
   --gray-100: #f3f4f6;
   --gray-200: #e5e7eb;
@@ -20,501 +18,417 @@
   --gray-800: #1f2937;
   --gray-900: #111827;
   --white: #ffffff;
-  --text: #1f2937;
-  --text-light: #6b7280;
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  --radius: 6px;
-  --radius-lg: 10px;
-  --radius-xl: 14px;
-  
-  /* Sentiment colors */
-  --positive: #059669;
-  --positive-light: #d1fae5;
-  --positive-border: #10b981;
-  --neutral: #f59e0b;
-  --neutral-light: #fef3c7;
-  --neutral-border: #fbbf24;
-  --negative: #dc2626;
-  --negative-light: #fee2e2;
-  --negative-border: #ef4444;
-}
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+  --radius: 14px;
+  --shadow: 0 4px 20px rgba(0,0,0,0.06);
 }
 
 body {
   font-family: 'Inter', sans-serif;
-  background: linear-gradient(135deg, var(--gray-50) 0%, var(--white) 100%);
-  color: var(--text);
-  line-height: 1.6;
-  padding-top: 100px; /* Added top padding to push content down */
-  min-height: 100vh;
+  background: linear-gradient(135deg, #e6fff2, #f9fffc); /* super light mint green */
+  color: var(--gray-800);
+  padding-top: 90px;
 }
 
 .admin-review-container {
-  padding: 1.5rem;
-  max-width: 800px;
-  margin: 0 auto;
-  margin-bottom: 40px; /* Added bottom margin for spacing */
-  animation: fadeIn 0.8s ease-out;
+  padding: 30px;
+  width: calc(100% - 240px);
+  margin-left: 240px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  max-width: 1400px;
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+h1 {
+  font-weight: 800;
+  font-size: 2.2rem;
+  color: var(--gray-900);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
 }
 
-.admin-review-container h1 {
+h1 i {
+  color: var(--primary);
+}
+
+.stats-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(180px,1fr));
+  gap: 20px;
+}
+
+.stat-card {
+  background: var(--white);
+  padding: 20px;
+  border-radius: var(--radius);
   text-align: center;
-  background: linear-gradient(135deg, var(--primary), var(--primary-light));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  margin-bottom: 1.5rem;
-  font-size: 2rem;
+  box-shadow: var(--shadow);
+  transition: transform 0.2s;
+}
+
+.stat-card:hover {
+  transform: translateY(-3px);
+}
+
+.stat-number {
   font-weight: 700;
+  font-size: 1.8rem;
+  color: var(--primary);
+}
+
+.stat-label {
+  font-size: 0.95rem;
+  color: var(--gray-500);
+  margin-top: 6px;
+}
+
+.analytics-container {
+  background: var(--white);
+  padding: 25px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 40px;
   position: relative;
-  animation: slideInDown 0.8s ease-out 0.2s both;
 }
 
-@keyframes slideInDown {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.analytics-title {
+  font-weight: 700;
+  font-size: 1.4rem;
+  color: var(--primary);
+  flex: 0 0 200px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
-.admin-review-container h1::after {
-  content: '';
+.analytics-title i { color: var(--primary-light); }
+
+.circular-charts-container {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  flex: 1;
+}
+
+.circular-chart {
+  position: relative;
+  width: 120px;
+  height: 120px;
+}
+
+.circular-chart canvas {
   position: absolute;
-  bottom: -8px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 60px;
-  height: 3px;
-  background: linear-gradient(135deg, var(--primary), var(--primary-light));
-  border-radius: 2px;
-  animation: expandWidth 1s ease-out 0.8s both;
+  top: 0; left: 0;
 }
 
-@keyframes expandWidth {
-  from { width: 0; }
-  to { width: 60px; }
+.circular-chart .percent-text {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.circular-chart .chart-label {
+  position: absolute;
+  width: 100%;
+  bottom: -25px;
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--gray-500);
+  font-weight: 600;
+}
+
+.analytics-filter {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+}
+
+.analytics-filter select,
+.analytics-filter input {
+  padding: 6px 10px;
+  border-radius: var(--radius);
+  border: 1px solid var(--gray-300);
+  font-size: 0.85rem;
+}
+
+.filter-buttons {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.filter-buttons button {
+  padding: 8px 16px;
+  border-radius: var(--radius);
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.filter-buttons button:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.filter-all { background: var(--gray-200); color: var(--gray-700); }
+.filter-positive { background: #d1fae5; color: var(--primary); }
+.filter-neutral { background: #fef3c7; color: #f59e0b; }
+.filter-negative { background: #fee2e2; color: #dc2626; }
+
+.filter-buttons .active {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
 .admin-review-list {
   list-style: none;
-  padding: 0;
   display: grid;
-  gap: 12px;
+  gap: 15px;
+  padding: 0;
 }
 
 .review-card {
-  padding: 16px;
-  border-left: 4px solid;
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-  animation: slideInLeft 0.6s ease-out both;
+  padding: 20px;
+  border-radius: var(--radius);
+  background: var(--white);
+  box-shadow: var(--shadow);
+  border-left: 5px solid transparent;
 }
 
-.review-card:nth-child(1) { animation-delay: 0.1s; }
-.review-card:nth-child(2) { animation-delay: 0.2s; }
-.review-card:nth-child(3) { animation-delay: 0.3s; }
-.review-card:nth-child(4) { animation-delay: 0.4s; }
-.review-card:nth-child(5) { animation-delay: 0.5s; }
-
-@keyframes slideInLeft {
-  from {
-    opacity: 0;
-    transform: translateX(-30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-.review-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, currentColor, transparent);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.review-card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
-}
-
-.review-card:hover::before {
-  opacity: 0.3;
-}
-
-/* Sentiment-based styling */
-.review-positive {
-  border-color: var(--positive-border);
-  background: linear-gradient(135deg, var(--positive-light), var(--white));
-  color: var(--positive);
-}
-
-.review-neutral {
-  border-color: var(--neutral-border);
-  background: linear-gradient(135deg, var(--neutral-light), var(--white));
-  color: var(--neutral);
-}
-
-.review-negative {
-  border-color: var(--negative-border);
-  background: linear-gradient(135deg, var(--negative-light), var(--white));
-  color: var(--negative);
-}
+.review-positive { border-color: #10b981; }
+.review-neutral { border-color: #f59e0b; }
+.review-negative { border-color: #dc2626; }
 
 .sentiment-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.8rem;
-  font-weight: 600;
+  display: inline-block;
   padding: 4px 10px;
   border-radius: var(--radius);
-  margin-bottom: 10px;
-  position: relative;
-  overflow: hidden;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-bottom: 8px;
 }
 
-.review-positive .sentiment-badge {
-  background: rgba(5, 150, 105, 0.1);
-  color: var(--positive);
-  border: 1px solid rgba(5, 150, 105, 0.2);
-}
-
-.review-neutral .sentiment-badge {
-  background: rgba(245, 158, 11, 0.1);
-  color: var(--neutral);
-  border: 1px solid rgba(245, 158, 11, 0.2);
-}
-
-.review-negative .sentiment-badge {
-  background: rgba(220, 38, 38, 0.1);
-  color: var(--negative);
-  border: 1px solid rgba(220, 38, 38, 0.2);
-}
-
-.sentiment-badge::before {
-  content: '';
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: currentColor;
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
-}
+.review-positive .sentiment-badge { background: #ecfdf5; color: #059669; }
+.review-neutral .sentiment-badge { background: #fffbeb; color: #b45309; }
+.review-negative .sentiment-badge { background: #fef2f2; color: #b91c1c; }
 
 .review-message {
-  color: var(--text);
-  font-size: 0.9rem;
-  line-height: 1.5;
+  font-size: 1rem;
   margin-bottom: 10px;
-  padding: 8px 0;
 }
 
 .review-meta {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 8px;
-  padding-top: 8px;
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  font-size: 0.85rem;
+  color: var(--gray-500);
 }
 
-.review-user {
-  color: var(--primary);
-  font-weight: 600;
-  font-size: 0.8rem;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.review-user::before {
-  content: '👤';
-  font-size: 0.7rem;
-}
-
-.review-date {
-  color: var(--text-light);
-  font-size: 0.75rem;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.review-date::before {
-  content: '📅';
-  font-size: 0.7rem;
-}
-
-/* Empty state */
 .empty-state {
   text-align: center;
-  padding: 3rem 1rem;
-  color: var(--text-light);
-  animation: fadeIn 0.8s ease-out;
-}
-
-.empty-state h3 {
-  font-size: 1.2rem;
-  margin-bottom: 0.5rem;
-  color: var(--text);
-}
-
-.empty-state p {
-  font-size: 0.9rem;
-}
-
-/* Stats summary */
-.stats-summary {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 12px;
-  margin-bottom: 1.5rem;
-  animation: slideInUp 0.8s ease-out 0.4s both;
-}
-
-@keyframes slideInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.stat-card {
   background: var(--white);
-  padding: 12px;
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
-  text-align: center;
-  border: 1px solid var(--gray-200);
-  transition: all 0.3s ease;
-}
-
-.stat-card:hover {
-  transform: translateY(-1px);
+  padding: 40px;
+  border-radius: var(--radius);
   box-shadow: var(--shadow);
 }
 
-.stat-number {
-  font-size: 1.5rem;
+.empty-state h3 {
   font-weight: 700;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
 
-.stat-label {
-  font-size: 0.75rem;
-  color: var(--text-light);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.stat-positive .stat-number { color: var(--positive); }
-.stat-neutral .stat-number { color: var(--neutral); }
-.stat-negative .stat-number { color: var(--negative); }
-
-/* Add a subtle top section for visual balance */
-.top-spacer {
-  height: 60px;
-  background: linear-gradient(180deg, rgba(5, 150, 105, 0.05) 0%, transparent 100%);
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: -1;
-  pointer-events: none;
-}
-
-/* Responsive design */
-@media (max-width: 768px) {
-  body {
-    padding-top: 80px; /* Reduced top padding for mobile */
-  }
-
-  .admin-review-container {
-    padding: 1rem;
-  }
-
-  .admin-review-container h1 {
-    font-size: 1.6rem;
-    margin-bottom: 1rem;
-  }
-
-  .review-card {
-    padding: 12px;
-  }
-
-  .review-meta {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 4px;
-  }
-
-  .stats-summary {
-    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-    gap: 8px;
-  }
-
-  .stat-card {
-    padding: 8px;
-  }
-
-  .stat-number {
-    font-size: 1.2rem;
-  }
-}
-
-@media (max-width: 480px) {
-  body {
-    padding-top: 60px; /* Even less top padding for small mobile */
-  }
-
-  .admin-review-container {
-    padding: 0.75rem;
-  }
-
-  .admin-review-container h1 {
-    font-size: 1.4rem;
-  }
-
-  .review-card {
-    padding: 10px;
-  }
-
-  .review-message {
-    font-size: 0.85rem;
-  }
-
-  .stats-summary {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--gray-100);
-}
-
-::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, var(--primary), var(--primary-light));
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, var(--primary-light), var(--secondary));
+.empty-state p {
+  color: var(--gray-500);
 }
 </style>
 
-<div class="top-spacer"></div>
-
 <div class="admin-review-container">
-  <h1>📋 All User Reviews</h1>
-  
-  <!-- Stats Summary -->
+  <h1><i class="fas fa-tachometer-alt"></i> Dashboard Sentiment</h1>
+
   <div class="stats-summary">
-    <div class="stat-card stat-positive">
+    <div class="stat-card">
       <div class="stat-number"><%= reviews.filter(r => r.sentiment.toLowerCase() === 'positive').length %></div>
       <div class="stat-label">Positive</div>
     </div>
-    <div class="stat-card stat-neutral">
+    <div class="stat-card">
       <div class="stat-number"><%= reviews.filter(r => r.sentiment.toLowerCase() === 'neutral').length %></div>
       <div class="stat-label">Neutral</div>
     </div>
-    <div class="stat-card stat-negative">
+    <div class="stat-card">
       <div class="stat-number"><%= reviews.filter(r => r.sentiment.toLowerCase() === 'negative').length %></div>
       <div class="stat-label">Negative</div>
     </div>
     <div class="stat-card">
-      <div class="stat-number" style="color: var(--primary);"><%= reviews.length %></div>
+      <div class="stat-number"><%= reviews.length %></div>
       <div class="stat-label">Total</div>
     </div>
   </div>
 
-  <% if (reviews.length === 0) { %>
+  <div class="analytics-container">
+    <div class="analytics-title"><i class="fas fa-chart-pie"></i> Analytics</div>
+    <div class="circular-charts-container">
+      <div class="analytics-filter">
+        <select id="analytics-period">
+          <option value="today">Today</option>
+          <option value="month">Month</option>
+          <option value="year">Year</option>
+        </select>
+        <input type="date" id="date-filter" style="display:none;">
+        <input type="month" id="month-filter" style="display:none;">
+        <input type="number" id="year-filter" style="display:none;" placeholder="YYYY" min="2000" max="2100">
+      </div>
+      <div class="circular-chart">
+        <canvas id="chart-positive"></canvas>
+        <div class="percent-text" id="percent-positive">0%</div>
+        <div class="chart-label">Positive</div>
+      </div>
+      <div class="circular-chart">
+        <canvas id="chart-neutral"></canvas>
+        <div class="percent-text" id="percent-neutral">0%</div>
+        <div class="chart-label">Neutral</div>
+      </div>
+      <div class="circular-chart">
+        <canvas id="chart-negative"></canvas>
+        <div class="percent-text" id="percent-negative">0%</div>
+        <div class="chart-label">Negative</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="filter-buttons">
+    <button class="filter-all active">All</button>
+    <button class="filter-positive">Positive</button>
+    <button class="filter-neutral">Neutral</button>
+    <button class="filter-negative">Negative</button>
+  </div>
+
+  <% if(reviews.length === 0) { %>
     <div class="empty-state">
+      <i class="fas fa-comment-slash fa-2x" style="color:#9ca3af; margin-bottom:10px;"></i>
       <h3>No Reviews Yet</h3>
       <p>No user reviews have been submitted yet.</p>
     </div>
   <% } else { %>
     <ul class="admin-review-list">
       <% reviews.forEach(review => { 
-          let sentimentClass = '';
-          if (review.sentiment.toLowerCase() === 'positive') sentimentClass = 'review-positive';
-          else if (review.sentiment.toLowerCase() === 'neutral') sentimentClass = 'review-neutral';
-          else if (review.sentiment.toLowerCase() === 'negative') sentimentClass = 'review-negative';
+        let sentimentClass = '';
+        if(review.sentiment.toLowerCase() === 'positive') sentimentClass='review-positive';
+        else if(review.sentiment.toLowerCase() === 'neutral') sentimentClass='review-neutral';
+        else if(review.sentiment.toLowerCase() === 'negative') sentimentClass='review-negative';
       %>
         <li class="review-card <%= sentimentClass %>">
-          <div class="sentiment-badge">
-            Sentiment: <%= review.sentiment %>
-          </div>
-          
-          <div class="review-message">
-            <%= review.message %>
-          </div>
-          
+          <div class="sentiment-badge"><%= review.sentiment %></div>
+          <div class="review-message"><%= review.message %></div>
           <div class="review-meta">
-            <div class="review-user">
-              <%= review.user?.username || 'Unknown User' %>
-            </div>
-            <div class="review-date">
-              <%= new Date(review.createdAt).toLocaleDateString('en-US', { 
-                year: 'numeric', 
-                month: 'short', 
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-              }) %>
-            </div>
+            <div><i class="fas fa-user"></i> <%= review.user?.username || 'Unknown User' %></div>
+            <div><i class="fas fa-clock"></i> <%= new Date(review.createdAt).toLocaleString() %></div>
           </div>
         </li>
       <% }) %>
     </ul>
   <% } %>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const reviews = <%- JSON.stringify(reviews) %>;
+function filterReviewsByDate(period, value){
+  if(period === 'today'){
+    const today = new Date();
+    return reviews.filter(r=>{
+      const d = new Date(r.createdAt);
+      return d.toDateString() === today.toDateString();
+    });
+  } else if(period === 'month'){
+    return reviews.filter(r=>{
+      const d = new Date(r.createdAt);
+      return d.getFullYear() === value.getFullYear() && d.getMonth() === value.getMonth();
+    });
+  } else if(period === 'year'){
+    return reviews.filter(r=>{
+      const d = new Date(r.createdAt);
+      return d.getFullYear() === value;
+    });
+  }
+  return reviews;
+}
+function updateCharts(filteredReviews){
+  const total = filteredReviews.length;
+  const counts = {
+    positive: filteredReviews.filter(r=>r.sentiment.toLowerCase()==='positive').length,
+    neutral: filteredReviews.filter(r=>r.sentiment.toLowerCase()==='neutral').length,
+    negative: filteredReviews.filter(r=>r.sentiment.toLowerCase()==='negative').length
+  };
+  function createCircularChart(id, value, color){
+    const ctx = document.getElementById(id).getContext('2d');
+    if(window[id+'_chart']) window[id+'_chart'].destroy();
+    window[id+'_chart'] = new Chart(ctx,{
+      type:'doughnut',
+      data:{
+        labels:['Filled','Remaining'],
+        datasets:[{
+          data:[value,total-value],
+          backgroundColor:[color,'#e5e5e5'],
+          cutout:'70%',
+          borderWidth:0
+        }]
+      },
+      options:{plugins:{legend:{display:false}, tooltip:{enabled:false}}}
+    });
+    document.getElementById('percent-'+id.split('-')[1]).innerText = total===0?'0%':((value/total)*100).toFixed(1)+'%';
+  }
+  createCircularChart('chart-positive', counts.positive, getComputedStyle(document.documentElement).getPropertyValue('--primary').trim());
+  createCircularChart('chart-neutral', counts.neutral, '#f59e0b');
+  createCircularChart('chart-negative', counts.negative, '#dc2626');
+}
+updateCharts(reviews);
+const periodSelect = document.getElementById('analytics-period');
+const dateInput = document.getElementById('date-filter');
+const monthInput = document.getElementById('month-filter');
+const yearInput = document.getElementById('year-filter');
+periodSelect.addEventListener('change', ()=>{
+  dateInput.style.display = monthInput.style.display = yearInput.style.display = 'none';
+  if(periodSelect.value==='today') dateInput.style.display='none';
+  if(periodSelect.value==='month') monthInput.style.display='inline-block';
+  if(periodSelect.value==='year') yearInput.style.display='inline-block';
+  updateCharts(reviews);
+});
+dateInput.addEventListener('change', ()=>{
+  const d = new Date(dateInput.value);
+  updateCharts(filterReviewsByDate('today', d));
+});
+monthInput.addEventListener('change', ()=>{
+  const d = new Date(monthInput.value);
+  updateCharts(filterReviewsByDate('month', d));
+});
+yearInput.addEventListener('change', ()=>{
+  const y = parseInt(yearInput.value);
+  updateCharts(filterReviewsByDate('year', y));
+});
+const buttons = document.querySelectorAll('.filter-buttons button');
+const reviewCards = document.querySelectorAll('.review-card');
+buttons.forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    buttons.forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    const filter = btn.classList.contains('filter-positive')?'positive':
+                   btn.classList.contains('filter-neutral')?'neutral':
+                   btn.classList.contains('filter-negative')?'negative':'all';
+    reviewCards.forEach(card=>{
+      if(filter==='all') card.style.display='block';
+      else card.style.display = card.classList.contains('review-'+filter)?'block':'none';
+    });
+  });
+});
+</script>
 
 <%- include('./layouts/footer') %>

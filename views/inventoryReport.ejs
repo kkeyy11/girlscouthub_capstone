@@ -2,623 +2,241 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Comprehensive Inventory Report</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-  body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin: 0;
-    padding: 0;
-    background: #f8fafc;
-    color: #333;
-  }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; background: #f4f7fa; color: #333; }
+    .container { padding: 2rem; max-width: 1200px; margin: 0 auto; }
+    .report-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; border-bottom: 3px solid #2e7d32; padding-bottom: .5rem; }
+    .report-title { font-size: 1.8rem; font-weight: bold; color: #2e7d32; }
+    .btn-group { display: flex; gap: .5rem; }
+    .action-btn { display: inline-flex; align-items: center; gap: 6px; padding: .5rem 1rem; border-radius: 6px; font-size: .9rem; font-weight: 500; border: none; cursor: pointer; background: #2e7d32; color: #fff; text-decoration: none; transition: 0.3s; }
+    .action-btn:hover { background: #256428; }
+    .search-bar { margin-bottom: 1rem; background: #fff; padding: .8rem 1rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,.08); }
+    .filter-row { display: flex; gap: .5rem; flex-wrap: wrap; }
+    .search-bar input, .search-bar select { padding: 0.5rem; border: 1px solid #ccc; border-radius: 6px; font-size: 0.9rem; }
+    .search-bar input { width: 220px; }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin: 1.5rem 0; }
+    .stat-card { background: #fff; padding: 1rem; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,.08); display: flex; flex-direction: column; gap: .5rem; }
+    .stat-header { display: flex; justify-content: space-between; align-items: center; }
+    .stat-title { font-size: .95rem; font-weight: 600; color: #666; }
+    .stat-value { font-size: 1.4rem; font-weight: bold; color: #2e7d32; }
+    .stat-icon { width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; border-radius: 8px; color: #fff; }
+    .blue { background: #1976d2; } .green { background: #2e7d32; } .orange { background: #f57c00; } .red { background: #c62828; }
+    table { width: 100%; border-collapse: collapse; margin-top: 1rem; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,.08); }
+    table th { background: #2e7d32; color: #fff; padding: .75rem; text-align: left; font-size: .9rem; }
+    table td { padding: .7rem; border-bottom: 1px solid #eee; font-size: .9rem; }
+    .status { padding: .25rem .5rem; border-radius: 5px; font-size: .8rem; font-weight: 600; color: #fff; }
+    .status-in-stock { background: #43a047; }
+    .status-low { background: #f57c00; }
+    .status-out { background: #c62828; }
 
-  header {
-    background-color: #2e7d32;
-    color: white;
-    padding: 1rem 2rem;
-  }
-
-  .header-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .company-info {
-    display: flex;
-    align-items: center;
-  }
-
-  .company-info .logo i {
-    font-size: 2rem;
-    margin-right: 1rem;
-  }
-
-  .company-name h1 {
-    margin: 0;
-    font-size: 1.5rem;
-  }
-
-  .company-name span {
-    font-size: 0.875rem;
-    opacity: 0.8;
-  }
-
-  .user-info {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  .user-info i {
-    font-size: 1.2rem;
-  }
-
-.container {
-  padding: 1rem;
-  max-width: 500px; /* dating 1100px, pinaliit */
-  margin: 0 auto;
-  font-size: 0.85rem; /* dating 0.9rem */
-}
-
-
-table {
-  font-size: 0.75rem; /* dating 0.8rem */
-  width: 50%;         /* dating 95%, mas maliit na width */
-  margin: 0 auto;
-}
-
-
-  .report-actions .btn {
-    margin-left: 0.5rem;
-    padding: 0.5rem 1rem;
-    font-size: 0.9rem;
-    border-radius: 6px;
-    border: none;
-    cursor: pointer;
-  }
-
-  .btn-outline {
-    border: 1px solid #ccc;
-    background: white;
-    color: #333;
-  }
-
-  .btn-primary {
-    background-color: #388e3c;
-    color: white;
-  }
-
-  .btn-success {
-    background-color: #43a047;
-    color: white;
-  }
-
-  .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 1.5rem;
-    margin-bottom: 2rem;
-  }
-
-  .stat-card {
-    background: white;
-    border-radius: 10px;
-    padding: 1rem;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-  }
-
-  .stat-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .stat-title {
-    font-size: 0.95rem;
-    color: #555;
-  }
-
-  .stat-icon i {
-    font-size: 1.4rem;
-    padding: 0.6rem;
-    border-radius: 8px;
-    color: white;
-  }
-
-  .stat-icon.blue { background: #42a5f5; }
-  .stat-icon.green { background: #66bb6a; }
-  .stat-icon.orange { background: #ffa726; }
-  .stat-icon.red { background: #ef5350; }
-
-  .stat-value {
-    font-size: 1.5rem;
-    margin: 0.5rem 0;
-  }
-
-  .stat-description {
-    font-size: 0.8rem;
-    color: #888;
-  }
-
-  .trend-up { color: green; }
-  .trend-down { color: red; }
-
-  .info-card {
-    background: #e8f5e9;
-    border-left: 5px solid #43a047;
-    padding: 1rem;
-    display: flex;
-    align-items: center;
-    border-radius: 8px;
-    margin-bottom: 2rem;
-  }
-
-  .info-icon {
-    font-size: 2rem;
-    margin-right: 1rem;
-    color: #2e7d32;
-  }
-
-  .filters {
-    background: #ffffff;
-    padding: 1rem 1.5rem;
-    border-radius: 10px;
-    margin-bottom: 2rem;
-    box-shadow: 0 1px 5px rgba(0,0,0,0.05);
-  }
-
-  .filters-title {
-    font-size: 1.2rem;
-    margin-bottom: 1rem;
-    color: #2e7d32;
-  }
-
-  .filters-form {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 1rem;
-  }
-
-  .form-group {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .form-label {
-    margin-bottom: 0.3rem;
-    font-weight: 600;
-    font-size: 0.85rem;
-  }
-
-  .form-control {
-    padding: 0.5rem;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    font-size: 0.9rem;
-  }
-
-  .filters-actions {
-    grid-column: span 2;
-    display: flex;
-    gap: 1rem;
-    margin-top: 1rem;
-  }
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    background: white;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.03);
-    border-radius: 8px;
-    overflow: hidden;
-  }
-
-  thead {
-    background: #e0f2f1;
-  }
-
-  th, td {
-    padding: 0.75rem;
-    text-align: left;
-    font-size: 0.9rem;
-    border-bottom: 1px solid #eee;
-  }
-
-  .category-header td {
-    background-color: #f1f8e9;
-    font-weight: bold;
-  }
-
-  .status {
-    padding: 0.3rem 0.6rem;
-    border-radius: 4px;
-    font-size: 0.8rem;
-    font-weight: bold;
-  }
-
-  .status-in-stock { background: #c8e6c9; color: #256029; }
-  .status-low { background: #fff3cd; color: #856404; }
-  .status-out { background: #f8d7da; color: #721c24; }
-
-  .table-actions {
-    display: flex;
-    gap: 0.3rem;
-  }
-
-  .action-btn {
-    border: none;
-    background: none;
-    cursor: pointer;
-    color: #555;
-  }
-
-  .action-btn:hover {
-    color: #000;
-  }
-
-  .summary-section {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1rem;
-    margin-top: 2rem;
-  }
-
-  .summary-card {
-    background: white;
-    padding: 1rem;
-    border-radius: 8px;
-    box-shadow: 0 1px 6px rgba(0,0,0,0.05);
-  }
-
-  .summary-title {
-    font-size: 1rem;
-    margin-bottom: 1rem;
-    color: #1b5e20;
-  }
-
-  .summary-list {
-    list-style: none;
-    padding: 0;
-  }
-
-  .summary-item {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 0.5rem;
-  }
-
-  .pagination {
-    display: flex;
-    justify-content: center;
-    margin-top: 2rem;
-    gap: 0.5rem;
-  }
-
-  .page-item {
-    padding: 0.5rem 0.75rem;
-    border-radius: 4px;
-    background: #e0e0e0;
-    cursor: pointer;
-  }
-
-  .page-item.active {
-    background: #43a047;
-    color: white;
-  }
-
-  
-</style>
-
+    /* ✅ Pagination */
+    .pagination { display: flex; justify-content: center; margin-top: 1rem; gap: .4rem; flex-wrap: wrap; }
+    .pagination button { padding: .4rem .8rem; border: 1px solid #2e7d32; background: #fff; color: #2e7d32; border-radius: 5px; cursor: pointer; font-size: .9rem; }
+    .pagination button.active { background: #2e7d32; color: #fff; }
+    .pagination button:hover { background: #256428; color: #fff; }
+    .pagination button:disabled { background: #eee; color: #aaa; cursor: not-allowed; }
+  </style>
 </head>
 <body>
-  
-
   <div class="container">
+    <!-- ✅ Header -->
     <div class="report-header">
-      <h1 class="report-title">Inventory Report</h1>
-      <div class="report-actions">
-        <button class="btn btn-outline">
-          <i class="fas fa-sync-alt"></i>
-          Refresh
-        </button>
-        <a href="/inventory-report/download?category=<%= category %>&startDate=<%= startDate %>&endDate=<%= endDate %>" class="btn btn-success">
-          <i class="fas fa-file-pdf"></i>
-          Export PDF
+      <h1 class="report-title">📦 Inventory Report</h1>
+      <div class="btn-group">
+        <a href="/manage-products" class="action-btn" style="background:#546e7a;">
+          <i class="fas fa-arrow-left"></i> Back to Products
         </a>
-        <button class="btn btn-outline">
-          <i class="fas fa-file-excel"></i>
-          Export Excel
-        </button>
-        <button class="btn btn-primary">
-          <i class="fas fa-print"></i>
-          Print
+        <button id="exportBtn" class="action-btn">
+          <i class="fas fa-file-csv"></i> Export CSV
         </button>
       </div>
     </div>
 
-    <!-- Stats Overview -->
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-header">
-          <span class="stat-title">Total Items</span>
-          <div class="stat-icon blue">
-            <i class="fas fa-cubes"></i>
-          </div>
-        </div>
-        <div class="stat-value">
-          <%= inventory ? inventory.reduce((sum, item) => sum + item.quantity, 0) : 0 %>
-        </div>
-        <div class="stat-description">
-          <i class="fas fa-arrow-up trend-up"></i>
-          <span>5.3% increase from last month</span>
-        </div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-header">
-          <span class="stat-title">Total Value</span>
-          <div class="stat-icon green">
-            <i class="fas fa-peso-sign"></i>
-          </div>
-        </div>
-        <div class="stat-value">
-          ₱<%= inventory ? inventory.reduce((sum, item) => sum + (item.price * item.quantity), 0).toFixed(2) : '0.00' %>
-        </div>
-        <div class="stat-description">
-          <i class="fas fa-arrow-up trend-up"></i>
-          <span>8.2% increase from last month</span>
-        </div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-header">
-          <span class="stat-title">Low Stock Items</span>
-          <div class="stat-icon orange">
-            <i class="fas fa-exclamation-triangle"></i>
-          </div>
-        </div>
-        <div class="stat-value">
-          <%= inventory ? inventory.filter(item => item.quantity < 10 && item.quantity > 0).length : 0 %>
-        </div>
-        <div class="stat-description">
-          <i class="fas fa-arrow-down trend-down"></i>
-          <span>2.1% increase from last week</span>
-        </div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-header">
-          <span class="stat-title">Out of Stock Items</span>
-          <div class="stat-icon red">
-            <i class="fas fa-times-circle"></i>
-          </div>
-        </div>
-        <div class="stat-value">
-          <%= inventory ? inventory.filter(item => item.quantity === 0).length : 0 %>
-        </div>
-        <div class="stat-description">
-          <i class="fas fa-arrow-down trend-down"></i>
-          <span>1.4% decrease from last week</span>
-        </div>
+    <!-- ✅ Category Set -->
+    <%
+      const _catSet = {};
+      (inventory || []).forEach(it => { if (it && it.category) _catSet[it.category] = true; });
+      const _cats = Object.keys(_catSet);
+    %>
+
+    <!-- ✅ Filters -->
+    <div class="search-bar">
+      <div class="filter-row">
+        <input type="text" id="searchInput" placeholder="Search inventory...">
+        <select id="filterCategory" title="Filter by Category">
+          <option value="all">All Categories</option>
+          <% _cats.forEach(cat => { %>
+            <option value="<%= cat %>"><%= cat %></option>
+          <% }) %>
+        </select>
       </div>
     </div>
 
-    <!-- Info Card (Replacing Charts) -->
-    <div class="info-card">
-      <div class="info-icon">
-        <i class="fas fa-chart-pie"></i>
-      </div>
-      <div class="info-content">
-        <h3>Inventory Insights</h3>
-        <p>View detailed inventory statistics and trends in the dashboard. Monitor stock levels, track inventory value, and identify items that need attention.</p>
-      </div>
-    </div>
-
-    
-    <!-- Inventory Table -->
+    <!-- ✅ Inventory Table -->
     <% if (inventory && inventory.length > 0) { %>
-      <% 
-        let grandTotal = 0;
-        let categories = {};
-        
-        // Group by categories
-        inventory.forEach(item => {
-          if (!categories[item.category]) {
-            categories[item.category] = {
-              items: [],
-              totalValue: 0,
-              totalQuantity: 0
-            };
-          }
-          categories[item.category].items.push(item);
-          categories[item.category].totalValue += item.price * item.quantity;
-          categories[item.category].totalQuantity += item.quantity;
-          grandTotal += item.price * item.quantity;
-        });
-      %>
-      
-      <div class="inventory-section">
-        <div class="section-header">
-          <h3 class="section-title">Inventory Items</h3>
-          <div class="section-actions">
-            <div class="btn btn-outline">
-              <i class="fas fa-sort"></i>
-              Sort
-            </div>
-            <div class="btn btn-outline">
-              <i class="fas fa-filter"></i>
-              Filter
-            </div>
-          </div>
-        </div>
-        <div class="table-responsive">
-          <table>
-            <thead>
-              <tr>
-                <th>Item Code</th>
-                <th>Item Name</th>
-                <th>Category</th>
-                <th>Quantity</th>
-                <th>Status</th>
-                <th>Unit Price (₱)</th>
-                <th>Total Value (₱)</th>
-                <th>Last Updated</th>
-                <th>Date Added</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <% 
-                // Display by category
-                Object.keys(categories).forEach(categoryName => {
-                  const categoryData = categories[categoryName];
-              %>
-                <tr class="category-header">
-                  <td colspan="11">
-                    <i class="fas fa-folder"></i>
-                    <%= categoryName %> (<%= categoryData.items.length %> items, <%= categoryData.totalQuantity %> units, ₱<%= categoryData.totalValue.toFixed(2) %>)
-                  </td>
-                </tr>
-                <% categoryData.items.forEach((item, index) => { 
-                  let totalValue = item.price * item.quantity;
-                  let stockStatus = item.quantity === 0 ? 'out' : (item.quantity < 10 ? 'low' : 'in-stock');
-                %>
-                  <tr>
-                    <td><%= 'ITM' + (1000 + index) %></td>
-                    <td><%= item.name %></td>
-                    <td><%= item.category %></td>
-                    
-                    <td><%= item.quantity %></td>
-                    <td>
-                      <% if (stockStatus === 'in-stock') { %>
-                        <span class="status status-in-stock">In Stock</span>
-                      <% } else if (stockStatus === 'low') { %>
-                        <span class="status status-low">Low Stock</span>
-                      <% } else { %>
-                        <span class="status status-out">Out of Stock</span>
-                      <% } %>
-                    </td>
-                    <td>₱<%= item.price.toFixed(2) %></td>
-                    <td>₱<%= totalValue.toFixed(2) %></td>
-                    <td><%= new Date(Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000).toLocaleDateString() %></td>
-                    <td><%= item.createdAt ? item.createdAt.toDateString() : new Date(Date.now() - Math.floor(Math.random() * 90) * 24 * 60 * 60 * 1000).toLocaleDateString() %></td>
-                    <td>
-                      <div class="table-actions">
-                        <button class="action-btn" title="View Details">
-                          <i class="fas fa-eye"></i>
-                        </button>
-                        <button class="action-btn" title="Edit Item">
-                          <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="action-btn" title="Delete Item">
-                          <i class="fas fa-trash"></i>
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                <% }); %>
-              <% }); %>
-              <tr class="total-row">
-                <td colspan="6" style="text-align: right;">Grand Total:</td>
-                <td></td>
-                <td>₱<%= grandTotal.toFixed(2) %></td>
-                <td colspan="3"></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- Summary Section -->
-      <div class="summary-section">
-        <div class="summary-card">
-          <h3 class="summary-title">Category Summary</h3>
-          <ul class="summary-list">
-            <% Object.keys(categories).forEach(categoryName => { %>
-              <li class="summary-item">
-                <span class="summary-label"><%= categoryName %></span>
-                <span class="summary-value">₱<%= categories[categoryName].totalValue.toFixed(2) %></span>
-              </li>
-            <% }); %>
-            <li class="summary-item">
-              <span class="summary-label"><strong>Total</strong></span>
-              <span class="summary-value"><strong>₱<%= grandTotal.toFixed(2) %></strong></span>
-            </li>
-          </ul>
-        </div>
-        
-        <div class="summary-card">
-          <h3 class="summary-title">Inventory Status</h3>
-          <ul class="summary-list">
-            <li class="summary-item">
-              <span class="summary-label">In Stock Items</span>
-              <span class="summary-value"><%= inventory.filter(item => item.quantity >= 10).length %></span>
-            </li>
-            <li class="summary-item">
-              <span class="summary-label">Low Stock Items</span>
-              <span class="summary-value"><%= inventory.filter(item => item.quantity < 10 && item.quantity > 0).length %></span>
-            </li>
-            <li class="summary-item">
-              <span class="summary-label">Out of Stock Items</span>
-              <span class="summary-value"><%= inventory.filter(item => item.quantity === 0).length %></span>
-            </li>
-            <li class="summary-item">
-              <span class="summary-label"><strong>Total Items</strong></span>
-              <span class="summary-value"><strong><%= inventory.length %></strong></span>
-            </li>
-          </ul>
-        </div>
-        
-        <div class="summary-card">
-          <h3 class="summary-title">Inventory Metrics</h3>
-          <ul class="summary-list">
-            <li class="summary-item">
-              <span class="summary-label">Average Item Value</span>
-              <span class="summary-value">₱<%= (grandTotal / inventory.length).toFixed(2) %></span>
-            </li>
-            <li class="summary-item">
-              <span class="summary-label">Highest Value Item</span>
-              <span class="summary-value">₱<%= Math.max(...inventory.map(item => item.price)).toFixed(2) %></span>
-            </li>
-            <li class="summary-item">
-              <span class="summary-label">Lowest Value Item</span>
-              <span class="summary-value">₱<%= Math.min(...inventory.map(item => item.price)).toFixed(2) %></span>
-            </li>
-            <li class="summary-item">
-              <span class="summary-label">Total Categories</span>
-              <span class="summary-value"><%= Object.keys(categories).length %></span>
-            </li>
-          </ul>
-        </div>
-      </div>
-      
-      <!-- Pagination -->
-      <div class="pagination">
-        <div class="page-item">
-          <i class="fas fa-chevron-left"></i>
-        </div>
-        <div class="page-item active">1</div>
-        <div class="page-item">2</div>
-        <div class="page-item">3</div>
-        <div class="page-item">
-          <i class="fas fa-chevron-right"></i>
-        </div>
-      </div>
+      <table id="inventoryTable">
+        <thead>
+          <tr>
+            <th>Item Name</th>
+            <th>Category</th>
+            <th>Quantity</th>
+            <th>Status</th>
+            <th>Unit Price (₱)</th>
+            <th>Total Value (₱)</th>
+            <th>Last Updated</th>
+            <th>Date Added</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% inventory.forEach(item => { 
+            let totalValue = item.price * item.quantity;
+            let stockStatus = item.quantity === 0 ? 'out' : (item.quantity < 10 ? 'low' : 'in-stock');
+          %>
+            <tr data-category="<%= item.category %>" data-name="<%= item.name %>">
+              <td><%= item.name %></td>
+              <td><%= item.category %></td>
+              <td><%= item.quantity %></td>
+              <td>
+                <% if (stockStatus === 'in-stock') { %>
+                  <span class="status status-in-stock">In Stock</span>
+                <% } else if (stockStatus === 'low') { %>
+                  <span class="status status-low">Low Stock</span>
+                <% } else { %>
+                  <span class="status status-out">Out of Stock</span>
+                <% } %>
+              </td>
+              <td>₱<%= item.price.toFixed(2) %></td>
+              <td>₱<%= totalValue.toFixed(2) %></td>
+              <td><%= item.updatedAt ? item.updatedAt.toLocaleDateString() : '' %></td>
+              <td><%= item.createdAt ? item.createdAt.toLocaleDateString() : '' %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+      <div class="pagination" id="pagination"></div>
     <% } else { %>
-      <div class="inventory-section">
-        <div class="section-header">
-          <h3 class="section-title">Inventory Items</h3>
-        </div>
-        <div style="padding: 3rem; text-align: center;">
-          <i class="fas fa-box-open" style="font-size: 3rem; color: var(--gray-300); margin-bottom: 1rem;"></i>
-          <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem;">No inventory data found</h3>
-          <p style="color: var(--gray-500);">Try adjusting your filters or add new inventory items.</p>
-          <button class="btn btn-primary" style="margin-top: 1rem;">
-            <i class="fas fa-plus"></i>
-            Add New Item
-          </button>
-        </div>
+      <div style="text-align:center; padding:2rem;">
+        <i class="fas fa-box-open" style="font-size:3rem; color:#ccc;"></i>
+        <h3>No Inventory Data</h3>
+        <p>Add new items to start tracking your inventory.</p>
       </div>
     <% } %>
   </div>
+
+  <!-- ✅ Scripts -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const searchInput = document.getElementById("searchInput");
+      const filterCategory = document.getElementById("filterCategory");
+      const table = document.getElementById("inventoryTable");
+      if (!table) return;
+      const rows = Array.from(table.querySelectorAll("tbody tr"));
+      const pagination = document.getElementById("pagination");
+      const rowsPerPage = 10;
+      let currentPage = 1;
+
+      function displayTable() {
+        let start = (currentPage - 1) * rowsPerPage;
+        let end = start + rowsPerPage;
+        rows.forEach((row, i) => {
+          row.style.display = (i >= start && i < end) ? "" : "none";
+        });
+      }
+
+      function setupPagination() {
+        pagination.innerHTML = "";
+        let pageCount = Math.ceil(rows.length / rowsPerPage);
+
+        // ✅ Previous button
+        let prevBtn = document.createElement("button");
+        prevBtn.innerText = "Previous";
+        prevBtn.disabled = currentPage === 1;
+        prevBtn.addEventListener("click", function () {
+          if (currentPage > 1) {
+            currentPage--;
+            displayTable();
+            setupPagination();
+          }
+        });
+        pagination.appendChild(prevBtn);
+
+        // ✅ Numbered buttons
+        for (let i = 1; i <= pageCount; i++) {
+          let btn = document.createElement("button");
+          btn.innerText = i;
+          if (i === currentPage) btn.classList.add("active");
+          btn.addEventListener("click", function () {
+            currentPage = i;
+            displayTable();
+            setupPagination();
+          });
+          pagination.appendChild(btn);
+        }
+
+        // ✅ Next button
+        let nextBtn = document.createElement("button");
+        nextBtn.innerText = "Next";
+        nextBtn.disabled = currentPage === pageCount;
+        nextBtn.addEventListener("click", function () {
+          if (currentPage < pageCount) {
+            currentPage++;
+            displayTable();
+            setupPagination();
+          }
+        });
+        pagination.appendChild(nextBtn);
+      }
+
+      // ✅ Filter
+      function filterTable() {
+        const searchValue = searchInput.value.toLowerCase();
+        const categoryValue = filterCategory.value;
+        rows.forEach(row => {
+          const rowCategory = row.getAttribute("data-category");
+          const rowName = row.getAttribute("data-name")?.toLowerCase() || "";
+          let matchCategory = (categoryValue === "all" || rowCategory === categoryValue);
+          let matchSearch = rowName.includes(searchValue);
+          row.style.display = (matchCategory && matchSearch) ? "" : "none";
+        });
+      }
+
+      searchInput.addEventListener("keyup", filterTable);
+      filterCategory.addEventListener("change", filterTable);
+
+      // ✅ Init
+      displayTable();
+      setupPagination();
+
+      // ✅ Export CSV
+      document.getElementById("exportBtn").addEventListener("click", () => {
+        let csv = [];
+        let headers = [];
+        table.querySelectorAll("thead th").forEach(th => headers.push(th.innerText));
+        csv.push(headers.join(","));
+
+        table.querySelectorAll("tbody tr").forEach(row => {
+          if (row.style.display !== "none") {
+            let cols = row.querySelectorAll("td");
+            let rowData = [];
+            cols.forEach((col, i) => {
+              let text = col.innerText.replace(/[₱,]/g, '').trim();
+              rowData.push(text);
+            });
+            csv.push(rowData.join(","));
+          }
+        });
+
+        let blob = new Blob([csv.join("\n")], { type: "text/csv;charset=utf-8;" });
+        let link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "Inventory_Report.csv";
+        link.click();
+      });
+    });
+  </script>
+</body>
+</html>

@@ -19,8 +19,8 @@ main {
 .summary-grid {
   display: grid;
   grid-auto-flow: column;
-  grid-auto-columns: 240px;
-  gap: 8px;
+  grid-auto-columns: 40px;
+  gap: 3px;
   overflow-x: auto;
   padding-bottom: 5px;
 }
@@ -117,57 +117,72 @@ h2, .chart-header {
   min-height: 100vh;
   position: relative;
   width: 100%;
-
-<%= user && user.role && user.role.toLowerCase() === 'admin'
-    ? 'margin-left: 220px; padding: 80px 30px 30px; background-color: #f8f9fa; max-width: none;'
-    : 'margin: 0; padding: 0; background-color: #f5f7fa; max-width: 100%;'
-  %>
-  min-height: 100vh;
-  position: relative;
-  width: 100%;
-
-<main>
 <% if (user && user.role && user.role.toLowerCase() === 'admin') { %>
-  <div class="container" style="max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 30px;">
 
-    <!-- ✅ SUMMARY CARDS -->
-    <div class="summary-grid">
-      <div class="custom-card">
-        <h2><%= districtCount %></h2>
-        <p>Total Districts</p>
-      </div>
-      <div class="custom-card">
-        <h2><%= latestAppointments?.length || 0 %></h2>
-        <p>Total Appointments</p>
-      </div>
-      <div class="custom-card">
-        <h2><%= productCount %></h2>
-        <p>Total Products</p>
-      </div>
-      <div class="custom-card">
-        <h2><%= events.length %></h2>
-        <p>Upcoming Events</p>
-      </div>
+<!-- ✅ MAIN DASHBOARD CONTAINER -->
+<div class="dashboard-container">
+
+  <!-- ✅ SUMMARY CARDS (Top Row) -->
+  <div class="summary-grid">
+    <div class="custom-card">
+      <h2><%= districtCount %></h2>
+      <p>Total Districts</p>
     </div>
-
-    <!-- ✅ CHARTS -->
-    <div class="charts-container">
-      <div class="chart-card-left">
-        <div class="chart-header">Sales Report</div>
-        <canvas id="productChart"></canvas>
-      </div>
-      <div class="chart-card-right">
-        <div class="chart-header">Top Districts</div>
-        <canvas id="districtChart"></canvas>
-      </div>
+    <div class="custom-card">
+      <h2><%= latestAppointments?.length || 0 %></h2>
+      <p>Total Appointments</p>
     </div>
+    <div class="custom-card">
+      <h2><%= productCount %></h2>
+      <p>Total Products</p>
+    </div>
+    <div class="custom-card">
+      <h2><%= events.length %></h2>
+      <p>Upcoming Events</p>
+    </div>
+    <div class="custom-card revenue-card">
+      <h2>₱<%= totalRevenue.toLocaleString() %></h2>
+      <p>Total Revenue</p>
+      <small>Total Sales Orders: <%= totalOrders %></small>
+    </div>
+  </div>
 
-    <!-- ✅ LATEST APPOINTMENTS -->
-    <section class="appointments-section">
-      <h2>Appointment</h2>
-      <% if (latestAppointments && latestAppointments.length > 0) { %>
-        <table>
-          <thead>
+  <!-- ✅ ANALYTICS SECTION (Second Row) -->
+  <div class="analytics-grid">
+    <div class="chart-card small-chart">
+      <h6>Top Selling Products</h6>
+      <canvas id="topProductsChart"></canvas>
+    </div>
+    <div class="chart-card small-chart">
+      <h6>Sales by Category</h6>
+      <canvas id="salesByCategoryChart"></canvas>
+    </div>
+    <div class="chart-card wide small-chart">
+      <div class="chart-header">
+        <h6>Revenue Trends</h6>
+        <select id="revenueTrendSelect" class="form-select form-select-sm" style="width:auto;">
+          <option value="monthly" selected>Monthly</option>
+          <option value="weekly">Weekly</option>
+          <option value="yearly">Yearly</option>
+        </select>
+      </div>
+      <canvas id="revenueTrendsChart"></canvas>
+    </div>
+  </div>
+
+  <!-- ✅ TOP 3 SALES ORDERS (Third Row) -->
+  <div class="chart-card small-chart">
+    <h6>🏆 Top 3 Sales Orders</h6>
+    <div id="topSalesContainer"></div>
+  </div>
+
+  <!-- ✅ LATEST APPOINTMENTS (Fourth Row) -->
+  <section class="appointments-section">
+    <h2>Latest Appointments</h2>
+    <% if (latestAppointments && latestAppointments.length > 0) { %>
+      <div class="table-responsive">
+        <table class="table table-hover align-middle">
+          <thead class="table-success">
             <tr>
               <th>User</th>
               <th>Date</th>
@@ -181,17 +196,72 @@ h2, .chart-header {
                 <td><%= app.user ? app.user.firstName + ' ' + app.user.lastName : 'N/A' %></td>
                 <td><%= app.date.toDateString() %></td>
                 <td><%= app.time %></td>
-                <td><%= app.status %></td>
+                <td>
+                  <span class="badge bg-<%= app.status === 'Confirmed' ? 'success' : app.status === 'Cancelled' ? 'danger' : 'secondary' %>">
+                    <%= app.status %>
+                  </span>
+                </td>
               </tr>
             <% }) %>
           </tbody>
         </table>
-      <% } else { %>
-         <p>No recent appointments found.</p>
-      <% } %>
-    </section>
+      </div>
+    <% } else { %>
+      <p class="text-muted">No recent appointments found.</p>
+    <% } %>
+  </section>
 
-  </div>
+</div>
+
+<style>
+.dashboard-container {
+  max-width: 1300px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  padding-bottom: 40px;
+}
+
+/* SUMMARY CARDS */
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+/* ANALYTICS GRID */
+.analytics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+.chart-card {
+  background: #fff;
+  border-radius: 15px;
+  padding: 15px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+.chart-card.wide {
+  grid-column: span 2;
+}
+/* Smaller chart size */
+.small-chart canvas {
+  max-height: 220px !important;
+}
+
+/* APPOINTMENTS */
+.appointments-section {
+  background:#fff;
+  padding:20px;
+  border-radius:15px;
+  box-shadow:0 2px 6px rgba(0,0,0,0.1);
+}
+</style>
+
+
+
+
 
 <% } else if (user) { %>
   <!-- 🌸 GIRL SCOUT MINDORO USER DASHBOARD -->
@@ -572,60 +642,133 @@ h2, .chart-header {
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-const productCtx = document.getElementById('productChart')?.getContext('2d');
-const productCategories = <%- JSON.stringify(productCategories || []) %>;
-const productLabels = productCategories.map(cat => cat._id);
-const productValues = productCategories.map(cat => cat.count);
 
-if (productCtx) {
-  new Chart(productCtx, {
-    type: 'line',
-    data: {
-      labels: productLabels,
-      datasets: [{
-        label: 'Products',
-        data: productValues,
-        borderColor: '#1b5e20',
-        backgroundColor: 'rgba(27, 94, 32, 0.2)',
-        tension: 0.4,
-        pointBackgroundColor: '#1b5e20',
-        fill: true,
-      }]
+<script>
+// Existing data
+const salesData = <%- JSON.stringify(topProducts || []) %>;
+const salesByCategory = <%- JSON.stringify(productSales || []) %>;
+const totalRevenue = <%- totalRevenue %>;
+const totalOrders = <%- totalOrders %>;
+
+// Monthly, Weekly, Yearly data
+const monthlyData = <%- JSON.stringify(monthlyData || []) %>;
+const weeklyData = <%- JSON.stringify(weeklyData || []) %>;
+const yearlyData = <%- JSON.stringify(yearlyData || []) %>;
+const topCategoriesPerMonth = <%- JSON.stringify(topCategoriesPerMonth || []) %>;
+
+// Helper functions
+function formatMonth(monthNum, year) {
+  const date = new Date(year, monthNum-1);
+  return date.toLocaleString('default', { month: 'long', year: 'numeric' });
+}
+function formatWeek(week, year) {
+  return `Week ${week}, ${year}`;
+}
+function formatYear(year) {
+  return `${year}`;
+}
+
+// 🔹 Top Products Chart
+const topProductsCtx = document.getElementById('topProductsChart')?.getContext('2d');
+if(topProductsCtx){
+  new Chart(topProductsCtx,{
+    type:'bar',
+    data:{
+      labels:salesData.map(p=>p._id),
+      datasets:[{label:'Quantity Sold',data:salesData.map(p=>p.totalSold),backgroundColor:'#43a047'}]
     },
-    options: {
-      plugins: { legend: { display: false }},
-      maintainAspectRatio: false,
-      scales: {
-        y: { beginAtZero: true, grid: { color: '#d7d7d7' }},
-        x: { grid: { color: '#eeeeee' }}
-      }
-    }
+    options:{plugins:{legend:{display:false}},responsive:true,scales:{y:{beginAtZero:true}}}
   });
 }
 
-const districtCtx = document.getElementById('districtChart')?.getContext('2d');
-const topDistricts = <%- JSON.stringify(topDistricts || []) %>;
-const districtLabels = topDistricts.map(d => d.name);
-const districtCounts = topDistricts.map(d => d.schoolCount);
+// 🔹 Sales by Category Chart
+const salesByCategoryCtx = document.getElementById('salesByCategoryChart')?.getContext('2d');
+if(salesByCategoryCtx){
+  new Chart(salesByCategoryCtx,{
+    type:'pie',
+    data:{
+      labels:salesByCategory.map(c=>c._id),
+      datasets:[{data:salesByCategory.map(c=>c.totalSales),backgroundColor:['#1b5e20','#43a047','#66bb6a','#a5d6a7','#c8e6c9']}]
+    },
+    options:{plugins:{legend:{position:'bottom'}},responsive:true}
+  });
+}
 
-if (districtCtx) {
-  new Chart(districtCtx, {
-    type: 'doughnut',
-    data: {
-      labels: districtLabels,
-      datasets: [{
-        data: districtCounts,
-        backgroundColor: ['#1b5e20', '#43a047', '#66bb6a'],
-        borderColor: 'white',
-        borderWidth: 2,
+// 🔹 Revenue Trends Chart (Weekly / Monthly / Yearly)
+let revenueChart = null;
+function renderRevenueChart(type){
+  let data, labels;
+  if(type==="monthly"){
+    data = monthlyData;
+    labels = data.map(m => formatMonth(m._id.month, m._id.year));
+  } else if(type==="weekly"){
+    data = weeklyData;
+    labels = data.map(w => formatWeek(w._id.week, w._id.year));
+  } else {
+    data = yearlyData;
+    labels = data.map(y => formatYear(y._id.year));
+  }
+
+  const ctx = document.getElementById('revenueTrendsChart')?.getContext('2d');
+  if(!ctx) return;
+  if(revenueChart) revenueChart.destroy();
+
+  if(!data || data.length===0){
+    revenueChart = new Chart(ctx,{
+      type:'bar',
+      data:{ labels:["No Data"], datasets:[{label:"Revenue",data:[0]}] },
+      options:{ plugins:{legend:{display:false}}, responsive:true }
+    });
+    return;
+  }
+
+  revenueChart = new Chart(ctx,{
+    type:'line',
+    data:{
+      labels,
+      datasets:[{
+        label:'Revenue (₱)',
+        data:data.map(d=>d.revenue),
+        borderColor:'#1b5e20',
+        backgroundColor:'rgba(27,94,32,0.2)',
+        tension:0.4,
+        fill:true
+      },{
+        label:'Orders',
+        data:data.map(d=>d.orders),
+        borderColor:'#43a047',
+        backgroundColor:'rgba(67,160,71,0.2)',
+        tension:0.4,
+        fill:true
       }]
     },
-    options: {
-      plugins: { legend: { position: 'bottom' }},
-      cutout: '65%',
-      maintainAspectRatio: false,
+    options:{
+      plugins:{legend:{position:'top'}},
+      scales:{y:{beginAtZero:true}}
     }
   });
+}
+renderRevenueChart("monthly");
+document.getElementById('revenueTrendSelect')?.addEventListener('change', e=>{
+  renderRevenueChart(e.target.value);
+});
+
+// 🔹 Analytics Modal Text 
+const analyticsModalBody = document.getElementById('analyticsModalBody');
+if (analyticsModalBody) {
+  // sort descending by totalSold, then take top 3
+  const top3 = salesData
+    .sort((a, b) => b.totalSold - a.totalSold)
+    .slice(0, 3);
+
+  const analyticsContent = `
+    <p><strong>Total Sales Orders:</strong> ${totalOrders}</p>
+    <h4>Top 3 Sales Orders:</h4>
+    <ul>
+      ${top3.map(p => `<li><strong>${p._id}</strong>: ${p.totalSold} sold</li>`).join('')}
+    </ul>
+  `;
+
+  analyticsModalBody.insertAdjacentHTML('afterbegin', analyticsContent);
 }
 </script>

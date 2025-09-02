@@ -687,13 +687,31 @@ tbody tr:hover {
 ::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(135deg, var(--primary-light), var(--secondary));
 }
+
+.btn-report {
+  background-color: #4caf50; /* green */
+  color: white;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  text-decoration: none;
+}
+.btn-report:hover {
+  background-color: #45a049;
+}
+
 </style>
 
 <div class="container">
   <div class="page-header">
     <h1 class="page-title">
       <i class="fas fa-boxes"></i>
-      Manage Products
+       Products
     </h1>
   </div>
 
@@ -753,6 +771,21 @@ tbody tr:hover {
           <i class="fas fa-exclamation-circle"></i> View Low Stock
         </a>
       </div>
+<div class="left-buttons">
+  <button class="btn btn-add" onclick="openAddProductModal()">
+    <i class="fas fa-plus"></i> Add Product
+  </button>
+  <a href="/low-stock" class="btn btn-lowstock">
+    <i class="fas fa-exclamation-circle"></i> View Low Stock
+  </a>
+  
+  <!-- ✅ Moved Reports button here -->
+  <a href="/inventory-report" class="btn btn-report">
+    <i class="fas fa-chart-bar"></i> Reports
+  </a>
+</div>
+
+
 
       <div class="right-controls">
         <div class="search-group">
@@ -764,6 +797,8 @@ tbody tr:hover {
             <% }); %>
           </select>
         </div>
+
+        
         <button class="btn btn-export" onclick="showExportPreview()">
           <i class="fas fa-file-pdf"></i> Export
         </button>

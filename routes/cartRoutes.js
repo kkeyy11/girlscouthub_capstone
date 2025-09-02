@@ -35,4 +35,11 @@ router.post('/delete-reservation/:id', cartController.deleteReservation);
 // Delete all reservations by email
 router.post('/clear-reservations', cartController.clearReservations);
 
+
+// Reorder from previous reservation - NEW ROUTE
+router.post('/reorder/:id', cartController.reorderReservation);
+
+// Get reservation details for preview
+router.get('/get-reservation/:id', cartController.getReservationDetails);
+
 module.exports = router;

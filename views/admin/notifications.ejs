@@ -1,0 +1,228 @@
+
+<style>
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    background: #f4f9f6;
+    margin: 0;
+    padding: 0;
+  }
+
+  .notifications-container {
+    max-width: 750px;
+    margin: 2rem auto;
+    padding: 1.5rem;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    border: 1px solid #cce3d6;
+  }
+
+  .back-btn {
+    display: inline-block;
+    margin-bottom: 1rem;
+    padding: .5rem 1rem;
+    background: #2f5233;
+    color: #fff;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: .9rem;
+    transition: background 0.2s ease;
+  }
+
+  .back-btn:hover {
+    background: #256128;
+  }
+
+  .notifications-container h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #2f5233;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+  }
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .notification-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    background: #fdfdfd;
+    border-radius: 12px;
+    border: 1px solid #d7ebdf;
+    transition: all 0.25s ease;
+  }
+
+  .notification-item:hover {
+    background: #f1f8f4;
+    border-color: #2f5233;
+  }
+
+  .notification-content {
+    flex: 1;
+  }
+
+  .notification-content strong {
+    display: block;
+    font-size: 1rem;
+    color: #2f5233;
+    margin-bottom: .3rem;
+  }
+
+  .notification-content small {
+    font-size: .85rem;
+    color: #6b7280;
+  }
+
+  .notification-actions {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+  }
+
+  .notification-badge {
+    font-size: .75rem;
+    padding: .35rem .65rem;
+    border-radius: 12px;
+    background: #2f9e44;
+    color: #fff;
+    font-weight: 600;
+  }
+
+  .delete-btn {
+    background: #2f5233;
+    color: #fff;
+    border: none;
+    padding: .45rem .9rem;
+    border-radius: 8px;
+    font-size: .8rem;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+
+  .delete-btn:hover {
+    background: #256128;
+  }
+
+  /* ✅ Mobile Responsive */
+  @media (max-width: 600px) {
+    .notification-item {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .notification-actions {
+      margin-top: .6rem;
+      width: 100%;
+      justify-content: flex-end;
+    }
+  }
+</style>
+
+<div class="notifications-container">
+  <!-- ✅ Back button -->
+  <a href="/reservations" class="back-btn">← Back</a>
+
+<div class="notifications-container">
+  <h2>📢 Admin Notifications</h2>
+  
+
+  <ul class="list-unstyled m-0 p-0">
+    <% if (notifications.length === 0) { %>
+      <li class="notification-item">
+        <div class="notification-content">
+          <strong>No notifications yet.</strong>
+        </div>
+      </li>
+    <% } %>
+    <% notifications.forEach(n => { %>
+      <li class="notification-item" id="notification-<%= n._id %>">
+        <div class="notification-content">
+          <strong><%= n.message %></strong>
+          <small><%= n.createdAt.toLocaleString() %></small>
+        </div>
+        <div class="notification-actions">
+          <% if (!n.read) { %>
+            <span class="notification-badge">New</span>
+          <% } %>
+          <button class="delete-btn" onclick="deleteNotification('<%= n._id %>')">
+            🗑️ Delete
+          </button>
+        </div>
+      </li>
+    <% }) %>
+  </ul>
+</div>
+
+<script>
+async function deleteNotification(notificationId) {
+  if (!confirm('Are you sure you want to delete this notification?')) {
+    return;
+  }
+
+  try {
+    const response = await fetch(`/admin/notifications/${notificationId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    });
+
+    if (response.ok) {
+      // Remove the notification from the DOM
+      const notificationElement = document.getElementById(`notification-${notificationId}`);
+      if (notificationElement) {
+        notificationElement.style.opacity = '0';
+        notificationElement.style.transform = 'translateX(-100%)';
+        setTimeout(() => {
+          notificationElement.remove();
+          
+          // Check if there are no more notifications
+          const remainingNotifications = document.querySelectorAll('.notification-item[id^="notification-"]');
+          if (remainingNotifications.length === 0) {
+            location.reload(); // Reload to show "No notifications yet" message
+          }
+        }, 300);
+      }
+    } else {
+      alert('Error deleting notification. Please try again.');
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    alert('Error deleting notification. Please try again.');
+  }
+}
+
+// async function clearAllNotifications() {
+//   if (!confirm('Are you sure you want to delete ALL notifications? This action cannot be undone.')) {
+//     return;
+//   }
+
+//   try {
+//     const response = await fetch('/admin/notifications/clear-all', {
+//       method: 'DELETE',
+//       headers: {
+//         'Content-Type': 'application/json',
+//       }
+//     });
+
+//     if (response.ok) {
+//       location.reload(); // Reload the page to show empty state
+//     } else {
+//       alert('Error clearing notifications. Please try again.');
+//     }
+//   } catch (error) {
+//     console.error('Error:', error);
+//     alert('Error clearing notifications. Please try again.');
+//   }
+// }
+</script>
