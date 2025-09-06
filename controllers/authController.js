@@ -1,7 +1,7 @@
 const User = require('../models/user.model');
 const { validationResult } = require('express-validator');
 const crypto = require('crypto');
-const { sendEmail } = require('../mailer'); // fixed mailer.js
+const { sendEmail } = require('../utils/mailer'); // fixed mailer.js
 
 const authController = {
   getLogin: (req, res) => {
