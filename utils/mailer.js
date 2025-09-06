@@ -1,31 +1,38 @@
 const nodemailer = require('nodemailer');
 require('dotenv').config();
 
+console.log("Email credentials loaded:", process.env.EMAIL_USER, process.env.EMAIL_PASS ? '✅' : '❌');
 
-console.log("Email credentials:", process.env.EMAIL_USER, process.env.EMAIL_PASS ? '✅' : '❌');
-
+// Railway-safe Gmail transporter
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  host: "smtp.gmail.com",
+  port: 587,
+  secure: false, // TLS
   auth: {
     user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
-  }
+    pass: process.env.EMAIL_PASS, // App Password
+  },
+  tls: {
+    rejectUnauthorized: false,
+  },
+  connectionTimeout: 10000, // fail fast instead of hanging
 });
 
-const sendAppointmentEmail = async (to, subject, text) => {
+// Reusable function
+const sendEmail = async (to, subject, text) => {
   const mailOptions = {
-    from: process.env.EMAIL_USER,
+    from: `"GSP System" <${process.env.EMAIL_USER}>`,
     to,
     subject,
-    text
+    text,
   };
 
   try {
     await transporter.sendMail(mailOptions);
-    console.log(`Email sent to ${to}`);
+    console.log(`✅ Email sent to ${to}`);
   } catch (error) {
-    console.error(`Failed to send email to ${to}:`, error);
+    console.error(`❌ Failed to send email to ${to}:`, error.message);
   }
 };
 
-module.exports = { sendAppointmentEmail };
+module.exports = { sendEmail };
