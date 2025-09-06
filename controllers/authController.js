@@ -1,7 +1,7 @@
 const User = require('../models/user.model');
 const { validationResult } = require('express-validator');
 const crypto = require('crypto');
-const { sendEmail } = require('../utils/mailer'); // fixed mailer.js
+const { sendAppointmentEmail } = require('../utils/mailer'); // reuse your mailer.js
 
 const authController = {
   getLogin: (req, res) => {
@@ -49,14 +49,25 @@ const authController = {
       user.isVerified = false;
       await user.save();
 
-      // ✅ Always use BASE_URL (not req.protocol/host)
-      const verifyUrl = `${process.env.BASE_URL}/auth/verify-email/${user.verificationToken}`;
-      await sendEmail(user.email, 'Verify your email', `Click to verify your account: ${verifyUrl}`);
+      // Build verification link (use BASE_URL from env)
+      const baseUrl = process.env.BASE_URL || `${req.protocol}://${req.get('host')}`;
+      const verifyUrl = `${baseUrl}/auth/verify-email/${user.verificationToken}`;
 
-      req.flash('success', 'Registered successfully. Please check your email to verify.');
+      // Try sending email but don't block registration
+      try {
+        await sendAppointmentEmail(
+          user.email,
+          'Verify your email',
+          `Click the link to verify your account: ${verifyUrl}`
+        );
+        console.log(`Verification email sent to ${user.email}`);
+      } catch (emailErr) {
+        console.error("Email send failed:", emailErr.message);
+      }
+
+      req.flash('success', 'Registered successfully. Check your email to verify.');
       res.redirect('/auth/login');
     } catch (err) {
-      console.error("❌ Registration error:", err.message);
       next(err);
     }
   },
@@ -76,7 +87,6 @@ const authController = {
       req.flash('success', 'Email verified. You can now log in.');
       res.redirect('/auth/login');
     } catch (err) {
-      console.error("❌ Verify email error:", err.message);
       res.status(500).send('Server error');
     }
   },
@@ -104,13 +114,23 @@ const authController = {
       user.resetTokenExpire = Date.now() + 3600000; // 1 hour
       await user.save();
 
-      const resetUrl = `${process.env.BASE_URL}/auth/reset-password/${user.resetToken}`;
-      await sendEmail(user.email, 'Reset Password', `Reset your password: ${resetUrl}`);
+      const baseUrl = process.env.BASE_URL || `${req.protocol}://${req.get('host')}`;
+      const resetUrl = `${baseUrl}/auth/reset-password/${user.resetToken}`;
+
+      try {
+        await sendAppointmentEmail(
+          user.email,
+          'Reset Password',
+          `Click the link to reset your password: ${resetUrl}`
+        );
+        console.log(`Password reset email sent to ${user.email}`);
+      } catch (emailErr) {
+        console.error("Reset email send failed:", emailErr.message);
+      }
 
       req.flash('success', 'Reset link sent to your email.');
       res.redirect('/auth/login');
     } catch (err) {
-      console.error("❌ Forgot password error:", err.message);
       res.status(500).send('Server error');
     }
   },
