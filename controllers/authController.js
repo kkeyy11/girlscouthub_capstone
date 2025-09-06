@@ -1,8 +1,7 @@
 const User = require('../models/user.model');
 const { validationResult } = require('express-validator');
-const passport = require('passport');
 const crypto = require('crypto');
-const nodemailer = require('nodemailer');
+const { sendEmail } = require('../mailer'); // fixed mailer.js
 
 const authController = {
   getLogin: (req, res) => {
@@ -50,13 +49,14 @@ const authController = {
       user.isVerified = false;
       await user.save();
 
-      // Send email verification
-      const verifyUrl = `${req.protocol}://${req.get('host')}/auth/verify-email/${user.verificationToken}`;
-      await sendEmail(user.email, 'Verify your email', `Click to verify: ${verifyUrl}`);
+      // ✅ Always use BASE_URL (not req.protocol/host)
+      const verifyUrl = `${process.env.BASE_URL}/auth/verify-email/${user.verificationToken}`;
+      await sendEmail(user.email, 'Verify your email', `Click to verify your account: ${verifyUrl}`);
 
-      req.flash('success', 'Registered successfully. Check your email to verify.');
+      req.flash('success', 'Registered successfully. Please check your email to verify.');
       res.redirect('/auth/login');
     } catch (err) {
+      console.error("❌ Registration error:", err.message);
       next(err);
     }
   },
@@ -76,6 +76,7 @@ const authController = {
       req.flash('success', 'Email verified. You can now log in.');
       res.redirect('/auth/login');
     } catch (err) {
+      console.error("❌ Verify email error:", err.message);
       res.status(500).send('Server error');
     }
   },
@@ -103,12 +104,13 @@ const authController = {
       user.resetTokenExpire = Date.now() + 3600000; // 1 hour
       await user.save();
 
-      const resetUrl = `${req.protocol}://${req.get('host')}/auth/reset-password/${user.resetToken}`;
+      const resetUrl = `${process.env.BASE_URL}/auth/reset-password/${user.resetToken}`;
       await sendEmail(user.email, 'Reset Password', `Reset your password: ${resetUrl}`);
 
       req.flash('success', 'Reset link sent to your email.');
       res.redirect('/auth/login');
     } catch (err) {
+      console.error("❌ Forgot password error:", err.message);
       res.status(500).send('Server error');
     }
   },
@@ -154,23 +156,5 @@ const authController = {
     res.redirect('/auth/login');
   }
 };
-
-// Utility: send email using nodemailer
-async function sendEmail(to, subject, text) {
-  const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS
-    }
-  });
-
-  await transporter.sendMail({
-    from: `"GSP System" <${process.env.EMAIL_USER}>`,
-    to,
-    subject,
-    text
-  });
-}
 
 module.exports = authController;
