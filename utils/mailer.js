@@ -28,4 +28,4 @@ const sendAppointmentEmail = async (to, subject, text) => {
   }
 };
 
-module.exports = { sendAppointmentEmail };
+module.exports = { sendAppointmentEmail }; 
