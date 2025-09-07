@@ -1,229 +1,194 @@
 <%- include('./layouts/header') %>
 <%- include('./layouts/navbar') %>
 
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <style>
-  body {
-    font-family: 'Poppins', sans-serif;
-    background: linear-gradient(to right top, #e6f9ea, #ccf5e1, #b2f1d8, #98edcf, #7fe9c6);
-    margin: 0;
-    color: #333;
-  }
-
   main {
     margin-left: 220px;
-    padding: 80px 30px 30px;
+    padding: 90px 20px 30px;
     min-height: 100vh;
+    background: linear-gradient(to right top,#e6f9ea,#ccf5e1,#b2f1d8,#98edcf,#7fe9c6);
+    box-sizing: border-box;
   }
 
-  .container {
-    background: #ffffff;
-    padding: 25px 35px;
-    border-radius: 16px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-    max-width: 100%;
+  .table-container {
+    max-width: 1250px;
+    margin: 0 auto;
     overflow-x: auto;
+    backdrop-filter: blur(10px);
   }
 
-  h1 {
-    font-size: 1.6rem;
-    color: #1f2937;
-    margin-bottom: 20px;
-    font-weight: 700;
-    border-left: 6px solid #10b981;
-    padding-left: 12px;
+  .table-wrapper {
+    background: rgba(255,255,255,0.9);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    transition: transform 0.2s;
   }
-
-  .filters {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    margin-bottom: 20px;
-  }
-
-  .filters input,
-  .filters select {
-    padding: 10px;
-    border-radius: 10px;
-    border: 1px solid #ccc;
-    font-size: 14px;
-  }
-
-  #searchBar {
-    flex-grow: 1;
-    border: 2px solid #10b981;
-  }
+  .table-wrapper:hover { transform: translateY(-2px); }
 
   table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0 10px;
-    font-size: 14px;
+    border-radius: 10px;
+    overflow: hidden;
   }
 
-  thead th {
-    background: #e0f2f1;
-    padding: 12px;
-    text-align: left;
-    color: #065f46;
-    font-weight: 600;
+  thead {
+    background: #059669;
+    color: #ffffff;
+    font-size: 15px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
   }
 
-  tbody tr {
-    background: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.03);
-    transition: transform 0.2s ease;
-  }
+  tbody tr:nth-child(odd) { background-color: #fdfdfd; }
+  tbody tr:nth-child(even) { background-color: #ecf9ef; }
 
+  tbody tr { transition: all 0.3s ease; }
   tbody tr:hover {
+    background-color: #ccf5e1 !important;
     transform: scale(1.01);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.08);
   }
 
   tbody td {
-    padding: 12px;
     vertical-align: middle;
-    border-bottom: 1px solid #f0f0f0;
+    font-size: 14px;
   }
 
-  .status-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 4px 12px;
-    font-size: 0.75rem;
-    border-radius: 999px;
+  .badge {
+    font-size: 0.85rem;
     font-weight: 600;
-    text-transform: capitalize;
+    padding: 0.45em 0.8em;
+    transition: all 0.3s ease;
   }
+  .badge:hover { transform: scale(1.1); box-shadow: 0 0 8px rgba(0,0,0,0.15); }
 
-  .status-pending    { background: #fff3cd; color: #856404; }
-  .status-approved   { background: #d4edda; color: #155724; }
-  .status-delivered  { background: #eafaf1; color: #2ecc71; }
-  .status-cancelled  { background: #fdecea; color: #e74c3c; }
-  .status-collected  { background: #eaf1ff; color: #3498db; }
+  .badge-pending { background: linear-gradient(45deg,#facc15,#fcd34d); color:#1f2937; }
+  .badge-approved { background: linear-gradient(45deg,#10b981,#059669); color:#fff; }
+  .badge-delivered { background: linear-gradient(45deg,#3b82f6,#2563eb); color:#fff; }
+  .badge-cancelled { background: linear-gradient(45deg,#ef4444,#b91c1c); color:#fff; }
+  .badge-collected { background: linear-gradient(45deg,#6366f1,#4f46e5); color:#fff; }
 
-  .approve-button, .remove-button {
-    padding: 8px 10px;
-    font-size: 13px;
-    border: none;
+  .btn-sm { transition: transform 0.2s ease, background 0.2s ease; }
+  .btn-sm:hover { transform: scale(1.1); }
+
+  #searchBar, #statusFilter, #dateRange {
     border-radius: 8px;
-    cursor: pointer;
-    font-weight: 500;
-    margin-right: 6px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+    border: 1px solid #059669;
+    padding-left: 2.5rem;
+    transition: all 0.3s;
+  }
+  #searchBar:focus, #statusFilter:focus, #dateRange:focus {
+    border-color: #10b981;
+    box-shadow: 0 0 6px rgba(5,150,105,0.25);
+  }
+  #searchBar::placeholder { color: #6b7280; }
+
+  h4.table-title {
+    font-weight: 700;
+    color: #059669;
   }
 
-  .approve-button { background-color: #10b981; color: white; }
-  .approve-button:hover { background-color: #059669; }
-
-  .remove-button { background-color: #ef4444; color: white; }
-  .remove-button:hover { background-color: #dc2626; }
-
-  .empty-state {
-    text-align: center;
-    padding: 40px 20px;
-    background: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
-  }
-
-  .nav-link {
-    display: inline-block;
-    padding: 10px 20px;
-    background-color: #374151;
-    color: white;
-    border-radius: 8px;
-    text-decoration: none;
-    font-weight: 600;
-    margin-top: 20px;
-  }
-
-  .nav-link:hover {
-    background-color: #1f2937;
+  @media (max-width: 768px) {
+    main { margin-left: 0; padding: 100px 15px 30px; }
+    thead { font-size: 13px; }
+    tbody td { font-size: 13px; }
+    #searchBar, #statusFilter, #dateRange { font-size: 13px; padding-left: 1.8rem; }
   }
 </style>
 
 <main>
-  <div class="container">
-    <h1>Reservations Table</h1>
+  <div class="table-container">
+    <div class="table-wrapper">
+      <!-- Title -->
+      <h4 class="table-title mb-4 d-flex align-items-center gap-2">
+        <i class="fas fa-calendar-check"></i> Reservations
+      </h4>
 
-  <div class="filters">
-  <input type="text" id="searchBar" placeholder="🔍 Search...">
-  <select id="statusFilter">
-    <option value="">All Status</option>
-    <option value="Pending">🕒 Pending</option>
-    <option value="Approved">✅ Approved</option>
-    <option value="Cancelled">❌ Cancelled</option>
-  </select>
-  <select id="dateRange">
-    <option value="all">All Dates</option>
-    <option value="today">Today</option>
-    <option value="week">This Week</option>
-    <option value="month">This Month</option>
-  </select>
-</div>
-
-
-    <% if (groupedReservations && Object.keys(groupedReservations).length > 0) { %>
-      <table id="reservationsTable">
-        <thead>
-          <tr>
-            <th>User</th>
-            <th>Contact</th>
-            <th>Email</th>
-            <th>Date</th>
-            <th>Items</th>
-            <th>Status</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% Object.keys(groupedReservations).forEach(user => {
-               groupedReservations[user].forEach(r => { %>
-              <tr data-user="<%= user %>" data-status="<%= r.status %>" data-date="<%= r.date %>">
-                <td><%= user %></td>
-                <td><%= r.contact %></td>
-                <td><%= r.email || 'N/A' %></td>
-                <td><%= r.date ? new Date(r.date).toLocaleDateString() : 'N/A' %></td>
-                <td><%= r.items.map(item => `${item.name} (₱${item.price} x ${item.quantity})`).join(', ') %></td>
-                <td>
-                  <span class="status-pill status-<%= r.status.toLowerCase() %>">
-                    <% if (r.status === 'Pending') { %><i class="fas fa-clock"></i><% } %>
-                    <% if (r.status === 'Approved') { %><i class="fas fa-check-circle"></i><% } %>
-                    <% if (r.status === 'Delivered') { %><i class="fas fa-box"></i><% } %>
-                    <% if (r.status === 'Cancelled') { %><i class="fas fa-times-circle"></i><% } %>
-                    <% if (r.status === 'Collected') { %><i class="fas fa-inbox"></i><% } %>
-                    <%= r.status %>
-                  </span>
-                </td>
-                <td>
-                  <form action="/approve/<%= r._id %>" method="POST" style="display:inline;">
-                    <button type="submit" class="approve-button" title="Approve">
-                      <i class="fas fa-check"></i>
-                    </button>
-                  </form>
-                  <form action="/remove/<%= r._id %>" method="POST" style="display:inline;">
-                    <button type="submit" class="remove-button" title="Remove">
-                      <i class="fas fa-trash-alt"></i>
-                    </button>
-                  </form>
-                </td>
-              </tr>
-          <% }) }) %>
-        </tbody>
-      </table>
-    <% } else { %>
-      <div class="empty-state">
-        <h3 style="color:#7f8c8d;">📋 No reservations found.</h3>
+      <!-- Filters -->
+      <div class="row g-2 mb-3 align-items-center">
+        <div class="col-12 col-md-6 col-lg-4 position-relative">
+          <i class="fas fa-search position-absolute" style="top:50%; left:10px; transform: translateY(-50%); color:#059669;"></i>
+          <input type="text" id="searchBar" class="form-control" placeholder="Search...">
+        </div>
+        <div class="col-6 col-md-3 col-lg-2 ms-auto">
+          <select id="dateRange" class="form-select">
+            <option value="all">All Dates</option>
+            <option value="today">Today</option>
+            <option value="week">This Week</option>
+            <option value="month">This Month</option>
+          </select>
+        </div>
+        <div class="col-6 col-md-3 col-lg-2">
+          <select id="statusFilter" class="form-select">
+            <option value="">All Status</option>
+            <option value="Pending">Pending</option>
+            <option value="Approved">Approved</option>
+            <option value="Cancelled">Cancelled</option>
+          </select>
+        </div>
       </div>
-    <% } %>
-    <a href="/products" class="nav-link">Back to Products</a>
+
+      <!-- Table -->
+      <% if (groupedReservations && Object.keys(groupedReservations).length > 0) { %>
+      <div class="table-responsive">
+        <table id="reservationsTable" class="table table-hover align-middle shadow-sm">
+          <thead>
+            <tr>
+              <th>User</th>
+              <th>Contact</th>
+              <th>Email</th>
+              <th>Items</th>
+              <th>Date</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% Object.keys(groupedReservations).forEach(user => {
+                 groupedReservations[user].forEach(r => { %>
+                <tr data-user="<%= user %>" data-status="<%= r.status %>" data-date="<%= r.date %>">
+                  <td><%= user %></td>
+                  <td><%= r.contact %></td>
+                  <td><%= r.email || 'N/A' %></td>
+                  <td><%= r.items.map(item => `${item.name} (₱${item.price} x ${item.quantity})`).join(', ') %></td>
+                  <td><%= r.date ? new Date(r.date).toLocaleDateString() : 'N/A' %></td>
+                  <td>
+                    <span class="badge rounded-pill
+                      <% if (r.status === 'Pending') { %> badge-pending <% } %>
+                      <% if (r.status === 'Approved') { %> badge-approved <% } %>
+                      <% if (r.status === 'Delivered') { %> badge-delivered <% } %>
+                      <% if (r.status === 'Cancelled') { %> badge-cancelled <% } %>
+                      <% if (r.status === 'Collected') { %> badge-collected <% } %>">
+                      <%= r.status %>
+                    </span>
+                  </td>
+                  <td class="d-flex gap-1">
+                    <form action="/approve/<%= r._id %>" method="POST" class="d-inline">
+                      <button type="submit" class="btn btn-sm btn-success"><i class="fas fa-check"></i></button>
+                    </form>
+                    <form action="/remove/<%= r._id %>" method="POST" class="d-inline">
+                      <button type="submit" class="btn btn-sm btn-danger"><i class="fas fa-trash-alt"></i></button>
+                    </form>
+                  </td>
+                </tr>
+            <% }) }) %>
+          </tbody>
+        </table>
+      </div>
+      <% } else { %>
+        <div class="alert alert-secondary text-center py-4">
+          <h5 class="mb-0">📋 No reservations found.</h5>
+        </div>
+      <% } %>
+
+      <a href="/products" class="btn btn-dark mt-3"><i class="fas fa-arrow-left me-2"></i> Back to Products</a>
+    </div>
   </div>
 </main>
+
 <script>
   const searchBar = document.getElementById('searchBar');
   const statusFilter = document.getElementById('statusFilter');
@@ -238,14 +203,10 @@
     const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
 
     switch (range) {
-      case 'today':
-        return date.toDateString() === today.toDateString();
-      case 'week':
-        return date >= startOfWeek && date <= today;
-      case 'month':
-        return date >= startOfMonth && date <= today;
-      default:
-        return true;
+      case 'today': return date.toDateString() === today.toDateString();
+      case 'week': return date >= startOfWeek && date <= today;
+      case 'month': return date >= startOfMonth && date <= today;
+      default: return true;
     }
   }
 
@@ -263,15 +224,11 @@
       const matchStatus = !status || rowStatus === status;
       const matchDate = isDateInRange(rowDate, dateFilter);
 
-      if (matchKeyword && matchStatus && matchDate) {
-        row.style.display = '';
-      } else {
-        row.style.display = 'none';
-      }
+      row.style.display = (matchKeyword && matchStatus && matchDate) ? '' : 'none';
     });
   }
 
-  [searchBar, statusFilter, dateRange].forEach(el => {
-    el.addEventListener('input', filterTable);
-  });
+  [searchBar, statusFilter, dateRange].forEach(el => el.addEventListener('input', filterTable));
 </script>
+
+<%- include('./layouts/footer') %>

@@ -6,19 +6,23 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Event List</title>
+
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Segoe UI', sans-serif;
       background: #f4f7f6;
-      padding: 20px;
     }
 
     h1 {
-      text-align: center;
       color: #388e3c;
       margin-bottom: 30px;
+      font-weight: 700;
     }
 
     .notification-container {
@@ -108,21 +112,6 @@
       background: #e8f5e9;
     }
 
-    .notification-actions {
-      text-align: right;
-      margin-top: 8px;
-    }
-
-    .notification-actions button {
-      font-size: 0.75rem;
-      padding: 4px 8px;
-      border: none;
-      border-radius: 3px;
-      cursor: pointer;
-      background: #388e3c;
-      color: white;
-    }
-
     #toast {
       position: fixed;
       bottom: 20px;
@@ -135,95 +124,70 @@
       z-index: 1000;
     }
 
-    .event-table-container {
-      max-width: 800px;
-      margin: 0 auto;
-      background: #ffffff;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-    }
-
-    table.event-table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    .event-table th, .event-table td {
-      padding: 12px;
-      text-align: left;
-    }
-
-    .event-table thead {
-      background-color: #388e3c;
-      color: white;
-    }
-
-    .event-table tbody tr:nth-child(even) {
-      background-color: #f2f2f2;
-    }
-
-    .event-table tbody tr:hover {
-      background-color: #e0f2e0;
-    }
-
     @media (max-width: 600px) {
       .notification-dropdown {
         width: 95%;
         right: 2.5%;
-      }
-
-      .event-table-container {
-        padding: 10px;
       }
     }
   </style>
 </head>
 <body>
 
-<h1>Upcoming Events</h1>
+<div class="container my-4">
+  <h1 class="text-center">Upcoming Events</h1>
 
-<div class="notification-container">
-  <i class="fa fa-bell notification-bell"></i>
-  <% if (notificationsCount > 0) { %>
-    <span class="notification-count" id="notif-count"><%= notificationsCount %></span>
-  <% } %>
+  <!-- 🔔 Notification Section -->
+  <div class="notification-container">
+    <i class="fa fa-bell notification-bell"></i>
+    <% if (notificationsCount > 0) { %>
+      <span class="notification-count" id="notif-count"><%= notificationsCount %></span>
+    <% } %>
 
-  <div class="notification-dropdown" id="notificationDropdown">
-    <div class="notification-tabs">
-      <div class="notification-tab active" data-tab="unread">Unread</div>
-      <div class="notification-tab" data-tab="all">All</div>
+    <div class="notification-dropdown" id="notificationDropdown">
+      <div class="notification-tabs">
+        <div class="notification-tab active" data-tab="unread">Unread</div>
+        <div class="notification-tab" data-tab="all">All</div>
+      </div>
+      <div class="notification-list" id="notificationList">
+        <!-- JS will populate here -->
+      </div>
     </div>
-    <div class="notification-list" id="notificationList">
-      <!-- JS will populate here -->
+  </div>
+
+  <!-- 📅 Event Table -->
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle">
+          <thead class="table-success">
+            <tr>
+              <th scope="col">Event</th>
+              <th scope="col">Location</th>
+              <th scope="col">Description</th>
+              <th scope="col">Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% events.forEach(event => { %>
+              <tr>
+                <td><%= event.title %></td>
+                <td><%= event.location %></td>
+                <td><%= event.description %></td>
+                <td><%= event.date.toDateString() %></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </div>
 
-<div class="event-table-container">
-  <table class="event-table">
-    <thead>
-      <tr>
-        <th>Event</th>
-        <th>Location</th>
-        <th>Description</th>
-        <th>Date</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% events.forEach(event => { %>
-        <tr>
-          <td><%= event.title %></td>
-          <td><%= event.location %></td>
-          <td><%= event.description %></td>
-          <td><%= event.date.toDateString() %></td>
-        </tr>
-      <% }) %>
-    </tbody>
-  </table>
-</div>
-
 <div id="toast">Action complete</div>
+
+<!-- Bootstrap JS Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
   const events = <%- JSON.stringify(events) %>;
@@ -260,7 +224,7 @@
       });
 
       if (filtered.length === 0) {
-        container.append('<p style="text-align:center;color:#666;">No notifications</p>');
+        container.append('<p class="text-center text-muted">No notifications</p>');
         return;
       }
 
@@ -270,8 +234,8 @@
             <div><strong>${event.title}</strong></div>
             <small>${event.description}</small><br/>
             <small><i>${new Date(event.date).toDateString()} - ${event.location}</i></small>
-            <div class="notification-actions">
-              <button class="toggle-read-btn" data-id="${event._id}" data-read="${event.read}">
+            <div class="notification-actions mt-2">
+              <button class="btn btn-sm btn-success toggle-read-btn" data-id="${event._id}" data-read="${event.read}">
                 Mark as ${event.read ? 'Unread' : 'Read'}
               </button>
             </div>

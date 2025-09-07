@@ -173,4 +173,4 @@ async function sendEmail(to, subject, text) {
   });
 }
 
-module.exports = authController;
+module.exports = authController;  

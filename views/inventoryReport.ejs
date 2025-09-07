@@ -5,53 +5,29 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Comprehensive Inventory Report</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; background: #f4f7fa; color: #333; }
-    .container { padding: 2rem; max-width: 1200px; margin: 0 auto; }
-    .report-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; border-bottom: 3px solid #2e7d32; padding-bottom: .5rem; }
-    .report-title { font-size: 1.8rem; font-weight: bold; color: #2e7d32; }
-    .btn-group { display: flex; gap: .5rem; }
-    .action-btn { display: inline-flex; align-items: center; gap: 6px; padding: .5rem 1rem; border-radius: 6px; font-size: .9rem; font-weight: 500; border: none; cursor: pointer; background: #2e7d32; color: #fff; text-decoration: none; transition: 0.3s; }
-    .action-btn:hover { background: #256428; }
-    .search-bar { margin-bottom: 1rem; background: #fff; padding: .8rem 1rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,.08); }
-    .filter-row { display: flex; gap: .5rem; flex-wrap: wrap; }
-    .search-bar input, .search-bar select { padding: 0.5rem; border: 1px solid #ccc; border-radius: 6px; font-size: 0.9rem; }
-    .search-bar input { width: 220px; }
-    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin: 1.5rem 0; }
-    .stat-card { background: #fff; padding: 1rem; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,.08); display: flex; flex-direction: column; gap: .5rem; }
-    .stat-header { display: flex; justify-content: space-between; align-items: center; }
-    .stat-title { font-size: .95rem; font-weight: 600; color: #666; }
-    .stat-value { font-size: 1.4rem; font-weight: bold; color: #2e7d32; }
-    .stat-icon { width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; border-radius: 8px; color: #fff; }
-    .blue { background: #1976d2; } .green { background: #2e7d32; } .orange { background: #f57c00; } .red { background: #c62828; }
-    table { width: 100%; border-collapse: collapse; margin-top: 1rem; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,.08); }
-    table th { background: #2e7d32; color: #fff; padding: .75rem; text-align: left; font-size: .9rem; }
-    table td { padding: .7rem; border-bottom: 1px solid #eee; font-size: .9rem; }
+    body { background: #f4f7fa; }
+    .report-title { font-weight: bold; color: #2e7d32; }
     .status { padding: .25rem .5rem; border-radius: 5px; font-size: .8rem; font-weight: 600; color: #fff; }
     .status-in-stock { background: #43a047; }
     .status-low { background: #f57c00; }
     .status-out { background: #c62828; }
-
-    /* ✅ Pagination */
-    .pagination { display: flex; justify-content: center; margin-top: 1rem; gap: .4rem; flex-wrap: wrap; }
-    .pagination button { padding: .4rem .8rem; border: 1px solid #2e7d32; background: #fff; color: #2e7d32; border-radius: 5px; cursor: pointer; font-size: .9rem; }
     .pagination button.active { background: #2e7d32; color: #fff; }
-    .pagination button:hover { background: #256428; color: #fff; }
-    .pagination button:disabled { background: #eee; color: #aaa; cursor: not-allowed; }
   </style>
 </head>
 <body>
-  <div class="container">
+  <div class="container py-4">
     <!-- ✅ Header -->
-    <div class="report-header">
-      <h1 class="report-title">📦 Inventory Report</h1>
+    <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">
+      <h1 class="report-title h3"><i class="fas fa-boxes me-2"></i> Inventory Report</h1>
       <div class="btn-group">
-        <a href="/manage-products" class="action-btn" style="background:#546e7a;">
-          <i class="fas fa-arrow-left"></i> Back to Products
+        <a href="/manage-products" class="btn btn-secondary">
+          <i class="fas fa-arrow-left me-1"></i> Back
         </a>
-        <button id="exportBtn" class="action-btn">
-          <i class="fas fa-file-csv"></i> Export CSV
+        <button id="exportBtn" class="btn btn-success">
+          <i class="fas fa-file-csv me-1"></i> Export CSV
         </button>
       </div>
     </div>
@@ -64,70 +40,77 @@
     %>
 
     <!-- ✅ Filters -->
-    <div class="search-bar">
-      <div class="filter-row">
-        <input type="text" id="searchInput" placeholder="Search inventory...">
-        <select id="filterCategory" title="Filter by Category">
-          <option value="all">All Categories</option>
-          <% _cats.forEach(cat => { %>
-            <option value="<%= cat %>"><%= cat %></option>
-          <% }) %>
-        </select>
+    <div class="card shadow-sm mb-3">
+      <div class="card-body row g-2">
+        <div class="col-md-6">
+          <input type="text" id="searchInput" class="form-control" placeholder="Search inventory...">
+        </div>
+        <div class="col-md-6">
+          <select id="filterCategory" class="form-select">
+            <option value="all">All Categories</option>
+            <% _cats.forEach(cat => { %>
+              <option value="<%= cat %>"><%= cat %></option>
+            <% }) %>
+          </select>
+        </div>
       </div>
     </div>
 
     <!-- ✅ Inventory Table -->
     <% if (inventory && inventory.length > 0) { %>
-      <table id="inventoryTable">
-        <thead>
-          <tr>
-            <th>Item Name</th>
-            <th>Category</th>
-            <th>Quantity</th>
-            <th>Status</th>
-            <th>Unit Price (₱)</th>
-            <th>Total Value (₱)</th>
-            <th>Last Updated</th>
-            <th>Date Added</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% inventory.forEach(item => { 
-            let totalValue = item.price * item.quantity;
-            let stockStatus = item.quantity === 0 ? 'out' : (item.quantity < 10 ? 'low' : 'in-stock');
-          %>
-            <tr data-category="<%= item.category %>" data-name="<%= item.name %>">
-              <td><%= item.name %></td>
-              <td><%= item.category %></td>
-              <td><%= item.quantity %></td>
-              <td>
-                <% if (stockStatus === 'in-stock') { %>
-                  <span class="status status-in-stock">In Stock</span>
-                <% } else if (stockStatus === 'low') { %>
-                  <span class="status status-low">Low Stock</span>
-                <% } else { %>
-                  <span class="status status-out">Out of Stock</span>
-                <% } %>
-              </td>
-              <td>₱<%= item.price.toFixed(2) %></td>
-              <td>₱<%= totalValue.toFixed(2) %></td>
-              <td><%= item.updatedAt ? item.updatedAt.toLocaleDateString() : '' %></td>
-              <td><%= item.createdAt ? item.createdAt.toLocaleDateString() : '' %></td>
+      <div class="table-responsive shadow-sm">
+        <table id="inventoryTable" class="table table-hover align-middle">
+          <thead class="table-success text-dark">
+            <tr>
+              <th>Item Name</th>
+              <th>Category</th>
+              <th>Quantity</th>
+              <th>Status</th>
+              <th>Unit Price (₱)</th>
+              <th>Total Value (₱)</th>
+              <th>Last Updated</th>
+              <th>Date Added</th>
             </tr>
-          <% }) %>
-        </tbody>
-      </table>
-      <div class="pagination" id="pagination"></div>
+          </thead>
+          <tbody>
+            <% inventory.forEach(item => { 
+              let totalValue = item.price * item.quantity;
+              let stockStatus = item.quantity === 0 ? 'out' : (item.quantity < 10 ? 'low' : 'in-stock');
+            %>
+              <tr data-category="<%= item.category %>" data-name="<%= item.name %>">
+                <td><%= item.name %></td>
+                <td><%= item.category %></td>
+                <td><%= item.quantity %></td>
+                <td>
+                  <% if (stockStatus === 'in-stock') { %>
+                    <span class="status status-in-stock">In Stock</span>
+                  <% } else if (stockStatus === 'low') { %>
+                    <span class="status status-low">Low Stock</span>
+                  <% } else { %>
+                    <span class="status status-out">Out of Stock</span>
+                  <% } %>
+                </td>
+                <td>₱<%= item.price.toFixed(2) %></td>
+                <td>₱<%= totalValue.toFixed(2) %></td>
+                <td><%= item.updatedAt ? item.updatedAt.toLocaleDateString() : '' %></td>
+                <td><%= item.createdAt ? item.createdAt.toLocaleDateString() : '' %></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+      <div class="d-flex justify-content-center my-3" id="pagination"></div>
     <% } else { %>
-      <div style="text-align:center; padding:2rem;">
-        <i class="fas fa-box-open" style="font-size:3rem; color:#ccc;"></i>
-        <h3>No Inventory Data</h3>
-        <p>Add new items to start tracking your inventory.</p>
+      <div class="text-center py-5">
+        <i class="fas fa-box-open fa-3x text-muted"></i>
+        <h3 class="mt-3">No Inventory Data</h3>
+        <p class="text-muted">Add new items to start tracking your inventory.</p>
       </div>
     <% } %>
   </div>
 
   <!-- ✅ Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script>
     document.addEventListener("DOMContentLoaded", function () {
       const searchInput = document.getElementById("searchInput");
@@ -151,47 +134,32 @@
         pagination.innerHTML = "";
         let pageCount = Math.ceil(rows.length / rowsPerPage);
 
-        // ✅ Previous button
+        // Prev
         let prevBtn = document.createElement("button");
+        prevBtn.className = "btn btn-outline-success btn-sm me-1";
         prevBtn.innerText = "Previous";
         prevBtn.disabled = currentPage === 1;
-        prevBtn.addEventListener("click", function () {
-          if (currentPage > 1) {
-            currentPage--;
-            displayTable();
-            setupPagination();
-          }
-        });
+        prevBtn.onclick = () => { if (currentPage > 1) { currentPage--; displayTable(); setupPagination(); } };
         pagination.appendChild(prevBtn);
 
-        // ✅ Numbered buttons
+        // Numbers
         for (let i = 1; i <= pageCount; i++) {
           let btn = document.createElement("button");
+          btn.className = "btn btn-sm " + (i === currentPage ? "btn-success" : "btn-outline-success");
           btn.innerText = i;
-          if (i === currentPage) btn.classList.add("active");
-          btn.addEventListener("click", function () {
-            currentPage = i;
-            displayTable();
-            setupPagination();
-          });
+          btn.onclick = () => { currentPage = i; displayTable(); setupPagination(); };
           pagination.appendChild(btn);
         }
 
-        // ✅ Next button
+        // Next
         let nextBtn = document.createElement("button");
+        nextBtn.className = "btn btn-outline-success btn-sm ms-1";
         nextBtn.innerText = "Next";
         nextBtn.disabled = currentPage === pageCount;
-        nextBtn.addEventListener("click", function () {
-          if (currentPage < pageCount) {
-            currentPage++;
-            displayTable();
-            setupPagination();
-          }
-        });
+        nextBtn.onclick = () => { if (currentPage < pageCount) { currentPage++; displayTable(); setupPagination(); } };
         pagination.appendChild(nextBtn);
       }
 
-      // ✅ Filter
       function filterTable() {
         const searchValue = searchInput.value.toLowerCase();
         const categoryValue = filterCategory.value;
@@ -207,11 +175,9 @@
       searchInput.addEventListener("keyup", filterTable);
       filterCategory.addEventListener("change", filterTable);
 
-      // ✅ Init
       displayTable();
       setupPagination();
 
-      // ✅ Export CSV
       document.getElementById("exportBtn").addEventListener("click", () => {
         let csv = [];
         let headers = [];
@@ -230,7 +196,7 @@
           }
         });
 
-        let blob = new Blob([csv.join("\n")], { type: "text/csv;charset=utf-8;" });
+        let blob = new Blob([csv.join("\\n")], { type: "text/csv;charset=utf-8;" });
         let link = document.createElement("a");
         link.href = URL.createObjectURL(blob);
         link.download = "Inventory_Report.csv";

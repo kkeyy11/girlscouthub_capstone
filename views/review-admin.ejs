@@ -24,123 +24,103 @@
 
 body {
   font-family: 'Inter', sans-serif;
-  background: linear-gradient(135deg, #e6fff2, #f9fffc); /* super light mint green */
+  background: linear-gradient(135deg, #e6fff2, #f9fffc);
   color: var(--gray-800);
   padding-top: 90px;
 }
 
+/* 🌟 Main Container */
 .admin-review-container {
   padding: 30px;
-  width: calc(100% - 240px);
-  margin-left: 240px;
+  width: 100%;
+  max-width: 1050px; /* slightly bigger */
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 30px;
-  max-width: 1400px;
+  gap: 35px;
+  align-items: center;
 }
 
+/* 🌟 Heading */
 h1 {
   font-weight: 800;
-  font-size: 2.2rem;
+  font-size: 2.4rem; /* slightly bigger */
   color: var(--gray-900);
   display: flex;
   align-items: center;
   gap: 12px;
+  justify-content: center;
   margin-bottom: 10px;
 }
+h1 i { color: var(--primary); }
 
-h1 i {
-  color: var(--primary);
-}
-
+/* 🌟 Stats Cards */
 .stats-summary {
-  display: grid;
-  grid-template-columns: repeat(auto-fit,minmax(180px,1fr));
-  gap: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 25px;
+  justify-content: center;
 }
-
 .stat-card {
   background: var(--white);
-  padding: 20px;
+  padding: 25px; /* slightly bigger */
   border-radius: var(--radius);
   text-align: center;
   box-shadow: var(--shadow);
   transition: transform 0.2s;
+  min-width: 160px; /* slightly bigger */
 }
+.stat-card:hover { transform: translateY(-3px); }
+.stat-number { font-weight: 700; font-size: 1.9rem; color: var(--primary); }
+.stat-label { font-size: 1rem; color: var(--gray-500); margin-top: 6px; }
 
-.stat-card:hover {
-  transform: translateY(-3px);
-}
-
-.stat-number {
-  font-weight: 700;
-  font-size: 1.8rem;
-  color: var(--primary);
-}
-
-.stat-label {
-  font-size: 0.95rem;
-  color: var(--gray-500);
-  margin-top: 6px;
-}
-
+/* 🌟 Analytics */
 .analytics-container {
   background: var(--white);
-  padding: 25px;
+  padding: 20px;
   border-radius: var(--radius);
   box-shadow: var(--shadow);
   display: flex;
-  flex-direction: row;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 40px;
+  justify-content: center;
+  gap: 15px; /* smaller gap for smaller container */
   position: relative;
+  width: 90%; /* smaller than before */
+  max-width: 700px; /* limit analytics container */
 }
-
 .analytics-title {
   font-weight: 700;
-  font-size: 1.4rem;
+  font-size: 1.2rem;
   color: var(--primary);
-  flex: 0 0 200px;
   display: flex;
   align-items: center;
   gap: 12px;
 }
-
 .analytics-title i { color: var(--primary-light); }
 
 .circular-charts-container {
   display: flex;
   justify-content: center;
-  gap: 40px;
-  flex: 1;
+  gap: 15px;
+  flex-wrap: wrap;
 }
 
 .circular-chart {
   position: relative;
-  width: 120px;
-  height: 120px;
+  width: 80px; /* smaller */
+  height: 80px; /* smaller */
 }
-
-.circular-chart canvas {
-  position: absolute;
-  top: 0; left: 0;
-}
-
+.circular-chart canvas { position: absolute; top:0; left:0; }
 .circular-chart .percent-text {
-  position: absolute;
-  top: 50%; left: 50%;
+  position: absolute; top:50%; left:50%;
   transform: translate(-50%,-50%);
-  font-weight: 700;
-  font-size: 1.1rem;
+  font-weight: 700; font-size: 0.85rem; /* smaller text */
 }
-
 .circular-chart .chart-label {
-  position: absolute;
-  width: 100%;
-  bottom: -25px;
-  text-align: center;
-  font-size: 0.9rem;
-  color: var(--gray-500);
+  position: absolute; width: 100%;
+  bottom: -18px; text-align: center;
+  font-size: 0.75rem; color: var(--gray-500);
   font-weight: 600;
 }
 
@@ -151,103 +131,91 @@ h1 i {
   display: flex;
   gap: 8px;
 }
-
 .analytics-filter select,
 .analytics-filter input {
-  padding: 6px 10px;
+  padding: 5px 8px;
   border-radius: var(--radius);
   border: 1px solid var(--gray-300);
-  font-size: 0.85rem;
+  font-size: 0.8rem;
 }
 
+/* 🌟 Filter Buttons */
 .filter-buttons {
   display: flex;
-  gap: 12px;
+  gap: 10px;
   flex-wrap: wrap;
+  justify-content: center;
 }
-
 .filter-buttons button {
-  padding: 8px 16px;
+  padding: 7px 16px; /* slightly bigger */
   border-radius: var(--radius);
   border: none;
   font-weight: 600;
   cursor: pointer;
   transition: 0.2s;
 }
-
-.filter-buttons button:hover {
-  opacity: 0.9;
-  transform: translateY(-1px);
-}
-
+.filter-buttons button:hover { opacity: 0.9; transform: translateY(-1px); }
 .filter-all { background: var(--gray-200); color: var(--gray-700); }
 .filter-positive { background: #d1fae5; color: var(--primary); }
 .filter-neutral { background: #fef3c7; color: #f59e0b; }
 .filter-negative { background: #fee2e2; color: #dc2626; }
+.filter-buttons .active { box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
 
-.filter-buttons .active {
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
+/* 🌟 Reviews Table */
 .admin-review-list {
   list-style: none;
-  display: grid;
-  gap: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
   padding: 0;
+  width: 100%;
+  max-width: 750px; /* slightly bigger */
+  margin: 0 auto;
 }
-
 .review-card {
-  padding: 20px;
+  padding: 18px; /* slightly bigger */
   border-radius: var(--radius);
   background: var(--white);
   box-shadow: var(--shadow);
   border-left: 5px solid transparent;
+  width: 100%;
+  box-sizing: border-box;
 }
-
 .review-positive { border-color: #10b981; }
 .review-neutral { border-color: #f59e0b; }
 .review-negative { border-color: #dc2626; }
 
 .sentiment-badge {
   display: inline-block;
-  padding: 4px 10px;
+  padding: 4px 9px;
   border-radius: var(--radius);
   font-size: 0.8rem;
   font-weight: 600;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
-
 .review-positive .sentiment-badge { background: #ecfdf5; color: #059669; }
 .review-neutral .sentiment-badge { background: #fffbeb; color: #b45309; }
 .review-negative .sentiment-badge { background: #fef2f2; color: #b91c1c; }
 
-.review-message {
-  font-size: 1rem;
-  margin-bottom: 10px;
-}
-
-.review-meta {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.85rem;
-  color: var(--gray-500);
-}
+.review-message { font-size: 1rem; margin-bottom: 8px; }
+.review-meta { display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--gray-500); }
 
 .empty-state {
   text-align: center;
   background: var(--white);
-  padding: 40px;
+  padding: 35px; /* slightly bigger */
   border-radius: var(--radius);
   box-shadow: var(--shadow);
 }
+.empty-state h3 { font-weight: 700; margin-bottom: 5px; font-size: 1.2rem; }
+.empty-state p { color: var(--gray-500); font-size: 0.95rem; }
 
-.empty-state h3 {
-  font-weight: 700;
-  margin-bottom: 6px;
-}
-
-.empty-state p {
-  color: var(--gray-500);
+/* 🌟 Responsive Adjustments */
+@media (max-width: 992px) {
+  .analytics-container { flex-direction: column; align-items: center; gap: 15px; }
+  .circular-charts-container { justify-content: center; }
+  .stats-summary { justify-content: center; }
+  .filter-buttons { justify-content: center; }
 }
 </style>
 
@@ -318,7 +286,7 @@ h1 i {
       <p>No user reviews have been submitted yet.</p>
     </div>
   <% } else { %>
-    <ul class="admin-review-list">
+    <ul class="admin-review-list mt-3">
       <% reviews.forEach(review => { 
         let sentimentClass = '';
         if(review.sentiment.toLowerCase() === 'positive') sentimentClass='review-positive';
@@ -344,20 +312,14 @@ const reviews = <%- JSON.stringify(reviews) %>;
 function filterReviewsByDate(period, value){
   if(period === 'today'){
     const today = new Date();
-    return reviews.filter(r=>{
-      const d = new Date(r.createdAt);
-      return d.toDateString() === today.toDateString();
-    });
+    return reviews.filter(r=> new Date(r.createdAt).toDateString() === today.toDateString());
   } else if(period === 'month'){
     return reviews.filter(r=>{
       const d = new Date(r.createdAt);
       return d.getFullYear() === value.getFullYear() && d.getMonth() === value.getMonth();
     });
   } else if(period === 'year'){
-    return reviews.filter(r=>{
-      const d = new Date(r.createdAt);
-      return d.getFullYear() === value;
-    });
+    return reviews.filter(r=> new Date(r.createdAt).getFullYear() === value);
   }
   return reviews;
 }
@@ -373,15 +335,7 @@ function updateCharts(filteredReviews){
     if(window[id+'_chart']) window[id+'_chart'].destroy();
     window[id+'_chart'] = new Chart(ctx,{
       type:'doughnut',
-      data:{
-        labels:['Filled','Remaining'],
-        datasets:[{
-          data:[value,total-value],
-          backgroundColor:[color,'#e5e5e5'],
-          cutout:'70%',
-          borderWidth:0
-        }]
-      },
+      data:{labels:['Filled','Remaining'], datasets:[{data:[value,total-value], backgroundColor:[color,'#e5e5e5'], cutout:'70%', borderWidth:0}]},
       options:{plugins:{legend:{display:false}, tooltip:{enabled:false}}}
     });
     document.getElementById('percent-'+id.split('-')[1]).innerText = total===0?'0%':((value/total)*100).toFixed(1)+'%';
@@ -391,6 +345,7 @@ function updateCharts(filteredReviews){
   createCircularChart('chart-negative', counts.negative, '#dc2626');
 }
 updateCharts(reviews);
+
 const periodSelect = document.getElementById('analytics-period');
 const dateInput = document.getElementById('date-filter');
 const monthInput = document.getElementById('month-filter');
@@ -402,18 +357,10 @@ periodSelect.addEventListener('change', ()=>{
   if(periodSelect.value==='year') yearInput.style.display='inline-block';
   updateCharts(reviews);
 });
-dateInput.addEventListener('change', ()=>{
-  const d = new Date(dateInput.value);
-  updateCharts(filterReviewsByDate('today', d));
-});
-monthInput.addEventListener('change', ()=>{
-  const d = new Date(monthInput.value);
-  updateCharts(filterReviewsByDate('month', d));
-});
-yearInput.addEventListener('change', ()=>{
-  const y = parseInt(yearInput.value);
-  updateCharts(filterReviewsByDate('year', y));
-});
+dateInput.addEventListener('change', ()=>{ updateCharts(filterReviewsByDate('today', new Date(dateInput.value))); });
+monthInput.addEventListener('change', ()=>{ updateCharts(filterReviewsByDate('month', new Date(monthInput.value))); });
+yearInput.addEventListener('change', ()=>{ updateCharts(filterReviewsByDate('year', parseInt(yearInput.value))); });
+
 const buttons = document.querySelectorAll('.filter-buttons button');
 const reviewCards = document.querySelectorAll('.review-card');
 buttons.forEach(btn=>{
@@ -423,10 +370,7 @@ buttons.forEach(btn=>{
     const filter = btn.classList.contains('filter-positive')?'positive':
                    btn.classList.contains('filter-neutral')?'neutral':
                    btn.classList.contains('filter-negative')?'negative':'all';
-    reviewCards.forEach(card=>{
-      if(filter==='all') card.style.display='block';
-      else card.style.display = card.classList.contains('review-'+filter)?'block':'none';
-    });
+    reviewCards.forEach(card=>{ card.style.display=(filter==='all'||card.classList.contains('review-'+filter))?'block':'none'; });
   });
 });
 </script>

@@ -2,121 +2,140 @@
 <%- include('./layouts/navbar') %>
 
 <style>
+/* ---------------- Main Layout ---------------- */
 main {
   margin-left: 220px;
   padding: 60px 20px 20px;
   min-height: 100vh;
-  background: linear-gradient(135deg, var(--gray-50) 0%, var(--white) 50%, rgba(5,150,105,0.05) 100%);
+  background: #f4f7fa;
   font-family: 'Inter', sans-serif;
   overflow-x: hidden;
 }
 
-/* Header */
+/* ---------------- Header ---------------- */
 .page-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
 }
 .page-title {
-  font-size: 1.6rem;
+  font-size: 1.8rem;
   font-weight: 700;
-  background: linear-gradient(135deg, var(--primary), var(--primary-light));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: #065f46;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 .add-btn {
-  padding: 8px 14px;
-  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  padding: 10px 18px;
+  background: linear-gradient(135deg, #059669, #10b981);
   color: white;
   border: none;
-  border-radius: 6px;
-  font-size: 0.9rem;
+  border-radius: 8px;
+  font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 6px;
-  box-shadow: var(--shadow);
+  gap: 8px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  transition: all 0.2s ease;
 }
 .add-btn:hover {
   transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
 }
 
-/* Table */
+/* ---------------- Table ---------------- */
 .table-container {
   background: white;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: var(--shadow);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
   overflow-x: auto;
+  padding: 20px;
 }
 .table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
+  min-width: 600px;
 }
 .table thead {
-  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  background: linear-gradient(135deg, #059669, #10b981);
   color: white;
+  font-weight: 600;
 }
 .table th, .table td {
-  padding: 12px 14px;
+  padding: 14px 16px;
   text-align: left;
 }
-.table tbody tr:nth-child(even) {
-  background: var(--gray-50);
-}
-.table tbody tr:hover {
-  background: rgba(5,150,105,0.05);
-}
+.table tbody tr:nth-child(even) { background-color: #f9fafb; }
+.table tbody tr:nth-child(odd) { background-color: #ffffff; }
+.table tbody tr:hover { background-color: rgba(5,150,105,0.08); }
+
+/* ---------------- Action Buttons ---------------- */
 .action-btn {
-  padding: 6px 10px;
+  padding: 6px 12px;
   border-radius: 6px;
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   font-weight: 500;
   text-decoration: none;
   margin-right: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.2s ease;
 }
-.btn-view {
-  background: rgba(5,150,105,0.1);
-  color: var(--primary);
-  border: 1px solid rgba(5,150,105,0.2);
-}
-.btn-view:hover { background: var(--primary); color: white; }
-.btn-edit {
-  background: rgba(245,158,11,0.1);
-  color: #f59e0b;
-  border: 1px solid rgba(245,158,11,0.2);
-}
+.btn-view { background: rgba(5,150,105,0.1); color: #059669; border: 1px solid rgba(5,150,105,0.2); }
+.btn-view:hover { background: #059669; color: white; }
+.btn-edit { background: rgba(245,158,11,0.1); color: #f59e0b; border: 1px solid rgba(245,158,11,0.2); }
 .btn-edit:hover { background: #f59e0b; color: white; }
-.btn-delete {
-  background: rgba(220,38,38,0.1);
-  color: #dc2626;
-  border: 1px solid rgba(220,38,38,0.2);
-}
+.btn-delete { background: rgba(220,38,38,0.1); color: #dc2626; border: 1px solid rgba(220,38,38,0.2); }
 .btn-delete:hover { background: #dc2626; color: white; }
 
-/* Empty state */
-.empty-state {
-  text-align: center;
-  padding: 50px 20px;
-  color: var(--text-light);
+/* ---------------- Empty State ---------------- */
+.empty-state { text-align: center; padding: 60px 20px; color: #9ca3af; }
+.empty-state i { font-size: 3rem; margin-bottom: 12px; color: #d1d5db; }
+
+/* ---------------- Modal ---------------- */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0; top: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.4);
+  justify-content: center;
+  align-items: center;
 }
-.empty-state i {
-  font-size: 3rem;
-  margin-bottom: 10px;
-  color: var(--gray-300);
+.modal.show { display: flex; }
+.modal-content {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  max-width: 450px;
+  width: 100%;
+  position: relative;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
 }
+.close-btn { position: absolute; top: 16px; right: 16px; background: transparent; border: none; font-size: 1.2rem; cursor: pointer; color: #6b7280; }
+.modal-header .modal-title { font-size: 1.4rem; font-weight: 700; margin-bottom: 20px; }
+.form-group { margin-bottom: 20px; }
+.form-input { width: 100%; padding: 10px 14px; border-radius: 8px; border: 1px solid #d1d5db; font-size: 0.95rem; outline: none; transition: all 0.2s ease; }
+.form-input:focus { border-color: #059669; box-shadow: 0 0 0 3px rgba(5,150,105,0.15); }
+.modal-actions { display: flex; justify-content: flex-end; gap: 12px; }
+.modal-btn { padding: 8px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; border: none; display: flex; align-items: center; gap: 6px; }
+.btn-primary { background: linear-gradient(135deg, #059669, #10b981); color: white; }
+.btn-secondary { background: #f3f4f6; color: #374151; }
+.btn-primary:hover { transform: translateY(-2px); }
+.btn-secondary:hover { background: #e5e7eb; }
 </style>
 
 <main>
   <div class="page-header">
     <h1 class="page-title"><i class="fas fa-map-marked-alt"></i> All Districts</h1>
-    <button class="add-btn" onclick="openModal()">
-      <i class="fas fa-plus"></i> Add District
-    </button>
+    <button class="add-btn" onclick="openAddModal()"><i class="fas fa-plus"></i> Add District</button>
   </div>
 
   <% if (districts.length === 0) { %>
@@ -124,9 +143,7 @@ main {
       <i class="fas fa-map-marked-alt"></i>
       <h3>No Districts Yet</h3>
       <p>Start by adding your first district to organize schools.</p>
-      <button class="add-btn" onclick="openModal()">
-        <i class="fas fa-plus"></i> Add First District
-      </button>
+      <button class="add-btn" onclick="openAddModal()"><i class="fas fa-plus"></i> Add First District</button>
     </div>
   <% } else { %>
     <div class="table-container">
@@ -147,11 +164,9 @@ main {
               <td><%= d.schoolCount || 0 %></td>
               <td>
                 <a href="/districts/<%= d._id %>" class="action-btn btn-view"><i class="fas fa-eye"></i> View</a>
-                <a href="/districts/edit/<%= d._id %>" class="action-btn btn-edit"><i class="fas fa-edit"></i> Edit</a>
+                <button class="action-btn btn-edit" onclick="openEditModal('<%= d._id %>', '<%= d.name %>')"><i class="fas fa-edit"></i> Edit</button>
                 <form action="/districts/delete/<%= d._id %>" method="POST" style="display:inline;">
-                  <button type="submit" class="action-btn btn-delete" onclick="return confirm('Are you sure you want to delete this district?')">
-                    <i class="fas fa-trash"></i> Delete
-                  </button>
+                  <button type="submit" class="action-btn btn-delete" onclick="return confirm('Are you sure?')"><i class="fas fa-trash"></i> Delete</button>
                 </form>
               </td>
             </tr>
@@ -165,29 +180,50 @@ main {
 <!-- Add District Modal -->
 <div id="addDistrictModal" class="modal">
   <div class="modal-content">
-    <button class="close-btn" onclick="closeModal()"><i class="fas fa-times"></i></button>
-    <div class="modal-header">
-      <h2 class="modal-title">Add New District</h2>
-    </div>
-    <form action="/districts/add" method="POST" id="districtForm">
+    <button class="close-btn" onclick="closeAddModal()"><i class="fas fa-times"></i></button>
+    <div class="modal-header"><h2 class="modal-title">Add New District</h2></div>
+    <form action="/districts/add" method="POST" id="districtAddForm">
       <div class="form-group">
         <input type="text" name="name" placeholder="District Name" required class="form-input" maxlength="100">
       </div>
       <div class="modal-actions">
-        <button type="submit" class="modal-btn btn-primary"><i class="fas fa-save"></i> Save District</button>
-        <button type="button" class="modal-btn btn-secondary" onclick="closeModal()"><i class="fas fa-times"></i> Cancel</button>
+        <button type="submit" class="modal-btn btn-primary"><i class="fas fa-save"></i> Save</button>
+        <button type="button" class="modal-btn btn-secondary" onclick="closeAddModal()"><i class="fas fa-times"></i> Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Edit District Modal -->
+<div id="editDistrictModal" class="modal">
+  <div class="modal-content">
+    <button class="close-btn" onclick="closeEditModal()"><i class="fas fa-times"></i></button>
+    <div class="modal-header"><h2 class="modal-title">Edit District</h2></div>
+    <form method="POST" id="districtEditForm">
+      <div class="form-group">
+        <input type="text" name="name" id="editDistrictName" placeholder="District Name" required class="form-input" maxlength="100">
+      </div>
+      <div class="modal-actions">
+        <button type="submit" class="modal-btn btn-primary"><i class="fas fa-save"></i> Update</button>
+        <button type="button" class="modal-btn btn-secondary" onclick="closeEditModal()"><i class="fas fa-times"></i> Cancel</button>
       </div>
     </form>
   </div>
 </div>
 
 <script>
-function openModal() {
-  document.getElementById('addDistrictModal').classList.add('show');
+function openAddModal() { document.getElementById('addDistrictModal').classList.add('show'); }
+function closeAddModal() { document.getElementById('addDistrictModal').classList.remove('show'); document.getElementById('districtAddForm').reset(); }
+
+function openEditModal(id, name) {
+  const form = document.getElementById('districtEditForm');
+  form.action = '/districts/edit/' + id; // set the form action dynamically
+  document.getElementById('editDistrictName').value = name; // fill current name
+  document.getElementById('editDistrictModal').classList.add('show');
 }
-function closeModal() {
-  document.getElementById('addDistrictModal').classList.remove('show');
-  document.getElementById('districtForm').reset();
+function closeEditModal() {
+  document.getElementById('editDistrictModal').classList.remove('show');
+  document.getElementById('districtEditForm').reset();
 }
 </script>
 
