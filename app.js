@@ -68,6 +68,8 @@ app.use('/auth', require('./routes/auth.route'));
 app.use('/products', require('./routes/productRoutes'));
 app.use('/', require('./routes/cartRoutes'));
 app.use('/', require('./routes/troop.route'));
+app.use("/", require("./routes/testMail"));
+
 app.use(
   '/user',
   connectEnsureLogin.ensureLoggedIn({ redirectTo: '/auth/login' }),
