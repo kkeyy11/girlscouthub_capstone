@@ -1,41 +1,76 @@
-const nodemailer = require('nodemailer');
-require('dotenv').config();
+const nodemailer = require("nodemailer");
+const { google } = require("googleapis");
+require("dotenv").config();
 
-console.log("Email credentials:", process.env.EMAIL_USER, process.env.EMAIL_PASS ? '✅' : '❌');
+const oAuth2Client = new google.auth.OAuth2(
+  process.env.CLIENT_ID,
+  process.env.CLIENT_SECRET,
+  process.env.REDIRECT_URI
+);
 
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS, // must be App Password if 2FA is on
-  },
-  logger: true,   // enable detailed logs
-  debug: true     // show SMTP traffic in console
-});
+oAuth2Client.setCredentials({ refresh_token: process.env.REFRESH_TOKEN });
 
-// Verify transporter immediately
-transporter.verify((error, success) => {
-  if (error) {
-    console.error('Error verifying transporter:', error);
-  } else {
-    console.log('SMTP transporter verified ✅');
-  }
-});
-
-const sendAppointmentEmail = async (to, subject, text) => {
-  const mailOptions = {
-    from: `"GSP System" <${process.env.EMAIL_USER}>`,
-    to,
-    subject,
-    text
-  };
-
+async function createTransporter() {
   try {
-    const info = await transporter.sendMail(mailOptions);
-    console.log(`Email sent to ${to}:`, info.response);
-  } catch (error) {
-    console.error(`Failed to send email to ${to}:`, error);
-  }
-};
+    const accessToken = await oAuth2Client.getAccessToken();
 
-module.exports = { sendAppointmentEmail, transporter };
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        type: "OAuth2",
+        user: process.env.GMAIL_USER,
+        clientId: process.env.CLIENT_ID,
+        clientSecret: process.env.CLIENT_SECRET,
+        refreshToken: process.env.REFRESH_TOKEN,
+        accessToken: accessToken.token,
+      },
+    });
+
+    return transporter;
+  } catch (err) {
+    console.error("❌ Failed to create transporter:", err);
+    throw err;
+  }
+}
+
+async function sendEmail({ to, subject, text }) {
+  try {
+    const transporter = await createTransporter();
+
+    const info = await transporter.sendMail({
+      from: `"GSP System" <${process.env.GMAIL_USER}>`,
+      to,
+      subject,
+      text,
+    });
+
+    console.log(`✅ Email sent to ${to}:`, info.response);
+    return info;
+  } catch (err) {
+    console.error(`❌ Failed to send email to ${to}:`, err);
+    throw err;
+  }
+}
+
+// Specific helpers for clarity
+async function sendVerificationEmail(to, link) {
+  return sendEmail({
+    to,
+    subject: "Verify your email",
+    text: `Click to verify: ${link}`,
+  });
+}
+
+async function sendResetPasswordEmail(to, link) {
+  return sendEmail({
+    to,
+    subject: "Reset your password",
+    text: `Reset your password: ${link}`,
+  });
+}
+
+module.exports = {
+  sendEmail,
+  sendVerificationEmail,
+  sendResetPasswordEmail,
+};
