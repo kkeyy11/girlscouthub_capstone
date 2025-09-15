@@ -102,6 +102,42 @@ app.get('/', (req, res) => {
   `);
 });
 
+const { google } = require('googleapis');
+
+// ----------------------
+// OAuth2 callback route (for Google API token exchange)
+// ----------------------
+app.get('/oauth2callback', async (req, res) => {
+  const oauth2Client = new google.auth.OAuth2(
+    process.env.CLIENT_ID,
+    process.env.CLIENT_SECRET,
+    process.env.REDIRECT_URI // dapat ito yung nasa .env (Railway domain)
+  );
+
+  const code = req.query.code;
+
+  if (!code) {
+    return res.send("❌ No code received. Try logging in with Google again.");
+  }
+
+  try {
+    const { tokens } = await oauth2Client.getToken(code);
+    console.log("✅ TOKENS:", tokens);
+
+    // Ipakita sa browser para makopya mo
+    res.send(`
+      <h2>✅ Success! Copy your tokens:</h2>
+      <pre>${JSON.stringify(tokens, null, 2)}</pre>
+      <p>👉 Save the <b>refresh_token</b> into your .env file as REFRESH_TOKEN</p>
+    `);
+  } catch (err) {
+    console.error("❌ Error exchanging code:", err);
+    res.send("Error exchanging code. Check console.");
+  }
+});
+
+
+
 // ----------------------
 // 404 handler
 // ----------------------
