@@ -2,28 +2,18 @@ const User = require('../models/user.model');
 const { validationResult } = require('express-validator');
 const passport = require('passport');
 const crypto = require('crypto');
-const nodemailer = require('nodemailer');
+const { transporter } = require('../utils/mailer'); // import transporter
 
 const authController = {
-  getLogin: (req, res) => {
-    res.render('login');
-  },
-
-  getRegister: (req, res) => {
-    res.render('register');
-  },
+  getLogin: (req, res) => res.render('login'),
+  getRegister: (req, res) => res.render('register'),
 
   postRegister: async (req, res, next) => {
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        errors.array().forEach(error => {
-          req.flash('error', error.msg);
-        });
-        return res.render('register', {
-          email: req.body.email,
-          messages: req.flash(),
-        });
+        errors.array().forEach(error => req.flash('error', error.msg));
+        return res.render('register', { email: req.body.email, messages: req.flash() });
       }
 
       const { firstName, middleName, lastName, email, password } = req.body;
@@ -34,25 +24,26 @@ const authController = {
         return res.redirect('/auth/register');
       }
 
-      const user = new User({
-        firstName,
-        middleName,
-        lastName,
-        email,
-        password
-      });
-
-      if (req.file) {
-        user.profileImage = req.file.filename;
-      }
+      const user = new User({ firstName, middleName, lastName, email, password });
+      if (req.file) user.profileImage = req.file.filename;
 
       user.verificationToken = crypto.randomBytes(32).toString('hex');
       user.isVerified = false;
       await user.save();
 
-      // Send email verification
+      // Send email verification with debug logging
       const verifyUrl = `${req.protocol}://${req.get('host')}/auth/verify-email/${user.verificationToken}`;
-      await sendEmail(user.email, 'Verify your email', `Click to verify: ${verifyUrl}`);
+      try {
+        const info = await transporter.sendMail({
+          from: `"GSP System" <${process.env.EMAIL_USER}>`,
+          to: user.email,
+          subject: 'Verify your email',
+          text: `Click to verify: ${verifyUrl}`
+        });
+        console.log(`Verification email sent to ${user.email}:`, info.response);
+      } catch (err) {
+        console.error('Error sending verification email:', err);
+      }
 
       req.flash('success', 'Registered successfully. Check your email to verify.');
       res.redirect('/auth/login');
@@ -87,9 +78,7 @@ const authController = {
     });
   },
 
-  getForgotPassword: (req, res) => {
-    res.render('forgot-password');
-  },
+  getForgotPassword: (req, res) => res.render('forgot-password'),
 
   postForgotPassword: async (req, res) => {
     try {
@@ -104,11 +93,22 @@ const authController = {
       await user.save();
 
       const resetUrl = `${req.protocol}://${req.get('host')}/auth/reset-password/${user.resetToken}`;
-      await sendEmail(user.email, 'Reset Password', `Reset your password: ${resetUrl}`);
+      try {
+        const info = await transporter.sendMail({
+          from: `"GSP System" <${process.env.EMAIL_USER}>`,
+          to: user.email,
+          subject: 'Reset Password',
+          text: `Reset your password: ${resetUrl}`
+        });
+        console.log(`Reset password email sent to ${user.email}:`, info.response);
+      } catch (err) {
+        console.error('Error sending reset password email:', err);
+      }
 
       req.flash('success', 'Reset link sent to your email.');
       res.redirect('/auth/login');
     } catch (err) {
+      console.error('Forgot password error:', err);
       res.status(500).send('Server error');
     }
   },
@@ -155,22 +155,4 @@ const authController = {
   }
 };
 
-// Utility: send email using nodemailer
-async function sendEmail(to, subject, text) {
-  const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS
-    }
-  });
-
-  await transporter.sendMail({
-    from: `"GSP System" <${process.env.EMAIL_USER}>`,
-    to,
-    subject,
-    text
-  });
-}
-
-module.exports = authController;  
+module.exports = authController;
