@@ -1,10 +1,7 @@
 // routes/testMail.js
 const express = require("express");
 const router = express.Router();
-const { google } = require("googleapis");
-const oauth2Client = require("../utils/googleClient");
-
-const gmail = google.gmail({ version: "v1", auth: oauth2Client });
+const getGmailClient = require("../utils/googleClient"); // ✅ make sure this uses oauth2Client + refresh_token
 
 // helper to base64url encode
 function encodeMessage(message) {
@@ -17,6 +14,9 @@ function encodeMessage(message) {
 
 router.get("/send-test", async (req, res) => {
   try {
+    // ✅ get Gmail client with refreshed access token
+    const gmail = await getGmailClient();
+
     const from = process.env.GMAIL_USER;
     const to = process.env.GMAIL_USER; // send to yourself for testing
     const subject = "Test Email";
