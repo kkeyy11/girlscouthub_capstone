@@ -10,6 +10,7 @@ const MongoStore = require('connect-mongo');
 const connectEnsureLogin = require('connect-ensure-login');
 const path = require('path');
 const siteContentRoutes = require('./routes/siteContent.route');
+const productRoutes = require('./routes/productRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
