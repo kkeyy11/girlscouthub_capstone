@@ -31,26 +31,26 @@ body {
 
 /* 🌟 Main Container */
 .admin-review-container {
-  padding: 30px;
+  padding: 40px;
   width: 100%;
-  max-width: 1050px; /* slightly bigger */
+  max-width: 1200px; /* mas maluwag */
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 35px;
+  gap: 40px;
   align-items: center;
 }
 
 /* 🌟 Heading */
 h1 {
   font-weight: 800;
-  font-size: 2.4rem; /* slightly bigger */
+  font-size: 2.6rem; /* mas laki title */
   color: var(--gray-900);
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
   justify-content: center;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
 }
 h1 i { color: var(--primary); }
 
@@ -58,69 +58,72 @@ h1 i { color: var(--primary); }
 .stats-summary {
   display: flex;
   flex-wrap: wrap;
-  gap: 25px;
+  gap: 30px;
   justify-content: center;
 }
 .stat-card {
   background: var(--white);
-  padding: 25px; /* slightly bigger */
+  padding: 30px; /* mas spacious */
   border-radius: var(--radius);
   text-align: center;
   box-shadow: var(--shadow);
   transition: transform 0.2s;
-  min-width: 160px; /* slightly bigger */
+  min-width: 200px; /* mas laki card */
 }
-.stat-card:hover { transform: translateY(-3px); }
-.stat-number { font-weight: 700; font-size: 1.9rem; color: var(--primary); }
-.stat-label { font-size: 1rem; color: var(--gray-500); margin-top: 6px; }
+.stat-card:hover { transform: translateY(-4px); }
+.stat-number { font-weight: 700; font-size: 2.1rem; color: var(--primary); }
+.stat-label { font-size: 1.05rem; color: var(--gray-500); margin-top: 6px; }
 
 /* 🌟 Analytics */
 .analytics-container {
   background: var(--white);
-  padding: 20px;
+  padding: 30px;
   border-radius: var(--radius);
   box-shadow: var(--shadow);
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  gap: 15px; /* smaller gap for smaller container */
+  gap: 20px;
   position: relative;
-  width: 90%; /* smaller than before */
-  max-width: 700px; /* limit analytics container */
+  width: 95%;
+  max-width: 850px;
 }
 .analytics-title {
   font-weight: 700;
-  font-size: 1.2rem;
+  font-size: 1.4rem;
   color: var(--primary);
   display: flex;
   align-items: center;
   gap: 12px;
+  margin-bottom: 10px;
+  width: 100%;
+  justify-content: center;
 }
 .analytics-title i { color: var(--primary-light); }
 
 .circular-charts-container {
   display: flex;
   justify-content: center;
-  gap: 15px;
+  gap: 25px;
   flex-wrap: wrap;
 }
 
 .circular-chart {
   position: relative;
-  width: 80px; /* smaller */
-  height: 80px; /* smaller */
+  width: 100px; /* mas laki */
+  height: 100px;
 }
 .circular-chart canvas { position: absolute; top:0; left:0; }
 .circular-chart .percent-text {
   position: absolute; top:50%; left:50%;
   transform: translate(-50%,-50%);
-  font-weight: 700; font-size: 0.85rem; /* smaller text */
+  font-weight: 700; font-size: 1rem;
 }
 .circular-chart .chart-label {
   position: absolute; width: 100%;
-  bottom: -18px; text-align: center;
-  font-size: 0.75rem; color: var(--gray-500);
+  bottom: -22px; text-align: center;
+  font-size: 0.85rem; color: var(--gray-500);
   font-weight: 600;
 }
 
@@ -133,31 +136,32 @@ h1 i { color: var(--primary); }
 }
 .analytics-filter select,
 .analytics-filter input {
-  padding: 5px 8px;
+  padding: 6px 10px;
   border-radius: var(--radius);
   border: 1px solid var(--gray-300);
-  font-size: 0.8rem;
+  font-size: 0.85rem;
 }
 
 /* 🌟 Filter Buttons */
 .filter-buttons {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   flex-wrap: wrap;
   justify-content: center;
 }
 .filter-buttons button {
-  padding: 7px 16px; /* slightly bigger */
+  padding: 9px 20px;
   border-radius: var(--radius);
   border: none;
   font-weight: 600;
+  font-size: 0.95rem;
   cursor: pointer;
   transition: 0.2s;
 }
-.filter-buttons button:hover { opacity: 0.9; transform: translateY(-1px); }
+.filter-buttons button:hover { opacity: 0.9; transform: translateY(-2px); }
 .filter-all { background: var(--gray-200); color: var(--gray-700); }
 .filter-positive { background: #d1fae5; color: var(--primary); }
-.filter-neutral { background: #fef3c7; color: #f59e0b; }
+.filter-neutral { background: #fef3c7; color: #b45309; }
 .filter-negative { background: #fee2e2; color: #dc2626; }
 .filter-buttons .active { box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
 
@@ -166,18 +170,18 @@ h1 i { color: var(--primary); }
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 18px;
   padding: 0;
   width: 100%;
-  max-width: 750px; /* slightly bigger */
+  max-width: 850px;
   margin: 0 auto;
 }
 .review-card {
-  padding: 18px; /* slightly bigger */
+  padding: 22px;
   border-radius: var(--radius);
   background: var(--white);
   box-shadow: var(--shadow);
-  border-left: 5px solid transparent;
+  border-left: 6px solid transparent;
   width: 100%;
   box-sizing: border-box;
 }
@@ -187,32 +191,32 @@ h1 i { color: var(--primary); }
 
 .sentiment-badge {
   display: inline-block;
-  padding: 4px 9px;
+  padding: 5px 10px;
   border-radius: var(--radius);
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   font-weight: 600;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
 }
 .review-positive .sentiment-badge { background: #ecfdf5; color: #059669; }
 .review-neutral .sentiment-badge { background: #fffbeb; color: #b45309; }
 .review-negative .sentiment-badge { background: #fef2f2; color: #b91c1c; }
 
-.review-message { font-size: 1rem; margin-bottom: 8px; }
-.review-meta { display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--gray-500); }
+.review-message { font-size: 1.05rem; margin-bottom: 10px; line-height: 1.4; }
+.review-meta { display: flex; justify-content: space-between; font-size: 0.9rem; color: var(--gray-500); }
 
 .empty-state {
   text-align: center;
   background: var(--white);
-  padding: 35px; /* slightly bigger */
+  padding: 40px;
   border-radius: var(--radius);
   box-shadow: var(--shadow);
 }
-.empty-state h3 { font-weight: 700; margin-bottom: 5px; font-size: 1.2rem; }
-.empty-state p { color: var(--gray-500); font-size: 0.95rem; }
+.empty-state h3 { font-weight: 700; margin-bottom: 8px; font-size: 1.3rem; }
+.empty-state p { color: var(--gray-500); font-size: 1rem; }
 
 /* 🌟 Responsive Adjustments */
 @media (max-width: 992px) {
-  .analytics-container { flex-direction: column; align-items: center; gap: 15px; }
+  .analytics-container { flex-direction: column; align-items: center; gap: 20px; }
   .circular-charts-container { justify-content: center; }
   .stats-summary { justify-content: center; }
   .filter-buttons { justify-content: center; }
@@ -309,6 +313,7 @@ h1 i { color: var(--primary); }
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 const reviews = <%- JSON.stringify(reviews) %>;
+
 function filterReviewsByDate(period, value){
   if(period === 'today'){
     const today = new Date();
@@ -323,6 +328,7 @@ function filterReviewsByDate(period, value){
   }
   return reviews;
 }
+
 function updateCharts(filteredReviews){
   const total = filteredReviews.length;
   const counts = {

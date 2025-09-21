@@ -3,8 +3,34 @@ const District = require('../models/District');
 const School = require('../models/School');
 
 exports.getDistricts = async (req, res) => {
-  const districts = await District.find();
-  res.render('district', { districts });
+  try {
+    // Aggregate para makuha schoolCount per district
+    const districts = await District.aggregate([
+      {
+        $lookup: {
+          from: 'schools',          // collection name ng School
+          localField: '_id',        // District._id
+          foreignField: 'district', // School.district
+          as: 'schools'
+        }
+      },
+      {
+        $addFields: {
+          schoolCount: { $size: '$schools' } // bilang ng schools
+        }
+      },
+      {
+        $project: {
+          schools: 0 // wag na isama yung buong schools array, count lang kailangan
+        }
+      }
+    ]);
+
+    res.render('district', { districts });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Server Error');
+  }
 };
 
 exports.addDistrict = async (req, res) => {
@@ -30,7 +56,7 @@ exports.deleteDistrict = async (req, res) => {
 exports.getDistrictSchools = async (req, res) => {
   const districtId = req.params.id;
 
-  // 🔒 Protect against invalid ObjectId (e.g., "all")
+  // 🔒 Validate ObjectId
   if (!mongoose.Types.ObjectId.isValid(districtId)) {
     req.flash('error', 'Invalid district ID.');
     return res.redirect('/districts');

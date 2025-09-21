@@ -10,24 +10,116 @@
   <style>
     body { background: #f4f7fa; }
     .report-title { font-weight: bold; color: #2e7d32; }
-    .status { padding: .25rem .5rem; border-radius: 5px; font-size: .8rem; font-weight: 600; color: #fff; }
-    .status-in-stock { background: #43a047; }
-    .status-low { background: #f57c00; }
-    .status-out { background: #c62828; }
+
+    /* ✅ Custom Buttons */
+    .btn-custom {
+      padding: 0.5rem 1rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      border-radius: 8px;
+      transition: all 0.2s ease-in-out;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .btn-back {
+      background: #e0e0e0;
+      color: #333;
+    }
+    .btn-back:hover {
+      background: #d5d5d5;
+      color: #000;
+      transform: translateY(-2px);
+    }
+    .btn-save {
+      background: #2e7d32;
+      color: #fff;
+    }
+    .btn-save:hover {
+      background: #256828;
+      transform: translateY(-2px);
+    }
+
+    .btn-group { gap: 0.6rem; }
+
+    /* ✅ Status text only (no colored box) */
+    .status {
+      font-size: .85rem;
+      font-weight: 600;
+      background: none !important;
+      padding: 0 !important;
+      border-radius: 0 !important;
+    }
+    .status-in-stock { color: #2e7d32; }
+    .status-low { color: #f57c00; }
+    .status-out { color: #c62828; }
+
     .pagination button.active { background: #2e7d32; color: #fff; }
+
+    /* ✅ Print Styling (Portrait, Table Only, Centered & Smaller) */
+    @media print {
+      @page { 
+        size: A4 portrait; 
+        margin: 8mm;
+      }
+
+      body { 
+        background: #fff !important; 
+        font-size: 10px; 
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+      }
+
+      /* Hide non-table elements */
+      .btn-group,
+      #pagination,
+      .card,
+      #searchInput,
+      #filterCategory,
+      #filterDate,
+      .report-title,
+      .border-bottom { 
+        display: none !important; 
+      }
+
+      .container {
+        margin: 0 auto !important;
+        padding: 0 !important;
+        max-width: 95% !important;
+      }
+
+      .table { 
+        border-collapse: collapse !important; 
+        width: 100% !important; 
+        table-layout: fixed !important; 
+        font-size: 9px !important;
+      }
+      .table th, .table td { 
+        border: 1px solid #000 !important; 
+        padding: 3px 4px !important; 
+        word-break: break-word !important;
+        white-space: normal !important;
+        text-align: left;
+      }
+
+      /* ✅ Status plain black text on print */
+      .status {
+        font-size: 9px !important; 
+        color: #000 !important;
+      }
+    }
   </style>
 </head>
 <body>
   <div class="container py-4">
     <!-- ✅ Header -->
-    <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">
+    <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-3">
       <h1 class="report-title h3"><i class="fas fa-boxes me-2"></i> Inventory Report</h1>
       <div class="btn-group">
-        <a href="/manage-products" class="btn btn-secondary">
+        <a href="/manage-products" class="btn btn-custom btn-back">
           <i class="fas fa-arrow-left me-1"></i> Back
         </a>
-        <button id="exportBtn" class="btn btn-success">
-          <i class="fas fa-file-csv me-1"></i> Export CSV
+        <button id="printBtn" class="btn btn-custom btn-save">
+          <i class="fas fa-file-pdf me-1"></i> Save / Print PDF
         </button>
       </div>
     </div>
@@ -41,16 +133,24 @@
 
     <!-- ✅ Filters -->
     <div class="card shadow-sm mb-3">
-      <div class="card-body row g-2">
-        <div class="col-md-6">
-          <input type="text" id="searchInput" class="form-control" placeholder="Search inventory...">
+      <div class="card-body row g-3">
+        <div class="col-md-4">
+          <input type="text" id="searchInput" class="form-control" placeholder="🔍 Search inventory...">
         </div>
-        <div class="col-md-6">
+        <div class="col-md-4">
           <select id="filterCategory" class="form-select">
-            <option value="all">All Categories</option>
+            <option value="all">📂 All Categories</option>
             <% _cats.forEach(cat => { %>
               <option value="<%= cat %>"><%= cat %></option>
             <% }) %>
+          </select>
+        </div>
+        <div class="col-md-4">
+          <select id="filterDate" class="form-select">
+            <option value="all">📅 All Dates</option>
+            <option value="today">📅 Today</option>
+            <option value="week">📅 This Week</option>
+            <option value="month">📅 This Month</option>
           </select>
         </div>
       </div>
@@ -77,7 +177,9 @@
               let totalValue = item.price * item.quantity;
               let stockStatus = item.quantity === 0 ? 'out' : (item.quantity < 10 ? 'low' : 'in-stock');
             %>
-              <tr data-category="<%= item.category %>" data-name="<%= item.name %>">
+              <tr data-category="<%= item.category %>" 
+                  data-name="<%= item.name %>" 
+                  data-created="<%= item.createdAt ? item.createdAt.toISOString() : '' %>">
                 <td><%= item.name %></td>
                 <td><%= item.category %></td>
                 <td><%= item.quantity %></td>
@@ -115,6 +217,7 @@
     document.addEventListener("DOMContentLoaded", function () {
       const searchInput = document.getElementById("searchInput");
       const filterCategory = document.getElementById("filterCategory");
+      const filterDate = document.getElementById("filterDate");
       const table = document.getElementById("inventoryTable");
       if (!table) return;
       const rows = Array.from(table.querySelectorAll("tbody tr"));
@@ -134,7 +237,6 @@
         pagination.innerHTML = "";
         let pageCount = Math.ceil(rows.length / rowsPerPage);
 
-        // Prev
         let prevBtn = document.createElement("button");
         prevBtn.className = "btn btn-outline-success btn-sm me-1";
         prevBtn.innerText = "Previous";
@@ -142,7 +244,6 @@
         prevBtn.onclick = () => { if (currentPage > 1) { currentPage--; displayTable(); setupPagination(); } };
         pagination.appendChild(prevBtn);
 
-        // Numbers
         for (let i = 1; i <= pageCount; i++) {
           let btn = document.createElement("button");
           btn.className = "btn btn-sm " + (i === currentPage ? "btn-success" : "btn-outline-success");
@@ -151,7 +252,6 @@
           pagination.appendChild(btn);
         }
 
-        // Next
         let nextBtn = document.createElement("button");
         nextBtn.className = "btn btn-outline-success btn-sm ms-1";
         nextBtn.innerText = "Next";
@@ -163,44 +263,43 @@
       function filterTable() {
         const searchValue = searchInput.value.toLowerCase();
         const categoryValue = filterCategory.value;
+        const dateValue = filterDate.value;
+        const today = new Date();
+
         rows.forEach(row => {
           const rowCategory = row.getAttribute("data-category");
           const rowName = row.getAttribute("data-name")?.toLowerCase() || "";
+          const createdAt = new Date(row.getAttribute("data-created"));
+
           let matchCategory = (categoryValue === "all" || rowCategory === categoryValue);
           let matchSearch = rowName.includes(searchValue);
-          row.style.display = (matchCategory && matchSearch) ? "" : "none";
+
+          let matchDate = true;
+          if (dateValue === "today") {
+            matchDate = createdAt.toDateString() === today.toDateString();
+          } else if (dateValue === "week") {
+            let weekStart = new Date(today);
+            weekStart.setDate(today.getDate() - today.getDay());
+            let weekEnd = new Date(weekStart);
+            weekEnd.setDate(weekStart.getDate() + 6);
+            matchDate = createdAt >= weekStart && createdAt <= weekEnd;
+          } else if (dateValue === "month") {
+            matchDate = createdAt.getMonth() === today.getMonth() && createdAt.getFullYear() === today.getFullYear();
+          }
+
+          row.style.display = (matchCategory && matchSearch && matchDate) ? "" : "none";
         });
       }
 
       searchInput.addEventListener("keyup", filterTable);
       filterCategory.addEventListener("change", filterTable);
+      filterDate.addEventListener("change", filterTable);
 
       displayTable();
       setupPagination();
 
-      document.getElementById("exportBtn").addEventListener("click", () => {
-        let csv = [];
-        let headers = [];
-        table.querySelectorAll("thead th").forEach(th => headers.push(th.innerText));
-        csv.push(headers.join(","));
-
-        table.querySelectorAll("tbody tr").forEach(row => {
-          if (row.style.display !== "none") {
-            let cols = row.querySelectorAll("td");
-            let rowData = [];
-            cols.forEach((col, i) => {
-              let text = col.innerText.replace(/[₱,]/g, '').trim();
-              rowData.push(text);
-            });
-            csv.push(rowData.join(","));
-          }
-        });
-
-        let blob = new Blob([csv.join("\\n")], { type: "text/csv;charset=utf-8;" });
-        let link = document.createElement("a");
-        link.href = URL.createObjectURL(blob);
-        link.download = "Inventory_Report.csv";
-        link.click();
+      document.getElementById("printBtn").addEventListener("click", () => {
+        window.print();
       });
     });
   </script>

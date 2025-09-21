@@ -1,0 +1,48 @@
+<% layout('layouts/main') %>
+
+<!-- 🌸 HERO -->
+<section class="hero-section text-center text-white" 
+  style="background: linear-gradient(rgba(47,82,51,.85), rgba(47,82,51,.7)), url('/image/bg1.png') center/cover; min-height:80vh; display:flex; flex-direction:column; justify-content:center; align-items:center;">
+  <h1>Welcome, <%= user.firstName || 'Girl Scout' %>! 🌿</h1>
+  <p>Empowering young girls in Mindoro through leadership, service, and sisterhood.</p>
+  <a href="#features" class="btn btn-warning text-dark rounded-pill px-4">Explore Your Dashboard</a>
+</section>
+
+<!-- 🌿 FEATURES -->
+<section id="features" class="py-5 container">
+  <div class="row">
+    <% const features = [
+      { icon: 'fas fa-hand-holding-heart', title: 'Leadership', desc: 'Develop skills and confidence to lead your troop.' },
+      { icon: 'fas fa-seedling', title: 'Growth', desc: 'Every badge is a step toward resilience.' },
+      { icon: 'fas fa-users', title: 'Sisterhood', desc: 'Form lifelong friendships in a caring environment.' },
+      { icon: 'fas fa-hiking', title: 'Adventure', desc: 'Explore the outdoors and discover your strengths.' }
+    ]; %>
+    <% features.forEach(f => { %>
+      <div class="col-md-3 text-center">
+        <i class="<%= f.icon %> fs-1 text-success"></i>
+        <h4><%= f.title %></h4>
+        <p><%= f.desc %></p>
+      </div>
+    <% }) %>
+  </div>
+</section>
+
+<!-- 🏆 BADGES -->
+<section class="bg-light py-5 text-center">
+  <h2>🏆 Badge Examples</h2>
+  <div class="row justify-content-center">
+    <% const exampleBadges = [
+      { icon: '/image/community.jpg', title: 'Community Service', desc: 'Awarded for volunteering.' },
+      { icon: '/image/cam pro.jpg', title: 'Camping Pro', desc: 'Earned by camping adventures.' },
+      { icon: '/image/lead star.jpg', title: 'Leadership Star', desc: 'For strong leadership skills.' },
+      { icon: '/image/first aid.jpg', title: 'First Aid Ready', desc: 'For learning first aid skills.' }
+    ]; %>
+    <% exampleBadges.forEach(badge => { %>
+      <div class="col-md-3">
+        <img src="<%= badge.icon %>" class="rounded mb-2" style="width:60px;height:60px;">
+        <h5><%= badge.title %></h5>
+        <p><%= badge.desc %></p>
+      </div>
+    <% }) %>
+  </div>
+</section>

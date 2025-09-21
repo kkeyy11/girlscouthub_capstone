@@ -11,244 +11,262 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
 <style>
-<style>
-    h1 {
-      text-align: center;
-      font-size: 2rem;
-      margin: 10px 0 30px;
-      color: #1f2937;
-      font-weight: 700;
-    }
+  h1 {
+    text-align: center;
+    font-size: 2rem;
+    margin: 10px 0 30px;
+    color: #1f2937;
+    font-weight: 700;
+  }
 
-    .table-section {
-      max-width: 1100px;
-      margin: 0 auto 60px;
-      background: rgba(240, 255, 240, 0.4);
-      backdrop-filter: blur(20px);
-      border-radius: 16px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-      padding: 25px 35px;
-      overflow-x: auto;
-    }
+  .table-section {
+    max-width: 1100px;
+    margin: 0 auto 60px;
+    background: rgba(240, 255, 240, 0.4);
+    backdrop-filter: blur(20px);
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    padding: 25px 35px;
+    overflow-x: auto;
+  }
 
-    .top-bar {
-      display: flex;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-bottom: 25px;
-    }
+  .top-bar {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 25px;
+  }
 
-    .top-bar-left a,
-    .top-bar-right button {
-      padding: 10px 18px;
-      font-size: 13px;
-      border-radius: 8px;
-      font-weight: 600;
-      text-decoration: none;
-      transition: all 0.2s ease;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.08);
-      border: none;
-      cursor: pointer;
-    }
+  .top-bar-left a,
+  .top-bar-left button,
+  .top-bar-right button {
+    padding: 10px 18px;
+    font-size: 13px;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+    border: none;
+    cursor: pointer;
+  }
 
-    .top-bar-left a:first-child {
-      background: #94a3b8;
-      color: black;
-    }
+  .top-bar-left a:first-child {
+    background: #94a3b8;
+    color: black;
+  }
 
-    .top-bar-left a:last-child {
-      background: #34d399;
-      color: black;
-    }
+  .btn-add {
+    background: #34d399;
+    color: black;
+  }
 
-    .top-bar-right {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      position: relative;
-    }
+  .top-bar-right {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    position: relative;
+  }
 
-    .search-input {
-      padding: 10px 16px;
-      border: 1px solid #ccc;
-      border-radius: 10px;
-      font-size: 14px;
-    }
+  .search-input {
+    padding: 10px 16px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    font-size: 14px;
+  }
 
-    .btn-export {
-      background-color: #bfdbfe;
-      color: black;
-      position: relative;
-    }
+  .btn-export {
+    background-color: #bfdbfe;
+    color: black;
+    position: relative;
+  }
 
-    .dropdown {
-      position: relative;
-      display: inline-block;
-    }
+  .dropdown {
+    position: relative;
+    display: inline-block;
+  }
 
-    .dropdown-content {
-      display: none;
-      position: absolute;
-      background-color: #ffffff;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      border-radius: 8px;
-      padding: 10px 0;
-      z-index: 1;
-      min-width: 160px;
-      top: 100%;
-      left: 0;
-    }
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #ffffff;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    padding: 10px 0;
+    z-index: 1;
+    min-width: 160px;
+    top: 100%;
+    left: 0;
+  }
 
-    .dropdown-content a {
-      color: #1f2937;
-      padding: 10px 16px;
-      text-decoration: none;
-      display: block;
-      font-size: 14px;
-      font-weight: 500;
-      transition: background 0.2s;
-    }
+  .dropdown-content a {
+    color: #1f2937;
+    padding: 10px 16px;
+    text-decoration: none;
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background 0.2s;
+  }
 
-    .dropdown-content a:hover {
-      background-color: #f3f4f6;
-    }
+  .dropdown-content a:hover {
+    background-color: #f3f4f6;
+  }
 
-    .dropdown:hover .dropdown-content {
-      display: block;
-    }
+  .dropdown:hover .dropdown-content {
+    display: block;
+  }
 
-    table {
-      width: 100%;
-      border-collapse: separate;
-      border-spacing: 0 10px;
-      font-size: 14px;
-    }
+  table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 10px;
+    font-size: 14px;
+  }
 
-    thead th {
-      background: #f9fafb;
-      padding: 14px;
-      text-align: left;
-      font-weight: 700;
-      color: #1f2937;
-      border-bottom: 1px solid #e5e7eb;
-    }
+  thead th {
+    background: #f9fafb;
+    padding: 14px;
+    text-align: left;
+    font-weight: 700;
+    color: #1f2937;
+    border-bottom: 1px solid #e5e7eb;
+  }
 
-    tbody tr {
-      background: #ffffff;
-      border-radius: 12px;
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
+  tbody tr {
+    background: #ffffff;
+    border-radius: 12px;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
 
-    tbody tr:hover {
-      transform: scale(1.01);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-    }
+  tbody tr:hover {
+    transform: scale(1.01);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  }
 
-    tbody td {
-      padding: 14px;
-      vertical-align: middle;
-      border-bottom: 1px solid #f3f4f6;
-    }
+  tbody td {
+    padding: 14px;
+    vertical-align: middle;
+    border-bottom: 1px solid #f3f4f6;
+  }
 
-    .action-buttons {
-      display: flex;
-      gap: 10px;
-    }
+  .action-buttons {
+    display: flex;
+    gap: 10px;
+  }
 
-    .action-buttons button,
-    .action-buttons a {
-      width: 32px;
-      height: 32px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 50%;
-      font-size: 15px;
-      border: none;
-      cursor: pointer;
-      color: white;
-      transition: transform 0.2s, filter 0.2s;
-    }
+  .action-buttons button,
+  .action-buttons a {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 15px;
+    border: none;
+    cursor: pointer;
+    color: white;
+    transition: transform 0.2s, filter 0.2s;
+  }
 
-    .btn-view { background-color: #60a5fa; }
-    .btn-edit { background-color: #fbbf24; color: black; }
-    .btn-delete { background-color: #ef4444; }
+  .btn-view { background-color: #60a5fa; }
+  .btn-edit { background-color: #fbbf24; color: black; }
+  .btn-delete { background-color: #ef4444; }
 
-    .action-buttons a:hover,
-    .action-buttons button:hover {
-      transform: scale(1.1);
-      filter: brightness(0.95);
-    }
+  .action-buttons a:hover,
+  .action-buttons button:hover {
+    transform: scale(1.1);
+    filter: brightness(0.95);
+  }
 
-    form { display: inline; }
+  form { display: inline; }
 
-    #pagination {
-      text-align: center;
-      margin-top: 25px;
-    }
+  #pagination {
+    text-align: center;
+    margin-top: 25px;
+  }
 
-    .pagination-btn {
-      background: #6ee7b7;
-      border: none;
-      padding: 8px 14px;
-      margin: 0 4px;
-      border-radius: 8px;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      color: #065f46;
-      transition: all 0.2s ease;
-    }
+  .pagination-btn {
+    background: #6ee7b7;
+    border: none;
+    padding: 8px 14px;
+    margin: 0 4px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    color: #065f46;
+    transition: all 0.2s ease;
+  }
 
-    .pagination-btn:hover,
-    .page-num.active {
-      background: #34d399;
-      color: white;
-    }
+  .pagination-btn:hover,
+  .page-num.active {
+    background: #34d399;
+    color: white;
+  }
 
-    .page-num {
-      margin: 0 3px;
-      padding: 8px 12px;
-      border-radius: 6px;
-      font-size: 13px;
-      font-weight: 600;
-      background: #e0f2f1;
-      cursor: pointer;
-      color: #065f46;
-    }
+  .page-num {
+    margin: 0 3px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    background: #e0f2f1;
+    cursor: pointer;
+    color: #065f46;
+  }
 
-#exportPreview {
-  display: none;
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(0,0,0,0.6);
-  z-index: 9999;
-  align-items: center;
-  justify-content: center;
-}
-
-#exportPreview .modal-content {
-  background: white;
-  padding: 30px;
-  border-radius: 12px;
-  width: 90%;
-  max-width: 600px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-}
-
-#exportPreview table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 15px;
-}
-
-#exportPreview th, #exportPreview td {
-  padding: 10px;
-  border-bottom: 1px solid #ddd;
-  text-align: left;
-}
+  /* Modal Styling */
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5);
+    justify-content: center;
+    align-items: center;
+  }
+  .modal.show { display: flex; }
+  .modal-content {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  }
+  .modal-header {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    text-align: center;
+    color: #065f46;
+  }
+  .form-group { margin-bottom: 16px; }
+  .form-input {
+    width: 100%;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+  }
+  .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+  .modal-btn {
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+  }
+  .btn-primary { background: #10b981; color: white; }
+  .btn-secondary { background: #e5e7eb; }
 </style>
 
 <h1>Schools under <%= district.name %></h1>
@@ -257,7 +275,7 @@
   <div class="top-bar">
     <div class="top-bar-left">
       <a href="/districts">← Back</a>
-      <a href="/add-school?districtId=<%= district._id %>">+ Add School</a>
+      <button class="btn-add" onclick="openAddModal()"><i class="fas fa-plus"></i> Add School</button>
     </div>
     <div class="top-bar-right">
       <input type="text" id="searchInput" class="search-input" placeholder="Search school...">
@@ -306,162 +324,33 @@
   </div>
 </div>
 
-<!-- Export Preview Modal -->
-<div id="exportPreview">
+<!-- Add School Modal -->
+<div id="addSchoolModal" class="modal">
   <div class="modal-content">
-    <h3>Export Preview</h3>
-    <table>
-      <thead>
-        <tr>
-          <th>School Name</th>
-          <th>Principal</th>
-        </tr>
-      </thead>
-      <tbody id="previewBody"></tbody>
-    </table>
-    <div style="margin-top: 20px; text-align: right;">
-      <button onclick="closePreview()" style="padding: 8px 16px; border: none; background: #eee; border-radius: 6px;">Cancel</button>
-      <button id="confirmExportBtn" style="padding: 8px 16px; border: none; background: #3b82f6; color: white; border-radius: 6px;">Confirm Export</button>
-    </div>
+    <div class="modal-header">Add New School</div>
+    <form action="/add-school" method="POST">
+      <input type="hidden" name="districtId" value="<%= district._id %>">
+      <div class="form-group">
+        <input type="text" name="name" placeholder="School Name" required class="form-input">
+      </div>
+      <div class="form-group">
+        <input type="text" name="principal" placeholder="Principal" required class="form-input">
+      </div>
+      <div class="modal-actions">
+        <button type="submit" class="modal-btn btn-primary"><i class="fas fa-save"></i> Save</button>
+        <button type="button" class="modal-btn btn-secondary" onclick="closeAddModal()">Cancel</button>
+      </div>
+    </form>
   </div>
 </div>
-</main>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
 
 <script>
-let exportType = "";
-
-function previewExport(type) {
-  exportType = type;
-  const rows = document.querySelectorAll("#schoolTable tbody tr");
-  const previewBody = document.getElementById("previewBody");
-  previewBody.innerHTML = "";
-
-  rows.forEach(row => {
-    const cells = row.querySelectorAll("td");
-    const name = cells[1].innerText;
-    const principal = cells[2].innerText;
-
-    const tr = document.createElement("tr");
-    tr.innerHTML = `<td>${name}</td><td>${principal}</td>`;
-    previewBody.appendChild(tr);
-  });
-
-  document.getElementById("exportPreview").style.display = "flex";
+function openAddModal() {
+  document.getElementById("addSchoolModal").classList.add("show");
 }
-
-function closePreview() {
-  document.getElementById("exportPreview").style.display = "none";
+function closeAddModal() {
+  document.getElementById("addSchoolModal").classList.remove("show");
 }
-
-document.getElementById("confirmExportBtn").addEventListener("click", () => {
-  closePreview();
-  if (exportType === "csv") exportToCSV();
-  else if (exportType === "pdf") exportToPDF();
-});
-function exportToCSV() {
-  const rows = document.querySelectorAll("#schoolTable tbody tr");
-  let csv = '"School Name","Principal"\n';
-
-  rows.forEach(row => {
-    const cells = row.querySelectorAll("td");
-
-    // Extract only School Name and Principal
-    const name = cells[1].innerText.replace(/"/g, '""');
-    const principal = cells[2].innerText.replace(/"/g, '""');
-
-    csv += `"${name}","${principal}"\n`;
-  });
-
-  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-  const link = document.createElement("a");
-  link.href = URL.createObjectURL(blob);
-  link.setAttribute("download", "schools.csv");
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-}
-
-
-async function exportToPDF() {
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
-
-  doc.setFontSize(14);
-  doc.text("Schools under <%= district.name %>", 14, 16);
-
-  // Prepare rows
-  const rows = Array.from(document.querySelectorAll("#schoolTable tbody tr")).map(row => {
-    const cells = row.querySelectorAll("td");
-
-    const name = cells[1].innerText.trim();
-    const principal = cells[2].innerText.trim();
-
-    return [name, principal];
-  });
-
-  doc.autoTable({
-    head: [["School Name", "Principal"]],
-    body: rows,
-    startY: 24,
-    theme: 'grid',
-    headStyles: { fillColor: [59, 130, 246] }, // blue header
-    styles: {
-      fontSize: 11,
-      cellPadding: 3,
-    },
-    columnStyles: {
-      0: { cellWidth: 90 },
-      1: { cellWidth: 90 },
-    }
-  });
-
-  doc.save("schools.pdf");
-}
-
-
-// Search and pagination logic (same as before)
-const rowsPerPage = 5;
-let currentPage = 1;
-
-function paginateTable() {
-  const rows = document.querySelectorAll("#schoolTable tbody tr");
-  const totalPages = Math.ceil(rows.length / rowsPerPage);
-  rows.forEach((row, i) => {
-    row.style.display = (i >= (currentPage - 1) * rowsPerPage && i < currentPage * rowsPerPage) ? '' : 'none';
-  });
-
-  let pageButtons = '';
-  for (let i = 1; i <= totalPages; i++) {
-    pageButtons += `<span class="page-num ${i === currentPage ? 'active' : ''}" onclick="goToPage(${i})">${i}</span>`;
-  }
-  document.getElementById("pageNumbers").innerHTML = pageButtons;
-}
-
-function goToPage(page) {
-  currentPage = page;
-  paginateTable();
-}
-
-function changePage(direction) {
-  const rows = document.querySelectorAll("#schoolTable tbody tr");
-  const totalPages = Math.ceil(rows.length / rowsPerPage);
-  if (direction === 'prev' && currentPage > 1) currentPage--;
-  if (direction === 'next' && currentPage < totalPages) currentPage++;
-  paginateTable();
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-  paginateTable();
-  document.getElementById("searchInput").addEventListener("keyup", function () {
-    const filter = this.value.toLowerCase();
-    document.querySelectorAll("#schoolTable tbody tr").forEach(row => {
-      row.style.display = row.innerText.toLowerCase().includes(filter) ? "" : "none";
-    });
-  });
-});
 </script>
 
 <%- include('./layouts/footer') %>

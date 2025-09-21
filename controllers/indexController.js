@@ -4,6 +4,7 @@ const Event = require('../models/Event');
 const District = require('../models/District');
 const School = require('../models/School');
 const Reservation = require('../models/Reservation');
+const SiteContent = require('../models/SiteContent'); // ✅ ADD: for banner & gallery
 
 const indexController = {
   getIndex: async (req, res, next) => {
@@ -139,6 +140,9 @@ const indexController = {
         { $sort: { "_id.month": 1, totalSold: -1 } }
       ]);
 
+      // 🔹 NEW: Site Content (banner + gallery)
+      const siteContent = await SiteContent.findOne();
+
       // Render index page
       res.render('index', {
         appointmentCount,
@@ -155,6 +159,7 @@ const indexController = {
         weeklyData,
         yearlyData,
         topCategoriesPerMonth,
+        siteContent, // ✅ pass to view
         user: req.user
       });
     } catch (error) {
