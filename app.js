@@ -67,9 +67,11 @@ app.use((req, res, next) => {
 // ----------------------
 app.use('/', require('./routes/index.route'));
 app.use('/auth', require('./routes/auth.route'));
+app.use('/', require('./routes/admin.route'));
 app.use('/', require('./routes/productRoutes'));
 app.use('/', require('./routes/cartRoutes'));
 app.use('/', require('./routes/troop.route'));
+app.use('/', require('./routes/review.route'));
 app.use("/", require("./routes/testMail"));
 app.use("/", require("./routes/inventoryRoutes"));
 app.use('/', siteContentRoutes);
