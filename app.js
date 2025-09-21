@@ -9,6 +9,7 @@ const passport = require('passport');
 const MongoStore = require('connect-mongo');
 const connectEnsureLogin = require('connect-ensure-login');
 const path = require('path');
+const siteContentRoutes = require('./routes/siteContent.route');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -69,6 +70,7 @@ app.use('/products', require('./routes/productRoutes'));
 app.use('/', require('./routes/cartRoutes'));
 app.use('/', require('./routes/troop.route'));
 app.use("/", require("./routes/testMail"));
+app.use('/', siteContentRoutes);
 
 app.use(
   '/user',
