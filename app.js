@@ -71,6 +71,7 @@ app.use('/', require('./routes/productRoutes'));
 app.use('/', require('./routes/cartRoutes'));
 app.use('/', require('./routes/troop.route'));
 app.use("/", require("./routes/testMail"));
+app.use("/", require("./routes/inventoryRoutes"));
 app.use('/', siteContentRoutes);
 
 app.use(
