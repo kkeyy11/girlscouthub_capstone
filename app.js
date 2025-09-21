@@ -10,7 +10,7 @@ const MongoStore = require('connect-mongo');
 const connectEnsureLogin = require('connect-ensure-login');
 const path = require('path');
 const siteContentRoutes = require('./routes/siteContent.route');
-const productRoutes = require('./routes/productRoutes');
+
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -67,7 +67,7 @@ app.use((req, res, next) => {
 // ----------------------
 app.use('/', require('./routes/index.route'));
 app.use('/auth', require('./routes/auth.route'));
-app.use('/products', require('./routes/productRoutes'));
+app.use('/', require('./routes/productRoutes'));
 app.use('/', require('./routes/cartRoutes'));
 app.use('/', require('./routes/troop.route'));
 app.use("/", require("./routes/testMail"));
