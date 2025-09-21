@@ -56,8 +56,14 @@ async function sendResetPasswordEmail(to, link) {
   });
 }
 
+// ✅ New function for Event notification
+async function sendAppointmentEmail(to, subject, text) {
+  return sendEmail({ to, subject, text });
+}
+
 module.exports = {
   sendEmail,
   sendVerificationEmail,
   sendResetPasswordEmail,
+  sendAppointmentEmail,
 };
