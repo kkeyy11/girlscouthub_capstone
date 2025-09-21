@@ -76,7 +76,17 @@
       <div class="form-group"><i class="fas fa-user-tie"></i><input type="text" name="troopLeader" placeholder="Troop Leader" required></div>
       <div class="form-group"><i class="fas fa-user-friends"></i><input type="text" name="coLeader" placeholder="Co-Leader"></div>
       <div class="form-group"><i class="fas fa-hashtag"></i><input type="text" name="troopNumber" placeholder="Troop Number" required></div>
-      <div class="form-group"><i class="fas fa-users"></i><input type="text" name="ageLevel" placeholder="Age Level" required></div>
+      <div class="form-group">
+  <i class="fas fa-users"></i>
+  <select name="ageLevel" required class="form-input">
+    <option value="" disabled selected>Select Age Level</option>
+    <option value="Twinkler">Twinkler</option>
+    <option value="Star">Star</option>
+    <option value="Junior">Junior</option>
+    <option value="Senior">Senior</option>
+  </select>
+</div>
+
       <div class="form-group"><i class="fas fa-map-marker-alt"></i><input type="text" name="barangayCommittee" placeholder="Barangay Committee"></div>
       <div class="modal-actions">
         <button type="button" class="btn-cancel" onclick="closeAddModal()">Cancel</button>
@@ -98,7 +108,17 @@
       <div class="form-group"><i class="fas fa-user-tie"></i><input type="text" name="troopLeader" id="editTroopLeader" required></div>
       <div class="form-group"><i class="fas fa-user-friends"></i><input type="text" name="coLeader" id="editCoLeader"></div>
       <div class="form-group"><i class="fas fa-hashtag"></i><input type="text" name="troopNumber" id="editTroopNumber" required></div>
-      <div class="form-group"><i class="fas fa-users"></i><input type="text" name="ageLevel" id="editAgeLevel" required></div>
+      <div class="form-group">
+  <i class="fas fa-users"></i>
+  <select name="ageLevel" id="editAgeLevel" required class="form-input">
+    <option value="" disabled>Select Age Level</option>
+    <option value="Twinkler">Twinkler</option>
+    <option value="Star">Star</option>
+    <option value="Junior">Junior</option>
+    <option value="Senior">Senior</option>
+  </select>
+</div>
+
       <div class="form-group"><i class="fas fa-map-marker-alt"></i><input type="text" name="barangayCommittee" id="editBarangayCommittee"></div>
       <div class="modal-actions">
         <button type="button" class="btn-cancel" onclick="closeEditModal()">Cancel</button>
