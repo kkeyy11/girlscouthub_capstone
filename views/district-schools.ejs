@@ -1,294 +1,248 @@
 <%- include('./layouts/header') %>
 <%- include('./layouts/navbar') %>
 
-<main style="
-  margin-left: 220px;
-  padding: 80px 30px 30px;
-  min-height: 100vh;
-  background: linear-gradient(to right top, #e6f9ea, #ccf5e1, #b2f1d8, #98edcf, #7fe9c6);
-  font-family: 'Poppins', sans-serif;
-">
+<main class="main-content">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
 <style>
-  h1 {
-    text-align: center;
-    font-size: 2rem;
-    margin: 10px 0 30px;
-    color: #1f2937;
-    font-weight: 700;
+:root { box-sizing: border-box; }
+*, *::before, *::after { box-sizing: inherit; }
+
+.main-content {
+  margin-left: 220px; /* ✅ space for sidebar */
+  padding: 80px 30px 30px;
+  min-height: 100vh;
+  background: #fff;
+  font-family: 'Poppins', sans-serif;
+  transition: all 0.3s ease;
+}
+
+/* Responsive container */
+.table-section {
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  overflow-x: auto; /* ✅ table scrollable */
+}
+
+/* Top bar */
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.top-bar-left a {
+  text-decoration: none;
+  color: #10b981;
+  font-weight: 500;
+  margin-right: 10px;
+}
+.top-bar button {
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+.btn-add { background: #10b981; color: #fff; }
+.top-bar-right {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.search-input {
+  padding: 6px 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  min-width: 200px;
+}
+
+/* Table design */
+#schoolTable { width: 100%; border-collapse: collapse; }
+#schoolTable th, #schoolTable td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+#schoolTable thead { background: #10b981; color: #fff; }
+#schoolTable tr:hover { background: #f9f9f9; }
+#schoolTable tbody tr:nth-child(odd) { background-color: #fff; }
+#schoolTable tbody tr:nth-child(even) { background-color: #f5f5f5; }
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.action-buttons a,
+.action-buttons button {
+  padding: 5px 10px;
+  font-size: 13px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  text-decoration: none;
+  color: white;
+}
+.btn-view { background: #3b82f6; }
+.btn-edit { background: #f59e0b; }
+.btn-delete { background: #ef4444; }
+
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+  margin-top: 15px;
+  flex-wrap: wrap;
+}
+.pagination button {
+  padding: 6px 12px;
+  border: 1px solid #ddd;
+  background: #f8f9fa;
+  cursor: pointer;
+  border-radius: 4px;
+}
+.pagination button.active {
+  background: #10b981;
+  color: #fff;
+  border-color: #10b981;
+}
+.pagination button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Modal */
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+.modal.show { display: flex; }
+.modal-content {
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 400px;
+}
+.modal-header {
+  font-weight: bold;
+  margin-bottom: 10px;
+  font-size: 18px;
+}
+.form-input {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+.modal-btn {
+  padding: 6px 12px;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+}
+.btn-primary { background: #10b981; color: white; }
+.btn-secondary { background: #ccc; }
+
+/* ✅ Print preview styling */
+@media print {
+  body * { visibility: hidden; }
+  #printPreview, #printPreview * { visibility: visible; }
+  #printPreview { position: absolute; left: 0; top: 0; width: 100%; }
+
+  header, footer, .navbar, .top-bar, .btn-add, .btn-edit, .btn-delete, .btn-view, 
+  .search-input, .pagination {
+    display: none !important;
   }
 
-  .table-section {
-    max-width: 1100px;
-    margin: 0 auto 60px;
-    background: rgba(240, 255, 240, 0.4);
-    backdrop-filter: blur(20px);
-    border-radius: 16px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-    padding: 25px 35px;
-    overflow-x: auto;
-  }
-
-  .top-bar {
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 12px;
-    margin-bottom: 25px;
-  }
-
-  .top-bar-left a,
-  .top-bar-left button,
-  .top-bar-right button {
-    padding: 10px 18px;
-    font-size: 13px;
-    border-radius: 8px;
-    font-weight: 600;
-    text-decoration: none;
-    transition: all 0.2s ease;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.08);
-    border: none;
-    cursor: pointer;
-  }
-
-  .top-bar-left a:first-child {
-    background: #94a3b8;
-    color: black;
-  }
-
-  .btn-add {
-    background: #34d399;
-    color: black;
-  }
-
-  .top-bar-right {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    position: relative;
-  }
-
-  .search-input {
-    padding: 10px 16px;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    font-size: 14px;
-  }
-
-  .btn-export {
-    background-color: #bfdbfe;
-    color: black;
-    position: relative;
-  }
-
-  .dropdown {
-    position: relative;
-    display: inline-block;
-  }
-
-  .dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: #ffffff;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    border-radius: 8px;
-    padding: 10px 0;
-    z-index: 1;
-    min-width: 160px;
-    top: 100%;
-    left: 0;
-  }
-
-  .dropdown-content a {
-    color: #1f2937;
-    padding: 10px 16px;
-    text-decoration: none;
-    display: block;
-    font-size: 14px;
-    font-weight: 500;
-    transition: background 0.2s;
-  }
-
-  .dropdown-content a:hover {
-    background-color: #f3f4f6;
-  }
-
-  .dropdown:hover .dropdown-content {
-    display: block;
-  }
-
-  table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0 10px;
-    font-size: 14px;
-  }
-
-  thead th {
-    background: #f9fafb;
-    padding: 14px;
+  #printPreview table { width: 100%; border-collapse: collapse; }
+  #printPreview th, #printPreview td {
+    border: 1px solid #000;
+    padding: 8px;
     text-align: left;
-    font-weight: 700;
-    color: #1f2937;
-    border-bottom: 1px solid #e5e7eb;
+  }
+  #printPreview thead { background: #34d399; color: black; }
+}
+
+/* ✅ Tablet (<=992px) */
+@media (max-width: 992px) {
+  .main-content {
+    margin-left: 0; /* ✅ remove sidebar margin */
+    padding: 70px 20px;
+  }
+  .top-bar { flex-direction: column; align-items: stretch; }
+  .search-input { min-width: 100%; }
+  #schoolTable th, #schoolTable td { padding: 8px; font-size: 14px; }
+}
+
+/* ✅ Mobile (<=600px) */
+@media (max-width: 600px) {
+  .main-content { padding: 60px 15px; }
+
+  /* Table scrollable */
+  #schoolTable {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
   }
 
-  tbody tr {
-    background: #ffffff;
-    border-radius: 12px;
-    transition: transform 0.2s, box-shadow 0.2s;
-  }
-
-  tbody tr:hover {
-    transform: scale(1.01);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-  }
-
-  tbody td {
-    padding: 14px;
-    vertical-align: middle;
-    border-bottom: 1px solid #f3f4f6;
-  }
-
-  .action-buttons {
-    display: flex;
-    gap: 10px;
-  }
-
-  .action-buttons button,
-  .action-buttons a {
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    font-size: 15px;
-    border: none;
-    cursor: pointer;
-    color: white;
-    transition: transform 0.2s, filter 0.2s;
-  }
-
-  .btn-view { background-color: #60a5fa; }
-  .btn-edit { background-color: #fbbf24; color: black; }
-  .btn-delete { background-color: #ef4444; }
-
-  .action-buttons a:hover,
-  .action-buttons button:hover {
-    transform: scale(1.1);
-    filter: brightness(0.95);
-  }
-
-  form { display: inline; }
-
-  #pagination {
-    text-align: center;
-    margin-top: 25px;
-  }
-
-  .pagination-btn {
-    background: #6ee7b7;
-    border: none;
-    padding: 8px 14px;
-    margin: 0 4px;
-    border-radius: 8px;
+  #schoolTable th, #schoolTable td {
+    padding: 6px;
     font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    color: #065f46;
-    transition: all 0.2s ease;
   }
 
-  .pagination-btn:hover,
-  .page-num.active {
-    background: #34d399;
-    color: white;
-  }
-
-  .page-num {
-    margin: 0 3px;
-    padding: 8px 12px;
-    border-radius: 6px;
-    font-size: 13px;
-    font-weight: 600;
-    background: #e0f2f1;
-    cursor: pointer;
-    color: #065f46;
-  }
-
-  /* Modal Styling */
-  .modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0; top: 0;
-    width: 100%; height: 100%;
-    background: rgba(0,0,0,0.5);
-    justify-content: center;
-    align-items: center;
-  }
-  .modal.show { display: flex; }
-  .modal-content {
-    background: white;
-    padding: 25px;
-    border-radius: 12px;
-    max-width: 500px;
-    width: 90%;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-  }
-  .modal-header {
-    font-size: 1.4rem;
-    font-weight: 700;
-    margin-bottom: 20px;
-    text-align: center;
-    color: #065f46;
-  }
-  .form-group { margin-bottom: 16px; }
-  .form-input {
+  .top-bar { flex-direction: column; align-items: stretch; }
+  .top-bar-left a,
+  .top-bar button,
+  .search-input {
     width: 100%;
-    padding: 10px 14px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    font-size: 14px;
+    text-align: center;
   }
-  .modal-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
+
+  .action-buttons { flex-direction: column; gap: 5px; }
+  .action-buttons a,
+  .action-buttons button {
+    width: 100%;
+    text-align: center;
   }
-  .modal-btn {
-    padding: 8px 16px;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    border: none;
-  }
-  .btn-primary { background: #10b981; color: white; }
-  .btn-secondary { background: #e5e7eb; }
+
+  .modal-content { width: 95%; max-width: none; }
+}
 </style>
 
-<h1>Schools under <%= district.name %></h1>
+
+<h1><%= district.name %></h1>
 
 <div class="table-section">
   <div class="top-bar">
     <div class="top-bar-left">
       <a href="/districts">← Back</a>
-      <!-- ✅ fixed type="button" -->
       <button type="button" class="btn-add" onclick="openAddModal()">
         <i class="fas fa-plus"></i> Add School
       </button>
     </div>
     <div class="top-bar-right">
       <input type="text" id="searchInput" class="search-input" placeholder="Search school...">
-      <div class="dropdown">
-        <button class="btn-export">Export ▼</button>
-        <div class="dropdown-content">
-          <a href="#" onclick="previewExport('csv')">Export as CSV</a>
-          <a href="#" onclick="previewExport('pdf')">Export as PDF</a>
-        </div>
-      </div>
+      <button onclick="openPrintPreview()" style="background:#10b981; color:white;">
+        <i class="fas fa-print"></i> Print
+      </button>
     </div>
   </div>
 
@@ -301,63 +255,188 @@
         <th>Actions</th>
       </tr>
     </thead>
-    <tbody>
-      <% schools.forEach((s, index) => { %>
-        <tr>
-          <td><%= index + 1 %></td>
-          <td><%= s.name %></td>
-          <td><%= s.principal %></td>
-          <td class="action-buttons">
-            <a href="/schools/<%= s._id %>" class="btn-view" title="View"><i class="fas fa-eye"></i></a>
-            <a href="/schools/edit/<%= s._id %>" class="btn-edit" title="Edit"><i class="fas fa-pen"></i></a>
-            <form action="/schools/delete/<%= s._id %>" method="POST" onsubmit="return confirm('Are you sure?')">
-              <input type="hidden" name="districtId" value="<%= district._id %>">
-              <button type="submit" class="btn-delete" title="Delete"><i class="fas fa-trash"></i></button>
-            </form>
-          </td>
-        </tr>
-      <% }); %>
-    </tbody>
+   <tbody>
+  <% schools.forEach((s, index) => { %>
+    <tr>
+      <td><%= index + 1 %></td>
+      <td><%= s.name %></td>
+      <td><%= s.principal %></td>
+      <td class="action-buttons">
+        <a href="/schools/<%= s._id %>" class="btn-view">View</a>
+        <button type="button" class="btn-edit" onclick="openEditModal('<%= s._id %>', '<%= s.name %>', '<%= s.principal %>')">Edit</button>
+        <form action="/schools/delete/<%= s._id %>" method="POST" onsubmit="return confirm('Are you sure?')">
+          <input type="hidden" name="districtId" value="<%= district._id %>">
+          <button type="submit" class="btn-delete">Delete</button>
+        </form>
+      </td>
+    </tr>
+  <% }); %>
+</tbody>
   </table>
 
-  <div id="pagination">
-    <button class="pagination-btn" onclick="changePage('prev')">Previous</button>
-    <span id="pageNumbers"></span>
-    <button class="pagination-btn" onclick="changePage('next')">Next</button>
-  </div>
+  <!-- ✅ Pagination container -->
+  <div id="pagination" class="pagination"></div>
+</div>
+
+<!-- ✅ Hidden Print Preview Section -->
+<div id="printPreview" style="display:none; padding:20px;">
+  <h2 style="text-align:center; margin-bottom:20px;">
+    <%= district.name %> 
+  </h2>
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>School Name</th>
+        <th>Barangay</th>
+      </tr>
+    </thead>
+    <tbody id="printTableBody"></tbody>
+  </table>
 </div>
 
 <!-- Add School Modal -->
-<div id="addSchoolModal" class="modal">
+<div id="addSchoolModal" class="modal" aria-hidden="true">
   <div class="modal-content">
-    <div class="modal-header">Add New School</div>
+    <div class="modal-header">Add School</div>
     <form action="/schools/add" method="POST">
       <input type="hidden" name="districtId" value="<%= district._id %>">
-      <div class="form-group">
-        <input type="text" name="name" placeholder="School Name" required class="form-input">
-      </div>
-      <div class="form-group">
-        <input type="text" name="schoolId" placeholder="School ID" required class="form-input">
-      </div>
-      <div class="form-group">
-        <input type="text" name="principal" placeholder="Barangay" required class="form-input">
-      </div>
+
+      <!-- ✅ School ID -->
+      <input type="text" name="schoolId" placeholder="School ID" required class="form-input">
+
+      <input type="text" name="name" placeholder="School Name" required class="form-input">
+      <input type="text" name="principal" placeholder="Barangay" required class="form-input">
+      
       <div class="modal-actions">
-        <button type="submit" class="modal-btn btn-primary"><i class="fas fa-save"></i> Save</button>
+        <button type="submit" class="modal-btn btn-primary">Save</button>
         <button type="button" class="modal-btn btn-secondary" onclick="closeAddModal()">Cancel</button>
       </div>
     </form>
   </div>
 </div>
 
+<!-- Edit School Modal -->
+<div id="editSchoolModal" class="modal" aria-hidden="true">
+  <div class="modal-content">
+    <div class="modal-header">Edit School</div>
+    <form id="editSchoolForm" method="POST">
+      <input type="hidden" name="districtId" value="<%= district._id %>">
+
+      <!-- ✅ School ID -->
+      <input type="text" id="editSchoolId" name="schoolId" placeholder="School ID" required class="form-input">
+
+      <input type="text" id="editSchoolName" name="name" placeholder="School Name" required class="form-input">
+      <input type="text" id="editPrincipal" name="principal" placeholder="Barangay" required class="form-input">
+      
+      <div class="modal-actions">
+        <button type="submit" class="modal-btn btn-primary">Update</button>
+        <button type="button" class="modal-btn btn-secondary" onclick="closeEditModal()">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
 <script>
-function openAddModal() {
-  console.log("Opening Add School Modal...");
-  document.getElementById("addSchoolModal").classList.add("show");
-}
-function closeAddModal() {
-  document.getElementById("addSchoolModal").classList.remove("show");
-}
+document.addEventListener('DOMContentLoaded', function() {
+  const rowsPerPage = 10;
+  const table = document.getElementById("schoolTable");
+  const rows = table.querySelectorAll("tbody tr");
+  const pagination = document.getElementById("pagination");
+  let currentPage = 1;
+  const totalPages = Math.ceil(rows.length / rowsPerPage);
+
+  function showPage(page) {
+    currentPage = page;
+    const start = (page - 1) * rowsPerPage;
+    const end = start + rowsPerPage;
+    rows.forEach((row, i) => {
+      row.style.display = (i >= start && i < end) ? "" : "none";
+    });
+    renderPagination();
+  }
+
+  function renderPagination() {
+    pagination.innerHTML = "";
+    if (totalPages <= 1) return;
+
+    const prev = document.createElement("button");
+    prev.textContent = "Previous";
+    prev.disabled = currentPage === 1;
+    prev.onclick = () => showPage(currentPage - 1);
+    pagination.appendChild(prev);
+
+    for (let i = 1; i <= totalPages; i++) {
+      const btn = document.createElement("button");
+      btn.textContent = i;
+      if (i === currentPage) btn.classList.add("active");
+      btn.onclick = () => showPage(i);
+      pagination.appendChild(btn);
+    }
+
+    const next = document.createElement("button");
+    next.textContent = "Next";
+    next.disabled = currentPage === totalPages;
+    next.onclick = () => showPage(currentPage + 1);
+    pagination.appendChild(next);
+  }
+
+  showPage(1);
+
+  window.openPrintPreview = function() {
+    const printBody = document.getElementById("printTableBody");
+    printBody.innerHTML = "";
+    const visibleRows = Array.from(rows).filter(r => r.style.display !== "none");
+    visibleRows.forEach(r => {
+      const cells = r.querySelectorAll("td");
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${cells[0].innerText}</td>
+        <td>${cells[1].innerText}</td>
+        <td>${cells[2].innerText}</td>
+      `;
+      printBody.appendChild(tr);
+    });
+    document.getElementById("printPreview").style.display = "block";
+    window.print();
+    document.getElementById("printPreview").style.display = "none";
+  }
+
+  window.openAddModal = function() {
+    document.getElementById("addSchoolModal").classList.add("show");
+    document.getElementById("addSchoolModal").setAttribute('aria-hidden', 'false');
+  }
+  window.closeAddModal = function() {
+    document.getElementById("addSchoolModal").classList.remove("show");
+    document.getElementById("addSchoolModal").setAttribute('aria-hidden', 'true');
+  }
+
+  window.openEditModal = function(id, name, principal) {
+    const modal = document.getElementById("editSchoolModal");
+    const form = document.getElementById("editSchoolForm");
+    document.getElementById("editSchoolName").value = name;
+    document.getElementById("editPrincipal").value = principal;
+    form.action = `/schools/edit/${id}`;
+    modal.classList.add("show");
+    modal.setAttribute("aria-hidden", "false");
+  }
+  window.closeEditModal = function() {
+    const modal = document.getElementById("editSchoolModal");
+    modal.classList.remove("show");
+    modal.setAttribute("aria-hidden", "true");
+  }
+
+  const searchInput = document.getElementById('searchInput');
+  if (searchInput) {
+    searchInput.addEventListener('input', function() {
+      const q = this.value.trim().toLowerCase();
+      rows.forEach(r => {
+        r.style.display = (q === '' || r.innerText.toLowerCase().includes(q)) ? '' : 'none';
+      });
+    });
+  }
+});
 </script>
 
 <%- include('./layouts/footer') %>
