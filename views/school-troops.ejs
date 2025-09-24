@@ -9,11 +9,11 @@
   font-family: 'Segoe UI', sans-serif;
 ">
   <div style="max-width: 1200px; margin: auto;">
-    <h2 style="font-size: 26px; font-weight: 700; margin-bottom: 20px; color: #111827; text-align:center;">
-      Troops in <%= school.name %>
+    <h2 style="font-size: 28px; font-weight: 800; margin-bottom: 30px; color: #111827; text-align:center;">
+      <%= school.name.toUpperCase() %>
     </h2>
 
-    <!-- ✅ Top Buttons -->
+    <!-- Top Buttons -->
     <div class="top-actions">
       <a href="/districts/<%= school.district %>" class="btn-back">
         ← Back to Schools
@@ -24,14 +24,14 @@
       </div>
     </div>
 
-    <!-- ✅ Troop Table -->
+    <!-- Troop Table -->
     <div class="table-container">
-      <table class="troop-table">
+      <table class="troop-table" id="troopTable">
         <thead>
           <tr>
             <th>Leader</th>
             <th>Co-Leader</th>
-            <th>Number</th>
+            <th>Troop #</th>
             <th>Age Level</th>
             <th>Barangay Committee</th>
             <th style="text-align:center;">Actions</th>
@@ -57,14 +57,14 @@
           <% }) %>
         </tbody>
       </table>
+
+      <!-- Pagination -->
+      <div id="pagination" class="pagination"></div>
     </div>
   </div>
 </main>
 
-<!-- ✅ Print-only heading -->
-<div class="print-heading">School: <%= school.name %></div>
-
-<!-- ✅ Add Modal -->
+<!-- Add Modal -->
 <div id="addModal" class="modal">
   <div class="modal-content">
     <div class="modal-header">
@@ -73,21 +73,38 @@
     </div>
     <form action="/troops/add" method="POST">
       <input type="hidden" name="schoolId" value="<%= school._id %>">
-      <div class="form-group"><i class="fas fa-user-tie"></i><input type="text" name="troopLeader" placeholder="Troop Leader" required></div>
-      <div class="form-group"><i class="fas fa-user-friends"></i><input type="text" name="coLeader" placeholder="Co-Leader"></div>
-      <div class="form-group"><i class="fas fa-hashtag"></i><input type="text" name="troopNumber" placeholder="Troop Number" required></div>
-      <div class="form-group">
-  <i class="fas fa-users"></i>
-  <select name="ageLevel" required class="form-input">
-    <option value="" disabled selected>Select Age Level</option>
-    <option value="Twinkler">Twinkler</option>
-    <option value="Star">Star</option>
-    <option value="Junior">Junior</option>
-    <option value="Senior">Senior</option>
-  </select>
-</div>
 
-      <div class="form-group"><i class="fas fa-map-marker-alt"></i><input type="text" name="barangayCommittee" placeholder="Barangay Committee"></div>
+      <div class="form-group">
+        <i class="fas fa-user-tie"></i>
+        <input type="text" name="troopLeader" placeholder="Troop Leader" required>
+      </div>
+
+      <div class="form-group">
+        <i class="fas fa-user-friends"></i>
+        <input type="text" name="coLeader" placeholder="Co-Leader">
+      </div>
+
+      <div class="form-group">
+        <i class="fas fa-hashtag"></i>
+        <input type="text" name="troopNumber" placeholder="Troop Number" required>
+      </div>
+
+      <div class="form-group">
+        <i class="fas fa-users"></i>
+        <select name="ageLevel" required>
+          <option value="" disabled selected>Select Age Level</option>
+          <option value="Twinkler">Twinkler</option>
+          <option value="Star">Star</option>
+          <option value="Junior">Junior</option>
+          <option value="Senior">Senior</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <i class="fas fa-map-marker-alt"></i>
+        <input type="text" name="barangayCommittee" placeholder="Barangay Committee">
+      </div>
+
       <div class="modal-actions">
         <button type="button" class="btn-cancel" onclick="closeAddModal()">Cancel</button>
         <button type="submit" class="btn-save">Save Troop</button>
@@ -96,7 +113,7 @@
   </div>
 </div>
 
-<!-- ✅ Edit Modal -->
+<!-- Edit Modal -->
 <div id="editModal" class="modal">
   <div class="modal-content">
     <div class="modal-header">
@@ -105,21 +122,38 @@
     </div>
     <form id="editForm" method="POST">
       <input type="hidden" name="schoolId" value="<%= school._id %>">
-      <div class="form-group"><i class="fas fa-user-tie"></i><input type="text" name="troopLeader" id="editTroopLeader" required></div>
-      <div class="form-group"><i class="fas fa-user-friends"></i><input type="text" name="coLeader" id="editCoLeader"></div>
-      <div class="form-group"><i class="fas fa-hashtag"></i><input type="text" name="troopNumber" id="editTroopNumber" required></div>
-      <div class="form-group">
-  <i class="fas fa-users"></i>
-  <select name="ageLevel" id="editAgeLevel" required class="form-input">
-    <option value="" disabled>Select Age Level</option>
-    <option value="Twinkler">Twinkler</option>
-    <option value="Star">Star</option>
-    <option value="Junior">Junior</option>
-    <option value="Senior">Senior</option>
-  </select>
-</div>
 
-      <div class="form-group"><i class="fas fa-map-marker-alt"></i><input type="text" name="barangayCommittee" id="editBarangayCommittee"></div>
+      <div class="form-group">
+        <i class="fas fa-user-tie"></i>
+        <input type="text" name="troopLeader" id="editTroopLeader" required>
+      </div>
+
+      <div class="form-group">
+        <i class="fas fa-user-friends"></i>
+        <input type="text" name="coLeader" id="editCoLeader">
+      </div>
+
+      <div class="form-group">
+        <i class="fas fa-hashtag"></i>
+        <input type="text" name="troopNumber" id="editTroopNumber" required>
+      </div>
+
+      <div class="form-group">
+        <i class="fas fa-users"></i>
+        <select name="ageLevel" id="editAgeLevel" required>
+          <option value="" disabled>Select Age Level</option>
+          <option value="Twinkler">Twinkler</option>
+          <option value="Star">Star</option>
+          <option value="Junior">Junior</option>
+          <option value="Senior">Senior</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <i class="fas fa-map-marker-alt"></i>
+        <input type="text" name="barangayCommittee" id="editBarangayCommittee">
+      </div>
+
       <div class="modal-actions">
         <button type="button" class="btn-cancel" onclick="closeEditModal()">Cancel</button>
         <button type="submit" class="btn-save">Update Troop</button>
@@ -128,62 +162,87 @@
   </div>
 </div>
 
-<!-- ✅ Styles -->
+<!-- Styles -->
 <style>
-  .top-actions { display:flex; justify-content:space-between; margin-bottom:20px; flex-wrap:wrap; gap:10px; }
-  .btn-back { padding:10px 16px; background:#e5e7eb; color:#111827; border-radius:8px; text-decoration:none; font-weight:600; font-size:14px; }
-  .btn-group { display:flex; gap:10px; flex-wrap:wrap; }
-  .btn-add { padding:10px 16px; background:linear-gradient(90deg,#10b981,#34d399); color:white; border:none; border-radius:8px; font-weight:600; cursor:pointer; }
-  .btn-print { padding:10px 16px; background:#2563eb; color:white; border:none; border-radius:8px; font-weight:600; cursor:pointer; }
-  .btn-edit { padding:6px 12px; background:#3b82f6; color:white; border:none; border-radius:6px; font-size:13px; cursor:pointer; margin-right:5px; }
-  .btn-delete { padding:6px 12px; background:#ef4444; color:white; border:none; border-radius:6px; font-size:13px; cursor:pointer; }
-  .table-container { overflow-x:auto; background:white; border-radius:12px; padding:20px; box-shadow:0 4px 12px rgba(0,0,0,0.05); }
-  .troop-table { width:100%; border-collapse:collapse; min-width:650px; }
-  .troop-table th, .troop-table td { padding:12px; border-bottom:1px solid #e5e7eb; }
-  .troop-table th { background:#f3f4f6; font-weight:600; text-align:left; }
+/* Buttons and top actions */
+.top-actions { display:flex; justify-content:space-between; margin-bottom:20px; flex-wrap:wrap; gap:10px; }
+.btn-back { padding:10px 16px; background:#e5e7eb; color:#111827; border-radius:8px; text-decoration:none; font-weight:600; font-size:14px; }
+.btn-group { display:flex; gap:10px; flex-wrap:wrap; }
+.btn-add { padding:10px 16px; background:linear-gradient(90deg,#10b981,#34d399); color:white; border:none; border-radius:8px; font-weight:600; cursor:pointer; }
+.btn-print { padding:10px 16px; background:#2563eb; color:white; border:none; border-radius:8px; font-weight:600; cursor:pointer; }
+.btn-edit { padding:6px 12px; background:#3b82f6; color:white; border:none; border-radius:6px; font-size:13px; cursor:pointer; margin-right:5px; }
+.btn-delete { padding:6px 12px; background:#ef4444; color:white; border:none; border-radius:6px; font-size:13px; cursor:pointer; }
 
-  /* ✅ Modal */
-  .modal { display:none; position:fixed; z-index:9999; inset:0; background:rgba(0,0,0,0.55); justify-content:center; align-items:center; }
-  .modal-content { background:#fff; border-radius:14px; width:460px; max-width:95%; padding:20px 25px; box-shadow:0 8px 20px rgba(0,0,0,0.25); animation:fadeIn 0.3s ease; }
-  .modal-header { display:flex; justify-content:space-between; align-items:center; font-weight:700; font-size:18px; color:#111827; padding-bottom:10px; border-bottom:2px solid #e5e7eb; margin-bottom:15px; }
-  .btn-x { background:none; border:none; font-size:22px; font-weight:bold; cursor:pointer; color:#6b7280; }
-  .btn-x:hover { color:#ef4444; }
-  .form-group { position:relative; margin-bottom:12px; }
-  .form-group i { position:absolute; top:50%; left:12px; transform:translateY(-50%); color:#6b7280; }
-  .form-group input { width:100%; padding:10px 12px 10px 36px; border:1px solid #d1d5db; border-radius:8px; font-size:14px; outline:none; transition:border 0.2s; }
-  .form-group input:focus { border-color:#34d399; box-shadow:0 0 0 3px rgba(52,211,153,0.3); }
-  .modal-actions { display:flex; justify-content:flex-end; gap:10px; margin-top:15px; }
-  .btn-cancel,.btn-save { padding:10px 18px; border-radius:8px; font-size:14px; font-weight:600; border:none; cursor:pointer; transition:all 0.2s ease; }
-  .btn-cancel { background:#9ca3af; color:white; }
-  .btn-cancel:hover { background:#6b7280; }
-  .btn-save { background:linear-gradient(90deg,#10b981,#34d399); color:white; }
-  .btn-save:hover { background:linear-gradient(90deg,#059669,#10b981); }
-  @keyframes fadeIn { from{opacity:0; transform:scale(0.9);} to{opacity:1; transform:scale(1);} }
+/* Table */
+.table-container { overflow-x:auto; background:white; border-radius:12px; padding:20px; box-shadow:0 4px 12px rgba(0,0,0,0.05); }
+.troop-table { width:100%; border-collapse:collapse; min-width:650px; }
+.troop-table th, .troop-table td { padding:12px; border-bottom:1px solid #e5e7eb }
+.troop-table th { background:#f3f4f6; font-weight:600; text-align:left; }
 
-  /* ✅ Print */
-  @media print {
-    @page { size:A4 portrait; margin:8mm; }
-    body, main { background:#fff !important; font-size:11px; margin:0 !important; padding:0 !important; }
-    header, nav, .top-actions, h2, .btn-add, .btn-print { display:none !important; }
-    .print-heading { display:block !important; text-align:center; font-weight:bold; margin-bottom:10px; }
-    th:last-child, td:last-child { display:none !important; }
-    table { border-collapse:collapse !important; width:100% !important; font-size:11px !important; box-shadow:none !important; }
-    thead th { background:#f0f0f0 !important; color:#000 !important; border:1px solid #000 !important; padding:6px !important; }
-    tbody td { border:1px solid #000 !important; padding:6px !important; }
-  }
+/* Alternate row colors */
+.troop-table tbody tr:nth-child(odd) { background-color: #ffffff; }
+.troop-table tbody tr:nth-child(even) { background-color: #f9fafb; }
 
-  /* ✅ Responsive */
-  @media (max-width: 768px) {
-    main { margin-left:0; padding:60px 15px; }
-    .top-actions { flex-direction:column; align-items:flex-start; gap:12px; }
-    .btn-group { width:100%; flex-direction:column; }
-    .btn-group button, .btn-back { width:100%; text-align:center; }
-    .troop-table { min-width:100%; font-size:13px; }
-    .modal-content { width:95% !important; padding:15px; }
-  }
+/* Pagination */
+.pagination { display:flex; justify-content:center; gap:6px; margin-top:15px; flex-wrap:wrap; }
+.pagination button { padding:6px 12px; border:1px solid #d1d5db; background:#f9fafb; border-radius:6px; cursor:pointer; font-size:13px; }
+.pagination button.active { background:#10b981; color:white; border:none; }
+.pagination button:hover { background:#d1fae5; }
+
+/* Modal */
+.modal { display:none; position:fixed; z-index:9999; inset:0; background:rgba(0,0,0,0.55); justify-content:center; align-items:center; padding:10px; }
+.modal-content { background:#fff; border-radius:14px; width:460px; max-width:100%; padding:25px 30px; box-shadow:0 12px 28px rgba(0,0,0,0.35); animation:fadeIn 0.3s ease; }
+.modal-header { display:flex; justify-content:space-between; align-items:center; font-weight:700; font-size:20px; color:#111827; margin-bottom:20px; border-bottom:2px solid #e5e7eb; padding-bottom:10px; }
+.btn-x { background:none; border:none; font-size:24px; font-weight:bold; cursor:pointer; color:#6b7280; transition:color 0.2s ease; }
+.btn-x:hover { color:#ef4444; }
+.form-group { position:relative; margin-bottom:16px; }
+.form-group i { position:absolute; top:50%; left:14px; transform:translateY(-50%); color:#6b7280; font-size:16px; }
+.form-group input, .form-group select { width:100%; padding:12px 14px 12px 42px; border:1px solid #d1d5db; border-radius:8px; font-size:14px; outline:none; transition:border 0.2s; }
+.form-group input:focus, .form-group select:focus { border-color:#34d399; box-shadow:0 0 0 3px rgba(52,211,153,0.25); }
+.modal-actions { display:flex; justify-content:flex-end; gap:10px; margin-top:15px; }
+.btn-cancel, .btn-save { padding:10px 18px; border-radius:8px; font-size:14px; font-weight:600; border:none; cursor:pointer; transition:all 0.2s ease; }
+.btn-cancel { background:#9ca3af; color:white; }
+.btn-cancel:hover { background:#6b7280; }
+.btn-save { background:linear-gradient(90deg,#10b981,#34d399); color:white; }
+.btn-save:hover { background:linear-gradient(90deg,#059669,#10b981); }
+
+@keyframes fadeIn { from{opacity:0; transform:scale(0.9);} to{opacity:1; transform:scale(1);} }
+
+/* Print */
+@media print {
+  @page { size:A4 portrait; margin:8mm; }
+  body, main { background:#fff !important; font-size:11px; margin:0 !important; padding:0 !important; }
+  header, nav, .top-actions, h2, .btn-add, .btn-print { display:none !important; }
+  .print-heading { display:block !important; text-align:center; font-weight:bold; margin-bottom:10px; }
+  th:last-child, td:last-child { display:none !important; }
+  table { border-collapse:collapse !important; width:100% !important; font-size:11px !important; box-shadow:none !important; }
+  thead th { background:#f0f0f0 !important; color:#000 !important; border:1px solid #000 !important; padding:6px !important; }
+  tbody td { border:1px solid #000 !important; padding:6px !important; }
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  main { margin-left: 0 !important; padding: 60px 15px; }
+  .top-actions { flex-direction: column; align-items: stretch; gap: 12px; }
+  .btn-group { width: 100%; flex-direction: column; }
+  .btn-group button, .btn-back { width: 100%; text-align: center; }
+}
+
+@media (max-width: 768px) {
+  h2 { font-size: 22px !important; }
+  .table-container { padding: 12px; }
+  .troop-table { font-size: 13px; min-width: 100% !important; }
+  .modal-content { width: 95% !important; padding: 15px; }
+}
+
+@media (max-width: 480px) {
+  h2 { font-size: 20px !important; }
+  .btn-edit, .btn-delete { font-size: 12px; padding: 5px 10px; }
+  .top-actions { gap: 8px; }
+}
 </style>
 
-<!-- ✅ Scripts -->
+<!-- Scripts -->
 <script>
   function openAddModal(){ document.getElementById('addModal').style.display='flex'; }
   function closeAddModal(){ document.getElementById('addModal').style.display='none'; }
@@ -198,6 +257,39 @@
   }
   function closeEditModal(){ document.getElementById('editModal').style.display='none'; }
   document.getElementById("printBtn").addEventListener("click",()=>{ window.print(); });
+
+  // Pagination
+  const rowsPerPage = 5;
+  let currentPage = 1;
+
+  function displayTablePage(page) {
+    const table = document.getElementById("troopTable").getElementsByTagName("tbody")[0];
+    const rows = table.getElementsByTagName("tr");
+    const totalRows = rows.length;
+    const totalPages = Math.ceil(totalRows / rowsPerPage);
+
+    if (page < 1) page = 1;
+    if (page > totalPages) page = totalPages;
+
+    for (let i = 0; i < totalRows; i++) {
+      rows[i].style.display = (i >= (page-1)*rowsPerPage && i < page*rowsPerPage) ? "" : "none";
+    }
+
+    const pagination = document.getElementById("pagination");
+    pagination.innerHTML = "";
+
+    for (let i = 1; i <= totalPages; i++) {
+      const btn = document.createElement("button");
+      btn.innerText = i;
+      if (i === page) btn.classList.add("active");
+      btn.addEventListener("click", function(){ displayTablePage(i); });
+      pagination.appendChild(btn);
+    }
+
+    currentPage = page;
+  }
+
+  window.onload = function(){ displayTablePage(1); }
 </script>
 
 <%- include('./layouts/footer') %>
