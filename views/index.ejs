@@ -155,128 +155,416 @@
 
 
 <% } else if (user) { %>
+
 <!-- 🌸 GIRL SCOUT MINDORO USER DASHBOARD -->
 <div style="font-family: 'Poppins', sans-serif; background-color: #f5f7fa; color: #333;">
 
-
-
-  <!-- 🌟 HERO SECTION -->
-  <section style="
-    width: 100%;
-    min-height: 100vh;
+  <!-- 🌟 HERO SECTION FULL SCREEN -->
+  <section class="page-section" style="
+    /* Full-screen hero background with gradient overlay */
     background: linear-gradient(to right, rgba(47,82,51,0.9), rgba(30,50,30,0.8)), url('/image/bg1.png') center/cover no-repeat;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 80px 20px;
     color: white;
     position: relative;
     overflow: hidden;
+    height: 100vh; /* FULL SCREEN */
+    padding: 0;    /* remove extra spacing */
+    display: flex;
+    justify-content: center;
+    align-items: center;
   ">
-    <!-- Decorative floating shapes -->
+    <!-- Decorative floating shapes for subtle animation -->
     <div style="position:absolute; top:10%; left:5%; width:80px; height:80px; background:rgba(255,255,255,0.1); border-radius:50%; animation: float 6s ease-in-out infinite;"></div>
     <div style="position:absolute; bottom:15%; right:8%; width:120px; height:120px; background:rgba(255,255,255,0.08); border-radius:50%; animation: float 8s ease-in-out infinite;"></div>
 
-    <h1 style="font-size: 56px; font-weight: 800; margin-bottom: 20px; letter-spacing: -1px;">
-      Welcome, <%= user.firstName || 'Girl Scout' %>! 🌿
-    </h1>
-    <p style="font-size: 22px; max-width: 800px; opacity: 0.95; line-height: 1.8; margin: 0 auto;">
-      Empowering young girls in Mindoro through <span style="color:#ffcc00; font-weight:600;">leadership</span>, 
-      <span style="color:#ffcc00; font-weight:600;">service</span>, and 
-      <span style="color:#ffcc00; font-weight:600;">sisterhood</span>.
-    </p>
-    <a href="#features" style="
-      display: inline-block;
-      margin-top: 40px;
-      background: linear-gradient(135deg, #ffcc00, #ffd633);
-      color: #2f5233;
-      padding: 16px 36px;
-      font-weight: 700;
-      font-size: 18px;
-      border-radius: 40px;
-      text-decoration: none;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.25);
-      transition: all 0.3s ease;
-    " onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 10px 25px rgba(0,0,0,0.35)'" 
-       onmouseout="this.style.transform='none'; this.style.boxShadow='0 6px 18px rgba(0,0,0,0.25)'">
-      🌟 Explore Your Dashboard
-    </a>
+    <!-- Hero content: greeting, description, and button -->
+    <div class="hero-content" style="
+      display: flex;
+      flex-direction: column;
+      justify-content: center; /* vertical centering */
+      align-items: center;     /* horizontal centering */
+      height: 100%;            /* full height of hero section */
+      text-align: center;
+      padding: 0 20px;
+    ">
+      <h1 style="font-size: 56px; font-weight: 800; margin-bottom: 20px; letter-spacing: -1px;">
+        Welcome, <%= user.firstName || 'Girl Scout' %>! 🌿
+      </h1>
+
+      <p style="font-size: 22px; max-width: 800px; opacity: 0.95; line-height: 1.8; margin: 0 auto;">
+        Empowering young girls in Mindoro through 
+        <span style="color:#ffcc00; font-weight:600;">leadership</span>, 
+        <span style="color:#ffcc00; font-weight:600;">service</span>, and 
+        <span style="color:#ffcc00; font-weight:600;">sisterhood</span>.
+      </p>
+
+      <!-- Button scrolls smoothly to the Gallery section -->
+      <a href="#gallerySection" 
+         onclick="event.preventDefault(); document.getElementById('gallerySection').scrollIntoView({ behavior: 'smooth' });"
+         style="
+            display: inline-block;
+            margin-top: 40px;
+            background: linear-gradient(135deg, #ffcc00, #ffd633);
+            color: #2f5233;
+            padding: 16px 36px;
+            font-weight: 700;
+            font-size: 18px;
+            border-radius: 40px;
+            text-decoration: none;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+            transition: all 0.3s ease;
+          " 
+         onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 10px 25px rgba(0,0,0,0.35)'" 
+         onmouseout="this.style.transform='none'; this.style.boxShadow='0 6px 18px rgba(0,0,0,0.25)'">
+          🌟 Explore Your Dashboard
+      </a>
+    </div>
   </section>
 
-  <!-- Animations -->
-  <style>
-    @keyframes float {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-20px); }
-    }
-  </style>
 
-    <!-- 🔹 Gallery Section (Dynamic) --> 
-   <section class="py-5"> 
-    <div class="container"> 
-      <h2 class="fw-bold text-center mb-4">Gallery</h2> 
-      <div class="row g-4"> <% if (siteContent && siteContent.gallery && siteContent.gallery.length > 0) { %> <% siteContent.gallery.forEach(img => { %> 
-        <div class="col-md-4"> 
-          <div class="card shadow-sm"> 
-            <img src="/uploads/<%= img.filename %>" class="card-img-top" alt="Gallery"> <% if (img.caption) { %> 
-              <div class="card-body text-center"> <p class="text-muted"><%= img.caption %></p> 
-              </div> <% } %> 
-            </div> </div> <% }) %> <% } else { %> <p class="text-center text-muted">No gallery images available.</p> <% } %> 
-            </div> </div> </section>
+
+
+  <!-- 🌟 Gallery Section Full Screen -->
+  <section id="gallerySection" class="page-section" style="
+    background:#f8f9fa; 
+    display:flex; 
+    flex-direction:column; 
+    justify-content:center; 
+    align-items:center; 
+    overflow:hidden;
+    min-height:100vh; 
+    padding:60px 0; 
+  ">
+    <!-- Section Title -->
+    <h2 class="fw-bold text-center mb-5" style="font-size:2.5rem; color:#2f5233;">Gallery</h2>
+
+    <% if (siteContent && siteContent.gallery && siteContent.gallery.length > 0) { %>
+      <div class="position-relative" style="width:100%; max-width:1200px;">
+
+        <!-- Carousel Wrapper -->
+        <div id="galleryCarousel" class="carousel" style="
+          display:flex; 
+          overflow-x:auto; 
+          gap:0;
+          scroll-snap-type: x mandatory; 
+          scroll-behavior: smooth; 
+          padding:0;
+        ">
+          <% siteContent.gallery.forEach((img, index) => { %>
+            <div class="card-carousel about-card" style="
+              min-width:260px; 
+              max-width:260px; 
+              height:350px;
+              flex-shrink:0; 
+              scroll-snap-align:center; 
+              box-shadow:0 8px 20px rgba(0,0,0,0.15);
+              display:flex;
+              flex-direction:column;
+              overflow:hidden;
+              cursor:pointer;
+              transition: transform 0.4s, box-shadow 0.4s, border 0.4s;
+            " onclick="openLightbox('/uploads/<%= img.filename %>')">
+              <!-- Image full size -->
+              <img src="/uploads/<%= img.filename %>" style="
+                width:100%; 
+                height:calc(100% - 35px); 
+                object-fit:cover; 
+              " alt="Gallery">
+
+              <!-- Caption strip -->
+              <% if (img.caption) { %>
+                <div class="card-body text-center p-1" style="height:35px; display:flex; align-items:center; justify-content:center; background:rgba(255,255,255,0.8);">
+                  <p class="text-muted mb-0" style="
+                    font-size:0.85rem; 
+                    color:#1f2937; 
+                    font-weight:500;
+                    text-align:center;
+                    overflow:hidden;
+                    text-overflow:ellipsis;
+                    white-space:nowrap;
+                    width:95%;
+                  "><%= img.caption %></p>
+                </div>
+              <% } %>
+            </div>
+          <% }) %>
+        </div>
+
+        <!-- Navigation Buttons -->
+        <button class="nav-btn left" onclick="scrollGallery(-1)">&#10094;</button>
+        <button class="nav-btn right" onclick="scrollGallery(1)">&#10095;</button>
+
+      </div>
+    <% } else { %>
+      <p class="text-center text-muted" style="font-size:1rem;">No gallery images available.</p>
+    <% } %>
+  </section>
+
+  <!-- Lightbox Modal -->
+  <div id="lightboxModal" style="
+    display:none; 
+    position:fixed; 
+    top:0; left:0; width:100%; height:100%; 
+    background:rgba(0,0,0,0.9); 
+    justify-content:center; 
+    align-items:center; 
+    z-index:1000;
+  ">
+    <span style="
+      position:absolute; 
+      top:20px; right:30px; 
+      color:white; 
+      font-size:3rem; 
+      cursor:pointer;
+    " onclick="closeLightbox()">&times;</span>
+    <img id="lightboxImg" src="" style="max-width:90%; max-height:90%; border-radius:10px; box-shadow:0 10px 30px rgba(0,0,0,0.5);">
+  </div>
 
 </div>
+
+<script>
+  const carousel = document.getElementById('galleryCarousel');
+
+  function scrollGallery(direction) {
+    const cardWidth = carousel.querySelector('.card-carousel').offsetWidth;
+    carousel.scrollBy({ left: direction * cardWidth, behavior: 'smooth' });
+  }
+
+  function updateCenterCard() {
+    const cards = carousel.querySelectorAll('.card-carousel');
+    const carouselCenter = carousel.scrollLeft + carousel.offsetWidth / 2;
+    cards.forEach(card => {
+      const cardCenter = card.offsetLeft + card.offsetWidth / 2;
+      const distance = Math.abs(carouselCenter - cardCenter);
+      const scale = Math.max(0.85, 1 - distance / 500);
+      card.style.transform = `scale(${scale})`;
+      card.style.boxShadow = `0 ${8 + (1 - scale) * 20}px ${20 + (1 - scale) * 30}px rgba(34,139,34,${0.15 + (1 - scale) * 0.1})`;
+      card.style.border = `1px solid rgba(34,139,34,${scale*0.5})`;
+    });
+  }
+
+  carousel.addEventListener('scroll', updateCenterCard);
+  window.addEventListener('load', updateCenterCard);
+  window.addEventListener('resize', updateCenterCard);
+
+  // Lightbox functions
+  function openLightbox(src) {
+    document.getElementById('lightboxImg').src = src;
+    document.getElementById('lightboxModal').style.display = 'flex';
+  }
+  function closeLightbox() {
+    document.getElementById('lightboxModal').style.display = 'none';
+  }
+
+  // Close lightbox on click outside image
+  document.getElementById('lightboxModal').addEventListener('click', function(e){
+    if(e.target.id === 'lightboxModal'){
+      closeLightbox();
+    }
+  });
+</script>
+
+<style>
+  #galleryCarousel { scrollbar-width: none; }
+  #galleryCarousel::-webkit-scrollbar { display:none; }
+
+  .nav-btn {
+    position: absolute;
+    top:50%;
+    transform: translateY(-50%);
+    border-radius:50%;
+    width:50px;
+    height:50px;
+    z-index:10;
+    background: rgba(34,139,34,0.8);
+    color:white;
+    font-size:1.5rem;
+    opacity:0.8;
+    transition: all 0.3s ease;
+    border:none;
+    cursor:pointer;
+  }
+  .nav-btn:hover { 
+    opacity:1; 
+    transform: translateY(-50%) scale(1.1);
+    box-shadow: 0 6px 20px rgba(34,139,34,0.3);
+  }
+  .nav-btn.left { left:0; }
+  .nav-btn.right { right:0; }
+
+  .about-card:hover {
+    transform: translateY(-10px) scale(1.05);
+    box-shadow: 0 20px 35px rgba(34,139,34,0.2);
+    border: 1px solid #22c55e;
+  }
+
+  @media (max-width:768px) {
+    .card-carousel { min-width:220px; max-width:220px; height:300px; }
+  }
+  @media (max-width:480px) {
+    .card-carousel { min-width:180px; max-width:180px; height:260px; }
+  }
+</style>
+
+
+
 
 
 <% } else { %>
-<!-- 🌟 GIRL SCOUT HUB LANDING PAGE -->
-<div class="landing-page">
 
-  <!-- 🌟 CAROUSEL SECTION
-  <div id="girlScoutCarousel" class="carousel slide" data-bs-ride="carousel">
-    <div class="carousel-inner">
-      <div class="carousel-item active">
-        <img src="/image/bg.png" class="d-block w-100 carousel-img" alt="Girl Scout 1">
+<!-- 🌟 GIRL SCOUT HUB LANDING PAGE FULL SCREEN -->
+<div class="landing-page" style="font-family: 'Poppins', sans-serif; overflow:hidden;">
+
+  <!-- 🔹 Hero / Banner Section Full Screen -->
+  <section class="hero-section" style="
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  ">
+
+    <!-- Background Image (Real-time from siteContent) -->
+    <div style="
+      position: absolute;
+      top:0; left:0;
+      width:100%;
+      height:100%;
+      background: url('<%= siteContent && siteContent.bannerImage ? '/uploads/' + siteContent.bannerImage : '/images/default-banner.jpg' %>') center/cover no-repeat;
+      filter: blur(0.5px); /* reduced blur */
+      z-index:1;
+    "></div>
+
+    <!-- Dark semi-transparent overlay -->
+    <div style="
+      position: absolute;
+      top:0; left:0;
+      width:100%;
+      height:100%;
+      background: rgba(0,0,0,0.2); /* lighter overlay */
+      z-index:2;
+    "></div>
+
+    <!-- Hero Content -->
+    <div class="hero-content" style="
+      position: relative;
+      text-align: center;
+      z-index:3;
+      padding: 0 20px;
+      max-width: 1000px;
+    ">
+
+      <!-- Title -->
+      <h1 style="
+        font-size: 4rem;
+        font-weight: 800;
+        letter-spacing: -1px;
+        color: white;
+        text-shadow: 2px 2px 6px rgba(0,0,0,0.7);
+        margin-bottom: 20px;
+      ">
+        Girl Scouts of the Philippines
+      </h1>
+
+      <!-- Subtitle (more visible) -->
+      <h3 style="
+        font-size: 2rem;           /* bigger for visibility */
+        font-weight: 800;          /* bold */
+        color: white;
+        margin-bottom: 40px;
+        text-shadow: 2px 2px 6px rgba(0,0,0,0.7);
+        letter-spacing: 1px;
+      ">
+        Oriental Mindoro
+      </h3>
+
+      <!-- Button -->
+      <div style="display:flex; justify-content:center; gap:20px; flex-wrap:wrap;">
+        <a href="#events" class="btn-hoverboard">
+          View Upcoming Events
+        </a>
       </div>
-      <div class="carousel-item">
-        <img src="/image/bg2.jpg" class="d-block w-100 carousel-img" alt="Girl Scout 2">
-      </div>
-      <div class="carousel-item">
-        <img src="/image/bg3.jpg" class="d-block w-100 carousel-img" alt="Girl Scout 3">
-      </div>
+
     </div>
-    <button class="carousel-control-prev" type="button" data-bs-target="#girlScoutCarousel" data-bs-slide="prev">
-      <span class="carousel-control-prev-icon"></span>
-    </button>
-    <button class="carousel-control-next" type="button" data-bs-target="#girlScoutCarousel" data-bs-slide="next">
-      <span class="carousel-control-next-icon"></span>
-    </button> -->
-
-    <!-- 🔹 Banner / Hero Section (Dynamic) -->
-<div id="carouselExample" class="carousel slide mb-5">
-  <div class="carousel-inner">
-    <% if (siteContent && siteContent.bannerImage) { %>
-      <div class="carousel-item active">
-        <img src="/uploads/<%= siteContent.bannerImage %>" class="d-block w-100" alt="Banner">
-        <div class="carousel-caption d-none d-md-block">
-          <h1 class="fw-bold">Welcome to Girl Scout Hub</h1>
-          <p class="lead">Empowering girls through leadership, community, and sisterhood.</p>
-          <a href="#events" class="btn btn-light btn-lg">View Upcoming Events</a>
-        </div>
-      </div>
-    <% } else { %>
-      <div class="carousel-item active">
-        <img src="/images/default-banner.jpg" class="d-block w-100" alt="Default Banner">
-        <div class="carousel-caption d-none d-md-block">
-          <h1 class="fw-bold">Welcome to Girl Scout Hub</h1>
-          <p class="lead">Empowering girls through leadership, community, and sisterhood.</p>
-          <a href="#events" class="btn btn-light btn-lg">View Upcoming Events</a>
-        </div>
-      </div>
-    <% } %>
-  </div>
+  </section>
 </div>
+
+<!-- Hoverboard Button CSS & Hero Responsive Styles -->
+<style>
+  /* Hoverboard Button */
+  .btn-hoverboard {
+    display: inline-block;
+    padding: 14px 36px; /* adjusted for hero size */
+    font-weight: 700;
+    font-size: 1.1rem;
+    border-radius: 999px;
+    background: linear-gradient(135deg,#16a34a,#065f46);
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    transition: transform 0.25s ease, color 0.25s ease;
+    border: none;
+    text-decoration: none;
+  }
+  .btn-hoverboard::before {
+    content: "";
+    position: absolute;
+    top:0;
+    left:-100%;
+    width:100%;
+    height:100%;
+    background: #000;
+    transition: left 0.28s ease;
+    z-index:-1;
+  }
+  .btn-hoverboard:hover::before { left: 0; }
+  .btn-hoverboard:hover {
+    color: #16a34a;
+    transform: scale(1.03);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.18);
+  }
+  .btn-hoverboard i { color: inherit; }
+
+  /* Ensure full viewport for hero */
+  .hero-section {
+    scroll-snap-align: start;
+  }
+
+  /* Responsive text */
+  @media (max-width: 768px) {
+    .hero-section h1 {
+      font-size: 3rem;
+    }
+    .hero-section h3 {
+      font-size: 1.6rem;
+    }
+    .btn-hoverboard {
+      font-size: 0.95rem;
+      padding: 12px 28px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .hero-section h1 {
+      font-size: 2.2rem;
+    }
+    .hero-section h3 {
+      font-size: 1.3rem;
+    }
+    .btn-hoverboard {
+      font-size: 0.85rem;
+      padding: 10px 24px;
+    }
+  }
+</style>
+
+
+
+
+
+
 
 <!-- 📅 EVENTS SECTION — Fixed & Premium (Fullscreen) -->
 <section id="events"
@@ -612,11 +900,182 @@
 </style>
 
 
+
+
+
+<!-- 🌟 Gallery Section Full Screen -->
+<section id="gallerySection" class="page-section" style="
+  background:#f8f9fa; 
+  display:flex; 
+  flex-direction:column; 
+  justify-content:center; 
+  align-items:center; 
+  overflow:hidden;
+  min-height:100vh; 
+  padding:60px 0; 
+">
+  <h2 class="fw-bold text-center mb-5" style="font-size:2.5rem; color:#000;">Recent Activities</h2>
+
+  <% if (siteContent && siteContent.gallery && siteContent.gallery.length > 0) { %>
+    <div class="carouselWrapper" style="position:relative; width:100%; max-width:1200px; overflow:hidden;">
+      
+      <div id="carouselInner" style="display:flex; transition: transform 0.5s ease; align-items:center;">
+        <% siteContent.gallery.forEach((img, index) => { %>
+          <div class="carouselItem" style="flex:0 0 33.333%; display:flex; justify-content:center; align-items:center;">
+            <img src="/uploads/<%= img.filename %>" class="carouselImage" style="
+              width:70%;
+              height:350px;
+              object-fit:cover;
+              border-radius:10px;
+              box-shadow:0 10px 30px rgba(0,0,0,0.2);
+              transition: all 0.5s ease;
+              cursor:pointer;
+            " alt="<%= img.caption %>" onclick="openModal('<%= img.filename %>')">
+          </div>
+        <% }) %>
+      </div>
+
+      <button class="nav-btn left" onclick="moveCarousel(-1)">&#10094;</button>
+      <button class="nav-btn right" onclick="moveCarousel(1)">&#10095;</button>
+
+    </div>
+  <% } else { %>
+    <p class="text-center text-muted" style="font-size:1rem;">No gallery images available.</p>
+  <% } %>
+</section>
+
+<!-- Modal for full-size image -->
+<div id="imageModal" style="
+  display:none;
+  position:fixed;
+  z-index:1000;
+  left:0;
+  top:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.9);
+  justify-content:center;
+  align-items:center;
+">
+  <span style="
+    position:absolute;
+    top:20px;
+    right:40px;
+    font-size:40px;
+    color:white;
+    cursor:pointer;
+  " onclick="closeModal()">&times;</span>
+  <img id="modalImage" src="" style="max-width:90%; max-height:90%; border-radius:10px;">
+</div>
+
+<script>
+const gallery = <%- JSON.stringify(siteContent.gallery || []) %>;
+let currentIndex = 0;
+
+function updateCarousel() {
+  const items = document.querySelectorAll('.carouselImage');
+
+  items.forEach((img, idx) => {
+    const pos = idx - currentIndex;
+    if(pos === 0) { // CENTER IMAGE
+      img.style.width = "120%";
+      img.style.height = "auto";
+      img.style.objectFit = "contain";
+      img.style.transform = "scale(1.1)";
+      img.style.opacity = "1";
+      img.style.zIndex = "2";
+    } else { // SIDE IMAGES
+      img.style.width = "70%";
+      img.style.height = "350px";
+      img.style.objectFit = "cover";
+      img.style.transform = "scale(0.7)";
+      img.style.opacity = "0.5";
+      img.style.zIndex = "1";
+    }
+  });
+
+  const inner = document.getElementById('carouselInner');
+  const wrapper = document.querySelector('.carouselWrapper');
+  const wrapperWidth = wrapper.offsetWidth;
+  const centerOffset = wrapperWidth / 2 - items[currentIndex].offsetWidth / 2;
+  inner.style.transform = `translateX(-${items[currentIndex].offsetLeft - centerOffset}px)`;
+}
+
+function moveCarousel(direction) {
+  if(gallery.length === 0) return;
+  currentIndex += direction;
+  if(currentIndex < 0) currentIndex = gallery.length - 1;
+  if(currentIndex >= gallery.length) currentIndex = 0;
+
+  updateCarousel();
+}
+
+// Modal functions
+function openModal(filename) {
+  const modal = document.getElementById('imageModal');
+  const modalImg = document.getElementById('modalImage');
+  modalImg.src = '/uploads/' + filename;
+  modal.style.display = 'flex';
+}
+
+function closeModal() {
+  document.getElementById('imageModal').style.display = 'none';
+}
+
+// Initialize on load
+updateCarousel();
+</script>
+
+<style>
+.nav-btn {
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  border-radius:50%;
+  width:50px;
+  height:50px;
+  z-index:10;
+  background: rgba(34,139,34,0.8);
+  color:white;
+  font-size:1.5rem;
+  opacity:0.8;
+  border:none;
+  cursor:pointer;
+  transition: all 0.3s ease;
+}
+.nav-btn:hover { 
+  opacity:1; 
+  transform: translateY(-50%) scale(1.2);
+  box-shadow: 0 6px 20px rgba(34,139,34,0.3);
+}
+.nav-btn.left { left:10px; }
+.nav-btn.right { right:10px; }
+</style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <!-- 🗺️ MAP + CONTACT SECTION -->
 <section class="py-5" style="background:#f9fafb;">
   <div class="container">
    <h2 class="text-center mb-4 text-black fw-bold">
-   Find Us
+   Visit Us
 </h2>
 
     <p class="text-center text-muted mb-5">
