@@ -15,8 +15,10 @@ main {
 /* ---------------- Header ---------------- */
 .page-header {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
+  gap: 15px;
   margin-bottom: 25px;
 }
 .page-title {
@@ -26,6 +28,24 @@ main {
   display: flex;
   align-items: center;
   gap: 10px;
+}
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+.search-input {
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  font-size: 0.95rem;
+  outline: none;
+  transition: all 0.2s ease;
+}
+.search-input:focus {
+  border-color: #059669;
+  box-shadow: 0 0 0 3px rgba(5,150,105,0.15);
 }
 .add-btn {
   padding: 10px 18px;
@@ -53,7 +73,8 @@ main {
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.05);
   overflow-x: auto;
-  padding: 20px;
+  padding: 0;
+  position: relative;
 }
 .table {
   width: 100%;
@@ -65,38 +86,46 @@ main {
   background: linear-gradient(135deg, #059669, #10b981);
   color: white;
   font-weight: 600;
+  position: sticky;
+  top: 0;
+  z-index: 5;
 }
 .table th, .table td {
   padding: 14px 16px;
   text-align: left;
+  white-space: nowrap;
 }
-.table tbody tr:nth-child(even) { background-color: #f9fafb; }
+/* ✅ Alternate row colors */
 .table tbody tr:nth-child(odd) { background-color: #ffffff; }
-.table tbody tr:hover { background-color: rgba(5,150,105,0.08); }
+.table tbody tr:nth-child(even) { background-color: #f9fafb; }
+.table tbody tr:hover { background-color: rgba(5,150,105,0.08); transition: 0.2s; }
 
 /* ---------------- Action Buttons ---------------- */
 .action-btn {
-  padding: 6px 12px;
+  padding: 6px 10px;
   border-radius: 6px;
   font-size: 0.8rem;
   font-weight: 500;
   text-decoration: none;
-  margin-right: 6px;
+  margin-right: 4px;
   display: inline-flex;
   align-items: center;
   gap: 4px;
   transition: all 0.2s ease;
+  border: 1px solid transparent;
 }
-.btn-view { background: rgba(5,150,105,0.1); color: #059669; border: 1px solid rgba(5,150,105,0.2); }
+.btn-view { background: rgba(5,150,105,0.1); color: #059669; border-color: rgba(5,150,105,0.2); }
 .btn-view:hover { background: #059669; color: white; }
-.btn-edit { background: rgba(245,158,11,0.1); color: #f59e0b; border: 1px solid rgba(245,158,11,0.2); }
+.btn-edit { background: rgba(245,158,11,0.1); color: #f59e0b; border-color: rgba(245,158,11,0.2); }
 .btn-edit:hover { background: #f59e0b; color: white; }
-.btn-delete { background: rgba(220,38,38,0.1); color: #dc2626; border: 1px solid rgba(220,38,38,0.2); }
+.btn-delete { background: rgba(220,38,38,0.1); color: #dc2626; border-color: rgba(220,38,38,0.2); }
 .btn-delete:hover { background: #dc2626; color: white; }
 
 /* ---------------- Empty State ---------------- */
-.empty-state { text-align: center; padding: 60px 20px; color: #9ca3af; }
-.empty-state i { font-size: 3rem; margin-bottom: 12px; color: #d1d5db; }
+.empty-state { text-align: center; padding: 80px 20px; color: #6b7280; }
+.empty-state i { font-size: 4rem; margin-bottom: 16px; color: #9ca3af; }
+.empty-state h3 { font-size: 1.4rem; font-weight: 600; margin-bottom: 8px; }
+.empty-state p { margin-bottom: 20px; }
 
 /* ---------------- Modal ---------------- */
 .modal {
@@ -118,7 +147,9 @@ main {
   width: 100%;
   position: relative;
   box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+  animation: fadeIn 0.25s ease;
 }
+@keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
 .close-btn { position: absolute; top: 16px; right: 16px; background: transparent; border: none; font-size: 1.2rem; cursor: pointer; color: #6b7280; }
 .modal-header .modal-title { font-size: 1.4rem; font-weight: 700; margin-bottom: 20px; }
 .form-group { margin-bottom: 20px; }
@@ -130,12 +161,28 @@ main {
 .btn-secondary { background: #f3f4f6; color: #374151; }
 .btn-primary:hover { transform: translateY(-2px); }
 .btn-secondary:hover { background: #e5e7eb; }
+
+/* ---------------- Responsive ---------------- */
+@media (max-width: 768px) {
+  main { margin-left: 0; padding: 100px 15px 20px; }
+  .page-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .controls { width: 100%; justify-content: space-between; }
+  .search-input { flex: 1; min-width: 100%; }
+  .table-container { border-radius: 8px; }
+  .table { font-size: 0.85rem; min-width: 100%; }
+  .table th, .table td { padding: 10px; }
+  .action-btn span { display: none; } /* hide text, keep icons only */
+  .add-btn span { display: none; } /* hide add text, icon only */
+}
 </style>
 
 <main>
   <div class="page-header">
     <h1 class="page-title"><i class="fas fa-map-marked-alt"></i> All Districts</h1>
-    <button class="add-btn" onclick="openAddModal()"><i class="fas fa-plus"></i> Add District</button>
+    <div class="controls">
+      <input type="text" id="searchInput" class="search-input" placeholder="🔍 Search district...">
+      <button class="add-btn" onclick="openAddModal()"><i class="fas fa-plus"></i> <span>Add District</span></button>
+    </div>
   </div>
 
   <% if (districts.length === 0) { %>
@@ -147,7 +194,7 @@ main {
     </div>
   <% } else { %>
     <div class="table-container">
-      <table class="table">
+      <table class="table" id="districtTable">
         <thead>
           <tr>
             <th>#</th>
@@ -163,10 +210,10 @@ main {
               <td><%= d.name %></td>
               <td><%= d.schoolCount || 0 %></td>
               <td>
-                <a href="/districts/<%= d._id %>" class="action-btn btn-view"><i class="fas fa-eye"></i> View</a>
-                <button class="action-btn btn-edit" onclick="openEditModal('<%= d._id %>', '<%= d.name %>')"><i class="fas fa-edit"></i> Edit</button>
+                <a href="/districts/<%= d._id %>" class="action-btn btn-view" title="View"><i class="fas fa-eye"></i> <span>View</span></a>
+                <button class="action-btn btn-edit" onclick="openEditModal('<%= d._id %>', '<%= d.name %>')" title="Edit"><i class="fas fa-edit"></i> <span>Edit</span></button>
                 <form action="/districts/delete/<%= d._id %>" method="POST" style="display:inline;">
-                  <button type="submit" class="action-btn btn-delete" onclick="return confirm('Are you sure?')"><i class="fas fa-trash"></i> Delete</button>
+                  <button type="submit" class="action-btn btn-delete" onclick="return confirm('Are you sure?')" title="Delete"><i class="fas fa-trash"></i> <span>Delete</span></button>
                 </form>
               </td>
             </tr>
@@ -212,19 +259,26 @@ main {
 </div>
 
 <script>
+/* Modal Handlers */
 function openAddModal() { document.getElementById('addDistrictModal').classList.add('show'); }
 function closeAddModal() { document.getElementById('addDistrictModal').classList.remove('show'); document.getElementById('districtAddForm').reset(); }
-
 function openEditModal(id, name) {
   const form = document.getElementById('districtEditForm');
-  form.action = '/districts/edit/' + id; // set the form action dynamically
-  document.getElementById('editDistrictName').value = name; // fill current name
+  form.action = '/districts/edit/' + id;
+  document.getElementById('editDistrictName').value = name;
   document.getElementById('editDistrictModal').classList.add('show');
 }
-function closeEditModal() {
-  document.getElementById('editDistrictModal').classList.remove('show');
-  document.getElementById('districtEditForm').reset();
-}
+function closeEditModal() { document.getElementById('editDistrictModal').classList.remove('show'); document.getElementById('districtEditForm').reset(); }
+
+/* Search Filter */
+document.getElementById('searchInput')?.addEventListener('keyup', function() {
+  const filter = this.value.toLowerCase();
+  const rows = document.querySelectorAll('#districtTable tbody tr');
+  rows.forEach(row => {
+    const name = row.cells[1].textContent.toLowerCase();
+    row.style.display = name.includes(filter) ? '' : 'none';
+  });
+});
 </script>
 
 <%- include('./layouts/footer') %>
