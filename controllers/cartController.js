@@ -85,7 +85,6 @@ Thank you for choosing our service!`
     console.error('Error reserving cart:', err);
     res.status(500).send('Error reserving cart');
   }
-}
 };
 
 // View reservations (grouped)
