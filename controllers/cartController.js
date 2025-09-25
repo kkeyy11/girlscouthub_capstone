@@ -1,21 +1,19 @@
 // controllers/cartController.js
-const Product = require("../models/Product");
-const Reservation = require("../models/Reservation");
-const { sendAppointmentEmail } = require("../utils/mailer");
+const Product = require('../models/Product');
+const Reservation = require('../models/Reservation');
+const { sendAppointmentEmail } = require('../utils/mailer');
 
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL; // set this in .env
-
-// View Cart (sample placeholder)
+// View cart
 exports.viewCart = (req, res) => {
-  res.render("cart", { cart: req.session.cart || [] });
+  const cart = req.session.cart || [];
+  res.render('cart', { cart });
 };
 
-// Add to Cart
+// Add to cart
 exports.addToCart = async (req, res) => {
-  const productId = req.params.id;
   try {
-    const product = await Product.findById(productId);
-    if (!product) return res.status(404).send("Product not found");
+    const product = await Product.findById(req.params.id);
+    if (!product) return res.redirect('/products');
 
     if (!req.session.cart) req.session.cart = [];
 
@@ -23,26 +21,23 @@ exports.addToCart = async (req, res) => {
       productId: product._id,
       name: product.name,
       description: product.description,
-      quantity: 1,
       price: product.price,
+      quantity: 1
     });
 
-    res.redirect("/cart");
+    res.redirect('/cart');
   } catch (err) {
-    console.error("❌ Add to cart failed:", err);
-    res.status(500).send("Server error");
+    console.error(err);
+    res.redirect('/products');
   }
 };
 
-// Reserve Cart
+// Reserve cart (create reservation + notify admin)
 exports.reserveCart = async (req, res) => {
   try {
     const { name, email, contact } = req.body;
     const cart = req.session.cart || [];
-
-    if (cart.length === 0) {
-      return res.status(400).send("Cart is empty");
-    }
+    if (cart.length === 0) return res.redirect('/cart');
 
     const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
@@ -55,137 +50,169 @@ exports.reserveCart = async (req, res) => {
     });
 
     await reservation.save();
-    req.session.cart = []; // clear cart after reserve
 
-    // 📩 Notify admin
+    // Clear cart session
+    req.session.cart = [];
+
+    // ✉️ Notify admin
     await sendAppointmentEmail(
-      ADMIN_EMAIL,
-      "New Reservation Received",
-      `A new reservation has been made by ${name} (${email}).\n\nTotal: ₱${total}\n\nPlease review it in the system.`
+      process.env.GMAIL_USER, // admin email
+      '📩 New Reservation Created',
+      `A new reservation has been made by ${name} (${email}).
+Contact: ${contact}
+Total: ₱${total}
+
+Please check the admin panel for more details.`
     );
 
-    res.redirect("/reservations");
+    // ✉️ Notify user
+    await sendAppointmentEmail(
+      email,
+      '✅ Reservation Received',
+      `Hi ${name},
+
+We have received your reservation. Our team will review it and notify you once it is approved.
+
+Reservation Total: ₱${total}
+Status: Pending
+
+Thank you for choosing our service!`
+    );
+
+    res.redirect('/reservations');
   } catch (err) {
-    console.error("❌ Reserve cart failed:", err);
-    res.status(500).send("Server error");
+    console.error(err);
+    res.redirect('/cart');
   }
 };
 
-// View All Reservations
+// View reservations (grouped)
 exports.viewReservations = async (req, res) => {
   try {
-    const reservations = await Reservation.find().sort({ date: -1 });
-    res.render("reservations", { reservations });
+    const reservations = await Reservation.find().sort({ date: -1 }).populate('items.productId');
+
+    // Group by email
+    const groupedReservations = {};
+    reservations.forEach(r => {
+      if (!groupedReservations[r.email]) groupedReservations[r.email] = [];
+      groupedReservations[r.email].push(r);
+    });
+
+    res.render('reservations', { groupedReservations });
   } catch (err) {
-    console.error("❌ View reservations failed:", err);
-    res.status(500).send("Server error");
+    console.error(err);
+    res.redirect('/');
   }
 };
 
-// Approve Reservation
+// Approve reservation (notify user)
 exports.approveReservation = async (req, res) => {
   try {
-    const id = req.params.id;
-    const reservation = await Reservation.findById(id);
+    const reservation = await Reservation.findById(req.params.id);
+    if (!reservation) return res.redirect('/reservations');
 
-    if (!reservation) return res.status(404).send("Reservation not found");
-
-    reservation.status = "Approved";
+    reservation.status = 'Approved';
     await reservation.save();
 
-    // 📩 Notify user
+    // ✉️ Notify user
     await sendAppointmentEmail(
       reservation.email,
-      "Your Reservation is Approved",
-      `Hi ${reservation.name},\n\nYour reservation has been approved! 🎉\n\nTotal: ₱${reservation.total}\n\nThank you for choosing us!`
+      '🎉 Reservation Approved',
+      `Hi ${reservation.name},
+
+Good news! Your reservation has been approved. 🎉
+You may now proceed with the next steps.
+
+Reservation Total: ₱${reservation.total}
+Status: Approved
+
+Thank you for trusting us!`
     );
 
-    res.redirect("/reservations");
+    res.redirect('/reservations');
   } catch (err) {
-    console.error("❌ Approve reservation failed:", err);
-    res.status(500).send("Server error");
+    console.error(err);
+    res.redirect('/reservations');
   }
 };
 
-// Remove Reservation (reject/delete single)
+// Remove reservation
 exports.removeReservation = async (req, res) => {
   try {
-    const id = req.params.id;
-    await Reservation.findByIdAndDelete(id);
-    res.redirect("/reservations");
+    await Reservation.findByIdAndDelete(req.params.id);
+    res.redirect('/reservations');
   } catch (err) {
-    console.error("❌ Remove reservation failed:", err);
-    res.status(500).send("Server error");
+    console.error(err);
+    res.redirect('/reservations');
   }
 };
 
-// View Reservation History (all reservations sorted by date)
+// View reservation history
 exports.viewReservationHistory = async (req, res) => {
   try {
     const reservations = await Reservation.find().sort({ date: -1 });
-    res.render("reservationHistory", { reservations });
+    res.render('reservationHistory', { reservations });
   } catch (err) {
-    console.error("❌ View history failed:", err);
-    res.status(500).send("Server error");
+    console.error(err);
+    res.redirect('/');
   }
 };
 
-// Delete single reservation by ID
+// Delete single reservation
 exports.deleteReservation = async (req, res) => {
   try {
-    const id = req.params.id;
-    await Reservation.findByIdAndDelete(id);
-    res.redirect("/reservation-history");
+    await Reservation.findByIdAndDelete(req.params.id);
+    res.redirect('/reservation-history');
   } catch (err) {
-    console.error("❌ Delete reservation failed:", err);
-    res.status(500).send("Server error");
+    console.error(err);
+    res.redirect('/reservation-history');
   }
 };
 
-// Delete all reservations by email
+// Clear reservations by email
 exports.clearReservations = async (req, res) => {
   try {
     const { email } = req.body;
+    if (!email) return res.redirect('/reservation-history');
+
     await Reservation.deleteMany({ email });
-    res.redirect("/reservation-history");
+    res.redirect('/reservation-history');
   } catch (err) {
-    console.error("❌ Clear reservations failed:", err);
-    res.status(500).send("Server error");
+    console.error(err);
+    res.redirect('/reservation-history');
   }
 };
 
 // Reorder from previous reservation
 exports.reorderReservation = async (req, res) => {
   try {
-    const id = req.params.id;
-    const reservation = await Reservation.findById(id);
-    if (!reservation) return res.status(404).send("Reservation not found");
+    const prevReservation = await Reservation.findById(req.params.id).populate('items.productId');
+    if (!prevReservation) return res.redirect('/reservation-history');
 
-    req.session.cart = reservation.items.map((item) => ({
-      productId: item.productId,
+    req.session.cart = prevReservation.items.map(item => ({
+      productId: item.productId._id,
       name: item.name,
       description: item.description,
-      quantity: item.quantity,
       price: item.price,
+      quantity: item.quantity,
     }));
 
-    res.redirect("/cart");
+    res.redirect('/cart');
   } catch (err) {
-    console.error("❌ Reorder failed:", err);
-    res.status(500).send("Server error");
+    console.error(err);
+    res.redirect('/reservation-history');
   }
 };
 
-// Get reservation details for preview
+// Get reservation details
 exports.getReservationDetails = async (req, res) => {
   try {
-    const id = req.params.id;
-    const reservation = await Reservation.findById(id).populate("items.productId");
-    if (!reservation) return res.status(404).send("Reservation not found");
+    const reservation = await Reservation.findById(req.params.id).populate('items.productId');
+    if (!reservation) return res.status(404).json({ error: 'Reservation not found' });
 
     res.json(reservation);
   } catch (err) {
-    console.error("❌ Get reservation details failed:", err);
-    res.status(500).send("Server error");
+    console.error(err);
+    res.status(500).json({ error: 'Something went wrong' });
   }
 };
