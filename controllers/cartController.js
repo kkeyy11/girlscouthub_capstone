@@ -148,15 +148,24 @@ exports.removeReservation = async (req, res) => {
 };
 
 // View reservation history
+// View reservation history (USER-SIDE only)
 exports.viewReservationHistory = async (req, res) => {
   try {
-    const reservations = await Reservation.find().sort({ date: -1 });
+    if (!req.session.email) {
+      return res.redirect('/login'); // kung hindi naka-login, redirect
+    }
+
+    const reservations = await Reservation.find({ email: req.session.email })
+      .sort({ date: -1 })
+      .populate('items.productId');
+
     res.render('reservationHistory', { reservations });
   } catch (err) {
     console.error(err);
     res.redirect('/');
   }
 };
+
 
 // Delete single reservation
 exports.deleteReservation = async (req, res) => {
