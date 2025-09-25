@@ -79,11 +79,13 @@ Status: Pending
 Thank you for choosing our service!`
     );
 
-    res.redirect('/reservations');
+     // ✅ Redirect to cart with success flag
+    res.redirect('/cart?reserved=success');
   } catch (err) {
-    console.error(err);
-    res.redirect('/cart');
+    console.error('Error reserving cart:', err);
+    res.status(500).send('Error reserving cart');
   }
+}
 };
 
 // View reservations (grouped)
