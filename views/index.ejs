@@ -9,46 +9,161 @@
 <main style="
  
 <% if (user && user.role && user.role.toLowerCase() === 'admin') { %>
-
 <!-- ✅ MAIN DASHBOARD CONTAINER -->
 <div class="dashboard-container">
 
-  <!-- ✅ SUMMARY CARDS (Top Row) -->
-  <div class="summary-grid">
-    <div class="custom-card">
+  <!-- ✅ SUMMARY CARDS (Horizontal Row) -->
+  <div class="summary-row">
+    <div class="custom-card blue-card">
+      <h3>Total Districts</h3>
       <h2><%= districtCount %></h2>
-      <p>Total Districts</p>
+      <p><span class="trend up">▲ 5%</span> this month</p>
     </div>
-    <div class="custom-card">
+
+    <div class="custom-card yellow-card">
+      <h3>Total Appointments</h3>
       <h2><%= latestAppointments?.length || 0 %></h2>
-      <p>Total Appointments</p>
+      <p><span class="trend up">▲ 8%</span> this month</p>
     </div>
-    <div class="custom-card">
+
+    <div class="custom-card pink-card">
+      <h3>Total Products</h3>
       <h2><%= productCount %></h2>
-      <p>Total Products</p>
+      <p><span class="trend down">▼ 2%</span> this month</p>
     </div>
-    <div class="custom-card">
+
+    <div class="custom-card green-card">
+      <h3>Upcoming Events</h3>
       <h2><%= events.length %></h2>
-      <p>Upcoming Events</p>
+      <p><span class="trend up">▲ 12%</span> this month</p>
     </div>
-    <div class="custom-card revenue-card">
+
+    <div class="custom-card purple-card">
+      <h3>Total Revenue</h3>
       <h2>₱<%= totalRevenue.toLocaleString() %></h2>
-      <p>Total Revenue</p>
-      <small>Total Sales Orders: <%= totalOrders %></small>
+      <p><span class="trend up">▲ 15%</span> this month</p>
+      <small>Total Orders: <%= totalOrders %></small>
     </div>
+  </div>  
+</div>
+
+<!-- ✅ CARD DESIGN STYLES -->
+<style>
+/* ✅ Dashboard Container */
+.dashboard-container {
+  margin-left: 220px;
+  padding: 40px 15px;
+  min-height: 100vh;
+  background: linear-gradient(to right top, #f9fafb, #f3f4f6);
+  font-family: 'Poppins', sans-serif;
+}
+
+/* ✅ Horizontal Row for Cards */
+.summary-row {
+  display: flex;
+  gap: 12px;
+  margin-top: 15px;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+}
+
+/* ✅ Card Base Style (Compact + Gradient) */
+.custom-card {
+  flex: 1;
+  padding: 15px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  text-align: left;
+  font-weight: bold; /* 🔥 bold lahat */
+  color: #000;       /* 🔥 black font */
+}
+
+.custom-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 14px rgba(0,0,0,0.16);
+}
+
+/* ✅ Headings (Black & Bold) */
+.custom-card h3 {
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 6px;
+  opacity: 0.9;
+  color: #000;
+}
+
+.custom-card h2 {
+  font-size: 20px;
+  font-weight: 800;
+  margin: 0 0 6px;
+  color: #000;
+}
+
+.custom-card p {
+  font-size: 12px;
+  font-weight: 700;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #000;
+}
+
+.custom-card small {
+  display: block;
+  margin-top: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  opacity: 0.9;
+  color: #000;
+}
+
+/* ✅ Trends (percent up/down colors) */
+.trend {
+  font-weight: 800;
+}
+.trend.up {
+  color: #28a745;
+}
+.trend.down {
+  color: #dc3545;
+}
+
+/* ✅ Gradient Variants (Background Colors of Cards) */
+.blue-card {
+  background: linear-gradient(135deg, #6dd5fa, #2980b9);
+}
+.yellow-card {
+  background: linear-gradient(135deg, #f7971e, #ffd200);
+}
+.pink-card {
+  background: linear-gradient(135deg, #ff6a00, #ee0979);
+}
+.green-card {
+  background: linear-gradient(135deg, #00b09b, #96c93d);
+}
+.purple-card {
+  background: linear-gradient(135deg, #8e2de2, #4a00e0);
+}
+</style>
+
+
+
+<!-- ✅ ANALYTICS SECTION (Second Row) -->
+<div class="analytics-grid">
+  <!-- 🔹 Top Selling Products -->
+  <div class="chart-card small-chart">
+    <h6>📦 Top Selling Products</h6>
+    <canvas id="topProductsChart"></canvas>
   </div>
 
-  <!-- ✅ ANALYTICS SECTION (Second Row) -->
-  <div class="analytics-grid">
-    <div class="chart-card small-chart">
-      <h6>Top Selling Products</h6>
-      <canvas id="topProductsChart"></canvas>
-    </div>
-    <div class="chart-card small-chart">
-      <h6>Sales by Category</h6>
-      <canvas id="salesByCategoryChart"></canvas>
-    </div>
-    <div class="chart-card wide small-chart">
+  <!-- 🔹 Sales by Category -->
+  <div class="chart-card small-chart">
+    <h6>📊 Sales by Category</h6>
+    <canvas id="salesByCategoryChart"></canvas>
+  </div>
+  <div class="chart-card wide small-chart">
       <div class="chart-header">
         <h6>Revenue Trends</h6>
         <select id="revenueTrendSelect" class="form-select form-select-sm" style="width:auto;">
@@ -61,48 +176,12 @@
     </div>
   </div>
 
-  <!-- ✅ TOP 3 SALES ORDERS (Third Row) -->
-  <div class="chart-card small-chart">
-    <h6>🏆 Top 3 Sales Orders</h6>
-    <div id="topSalesContainer"></div>
-  </div>
 
-  <!-- ✅ LATEST APPOINTMENTS (Fourth Row) -->
-  <section class="appointments-section">
-    <h2>Latest Appointments</h2>
-    <% if (latestAppointments && latestAppointments.length > 0) { %>
-      <div class="table-responsive">
-        <table class="table table-hover align-middle">
-          <thead class="table-success">
-            <tr>
-              <th>User</th>
-              <th>Date</th>
-              <th>Time</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% latestAppointments.forEach(app => { %>
-              <tr>
-                <td><%= app.user ? app.user.firstName + ' ' + app.user.lastName : 'N/A' %></td>
-                <td><%= app.date.toDateString() %></td>
-                <td><%= app.time %></td>
-                <td>
-                  <span class="badge bg-<%= app.status === 'Confirmed' ? 'success' : app.status === 'Cancelled' ? 'danger' : 'secondary' %>">
-                    <%= app.status %>
-                  </span>
-                </td>
-              </tr>
-            <% }) %>
-          </tbody>
-        </table>
-      </div>
-    <% } else { %>
-      <p class="text-muted">No recent appointments found.</p>
-    <% } %>
-  </section>
+  
 
-</div>
+
+  
+
 
 <style>
 .dashboard-container {
@@ -112,43 +191,71 @@
   flex-direction: column;
   gap: 30px;
   padding-bottom: 40px;
+  font-family: 'Poppins', sans-serif;
 }
 
-/* SUMMARY CARDS */
-.summary-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 20px;
-}
-
-/* ANALYTICS GRID */
+/* ✅ Analytics Grid */
 .analytics-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 20px;
 }
+
+/* ✅ Chart Cards */
 .chart-card {
   background: #fff;
   border-radius: 15px;
-  padding: 15px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  padding: 18px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
+
+.chart-card h6 {
+  font-size: 14px;
+  font-weight: 700;
+  color: #333;
+  margin: 0 0 6px;
+}
+
 .chart-card.wide {
   grid-column: span 2;
 }
-/* Smaller chart size */
+
+/* ✅ Chart Header (Title + Dropdown) */
+.chart-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.chart-header select {
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 6px;
+}
+
+/* ✅ Chart Size */
 .small-chart canvas {
   max-height: 220px !important;
 }
 
-/* APPOINTMENTS */
-.appointments-section {
-  background:#fff;
-  padding:20px;
-  border-radius:15px;
-  box-shadow:0 2px 6px rgba(0,0,0,0.1);
+/* ✅ Top 3 Sales Orders */
+.top-sales {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #444;
 }
+
 </style>
+
+
+
+
 
 
 
@@ -413,8 +520,6 @@
 
 <!-- 🌟 GIRL SCOUT HUB LANDING PAGE FULL SCREEN -->
 <div class="landing-page" style="font-family: 'Poppins', sans-serif; overflow:hidden;">
-
-  <!-- 🔹 Hero / Banner Section Full Screen -->
   <section class="hero-section" style="
     position: relative;
     width: 100%;
@@ -425,28 +530,29 @@
     align-items: center;
   ">
 
-    <!-- Background Image (Real-time from siteContent) -->
+    <!-- ✅ Background Image from DB -->
     <div style="
       position: absolute;
       top:0; left:0;
       width:100%;
       height:100%;
-      background: url('<%= siteContent && siteContent.bannerImage ? '/uploads/' + siteContent.bannerImage : '/images/default-banner.jpg' %>') center/cover no-repeat;
-      filter: blur(0.5px); /* reduced blur */
+      background: url('<%= siteContent && siteContent.banner && siteContent.banner.path 
+        ? siteContent.banner.path 
+        : '/images/default-banner.jpg' %>') center/cover no-repeat;
+      filter: blur(0.5px);
       z-index:1;
     "></div>
 
-    <!-- Dark semi-transparent overlay -->
+    <!-- Overlay -->
     <div style="
       position: absolute;
       top:0; left:0;
       width:100%;
       height:100%;
-      background: rgba(0,0,0,0.2); /* lighter overlay */
+      background: rgba(0,0,0,0.2);
       z-index:2;
     "></div>
 
-    <!-- Hero Content -->
     <div class="hero-content" style="
       position: relative;
       text-align: center;
@@ -454,113 +560,36 @@
       padding: 0 20px;
       max-width: 1000px;
     ">
-
-      <!-- Title -->
-      <h1 style="
-        font-size: 4rem;
-        font-weight: 800;
-        letter-spacing: -1px;
-        color: white;
-        text-shadow: 2px 2px 6px rgba(0,0,0,0.7);
-        margin-bottom: 20px;
-      ">
+      <h1 style="font-size: 4rem; font-weight: 800; color: white; text-shadow: 2px 2px 6px rgba(0,0,0,0.7);">
         Girl Scouts of the Philippines
       </h1>
-
-      <!-- Subtitle (more visible) -->
-      <h3 style="
-        font-size: 2rem;           /* bigger for visibility */
-        font-weight: 800;          /* bold */
-        color: white;
-        margin-bottom: 40px;
-        text-shadow: 2px 2px 6px rgba(0,0,0,0.7);
-        letter-spacing: 1px;
-      ">
+      <h3 style="font-size: 2rem; font-weight: 800; color: white; margin-bottom: 40px;">
         Oriental Mindoro
       </h3>
-
-      <!-- Button -->
-      <div style="display:flex; justify-content:center; gap:20px; flex-wrap:wrap;">
-        <a href="#events" class="btn-hoverboard">
-          View Upcoming Events
-        </a>
-      </div>
-
+      <a href="#events" class="btn-hoverboard">View Upcoming Events</a>
     </div>
   </section>
 </div>
 
-<!-- Hoverboard Button CSS & Hero Responsive Styles -->
 <style>
-  /* Hoverboard Button */
   .btn-hoverboard {
     display: inline-block;
-    padding: 14px 36px; /* adjusted for hero size */
+    padding: 14px 36px;
     font-weight: 700;
     font-size: 1.1rem;
     border-radius: 999px;
     background: linear-gradient(135deg,#16a34a,#065f46);
     color: #fff;
-    position: relative;
-    overflow: hidden;
-    z-index: 1;
-    transition: transform 0.25s ease, color 0.25s ease;
     border: none;
     text-decoration: none;
+    transition: transform 0.25s ease, color 0.25s ease;
   }
-  .btn-hoverboard::before {
-    content: "";
-    position: absolute;
-    top:0;
-    left:-100%;
-    width:100%;
-    height:100%;
-    background: #000;
-    transition: left 0.28s ease;
-    z-index:-1;
-  }
-  .btn-hoverboard:hover::before { left: 0; }
   .btn-hoverboard:hover {
     color: #16a34a;
+    background: #fff;
     transform: scale(1.03);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.18);
-  }
-  .btn-hoverboard i { color: inherit; }
-
-  /* Ensure full viewport for hero */
-  .hero-section {
-    scroll-snap-align: start;
-  }
-
-  /* Responsive text */
-  @media (max-width: 768px) {
-    .hero-section h1 {
-      font-size: 3rem;
-    }
-    .hero-section h3 {
-      font-size: 1.6rem;
-    }
-    .btn-hoverboard {
-      font-size: 0.95rem;
-      padding: 12px 28px;
-    }
-  }
-
-  @media (max-width: 480px) {
-    .hero-section h1 {
-      font-size: 2.2rem;
-    }
-    .hero-section h3 {
-      font-size: 1.3rem;
-    }
-    .btn-hoverboard {
-      font-size: 0.85rem;
-      padding: 10px 24px;
-    }
   }
 </style>
-
-
 
 
 
@@ -1206,11 +1235,19 @@ updateCarousel();
     background-color: #2f5233;
   }
 </style>
+
+
+
+
+
+
+
 <% } %>
 
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 
 <script>
 // Existing data
@@ -1237,40 +1274,97 @@ function formatYear(year) {
   return `${year}`;
 }
 
+// 🔹 Create gradient
+function createGradient(ctx, color1, color2) {
+  const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+  gradient.addColorStop(0, color1);
+  gradient.addColorStop(1, color2);
+  return gradient;
+}
+
 // 🔹 Top Products Chart
 const topProductsCtx = document.getElementById('topProductsChart')?.getContext('2d');
 if(topProductsCtx){
+  const barGradient = createGradient(topProductsCtx, "#43a047", "#a5d6a7");
+
   new Chart(topProductsCtx,{
     type:'bar',
     data:{
       labels:salesData.map(p=>p._id),
-      datasets:[{label:'Quantity Sold',data:salesData.map(p=>p.totalSold),backgroundColor:'#43a047'}]
+      datasets:[{
+        label:'Quantity Sold',
+        data:salesData.map(p=>p.totalSold),
+        backgroundColor:barGradient,
+        borderRadius:12,
+        borderSkipped:false
+      }]
     },
-    options:{plugins:{legend:{display:false}},responsive:true,scales:{y:{beginAtZero:true}}}
+    options:{
+      plugins:{legend:{display:false}},
+      responsive:true,
+      scales:{
+        y:{beginAtZero:true, ticks:{color:"#2e7d32"}},
+        x:{ticks:{color:"#2e7d32"}}
+      }
+    }
   });
 }
 
-// 🔹 Sales by Category Chart
+// 🔹 Sales by Category Chart (with %)
 const salesByCategoryCtx = document.getElementById('salesByCategoryChart')?.getContext('2d');
 if(salesByCategoryCtx){
+  const totalCategorySales = salesByCategory.reduce((sum,c)=>sum+c.totalSales,0);
+
   new Chart(salesByCategoryCtx,{
-    type:'pie',
+    type:'doughnut',
     data:{
       labels:salesByCategory.map(c=>c._id),
-      datasets:[{data:salesByCategory.map(c=>c.totalSales),backgroundColor:['#1b5e20','#43a047','#66bb6a','#a5d6a7','#c8e6c9']}]
+      datasets:[{
+        data:salesByCategory.map(c=>c.totalSales),
+        backgroundColor:['#1b5e20','#2e7d32','#43a047','#66bb6a','#a5d6a7'],
+        borderWidth:2,
+        borderColor:"#fff"
+      }]
     },
-    options:{plugins:{legend:{position:'bottom'}},responsive:true}
+    options:{
+      cutout:"65%",
+      responsive:true,
+      plugins:{
+        legend:{position:'bottom', labels:{color:"#2e7d32"}},
+        tooltip:{
+          callbacks:{
+            label:function(context){
+              const value = context.raw;
+              const percentage = ((value / totalCategorySales) * 100).toFixed(1) + '%';
+              return `${context.label}: ${value} (${percentage})`;
+            }
+          }
+        },
+        datalabels:{
+          color:'#fff',
+          font:{weight:'bold', size:11},
+          formatter:(value)=>{
+            let percentage = (value / totalCategorySales * 100).toFixed(1) + "%";
+            return percentage;
+          }
+        }
+      }
+    },
+    plugins:[ChartDataLabels] // ⬅️ important para gumana
   });
 }
 
-// 🔹 Revenue Trends Chart (Weekly / Monthly / Yearly)
+
+
+// ✅ Revenue Trends Chart (Inspired by your uploaded design)
 let revenueChart = null;
-function renderRevenueChart(type){
+
+function renderRevenueChart(type) {
   let data, labels;
-  if(type==="monthly"){
+  if (type === "monthly") {
     data = monthlyData;
-    labels = data.map(m => formatMonth(m._id.month, m._id.year));
-  } else if(type==="weekly"){
+    labels = data.map(m => formatMonth(m._id.month, m._id.year).split(" ")[0]); 
+  } else if (type === "weekly") {
     data = weeklyData;
     labels = data.map(w => formatWeek(w._id.week, w._id.year));
   } else {
@@ -1278,66 +1372,92 @@ function renderRevenueChart(type){
     labels = data.map(y => formatYear(y._id.year));
   }
 
-  const ctx = document.getElementById('revenueTrendsChart')?.getContext('2d');
-  if(!ctx) return;
-  if(revenueChart) revenueChart.destroy();
+  const ctx = document.getElementById("revenueTrendsChart")?.getContext("2d");
+  if (!ctx) return;
 
-  if(!data || data.length===0){
-    revenueChart = new Chart(ctx,{
-      type:'bar',
-      data:{ labels:["No Data"], datasets:[{label:"Revenue",data:[0]}] },
-      options:{ plugins:{legend:{display:false}}, responsive:true }
+  if (revenueChart) revenueChart.destroy();
+
+  if (!data || data.length === 0) {
+    revenueChart = new Chart(ctx, {
+      type: "bar",
+      data: { labels: ["No Data"], datasets: [{ label: "Revenue", data: [0] }] },
+      options: { plugins: { legend: { display: false } }, responsive: true }
     });
     return;
   }
 
-  revenueChart = new Chart(ctx,{
-    type:'line',
-    data:{
+  // 🌟 Gradient fill gaya sa inspo image
+  const gradient = ctx.createLinearGradient(0, 0, 0, ctx.canvas.height);
+  gradient.addColorStop(0, "rgba(46, 125, 50, 0.35)");
+  gradient.addColorStop(0.7, "rgba(46, 125, 50, 0.08)");
+  gradient.addColorStop(1, "rgba(46, 125, 50, 0)");
+
+  revenueChart = new Chart(ctx, {
+    type: "line",
+    data: {
       labels,
-      datasets:[{
-        label:'Revenue (₱)',
-        data:data.map(d=>d.revenue),
-        borderColor:'#1b5e20',
-        backgroundColor:'rgba(27,94,32,0.2)',
-        tension:0.4,
-        fill:true
-      },{
-        label:'Orders',
-        data:data.map(d=>d.orders),
-        borderColor:'#43a047',
-        backgroundColor:'rgba(67,160,71,0.2)',
-        tension:0.4,
-        fill:true
+      datasets: [{
+        label: "Revenue",
+        data: data.map(d => d.revenue),
+        borderColor: "#2e7d32",
+        backgroundColor: gradient,
+        fill: true,
+        tension: 0.4,   // smooth curve gaya ng nasa image
+        borderWidth: 3, // medyo bold ang line gaya ng inspo
+        pointRadius: 0, // walang bilog na point (malinis look)
+        pointHoverRadius: 6,
+        pointHoverBackgroundColor: "#2e7d32"
       }]
     },
-    options:{
-      plugins:{legend:{position:'top'}},
-      scales:{y:{beginAtZero:true}}
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false }, // walang legend sa taas
+        tooltip: {
+          backgroundColor: "#2e7d32",
+          titleColor: "#fff",
+          bodyColor: "#fff",
+          displayColors: false,
+          callbacks: {
+            title: (ctx) => labels[ctx[0].dataIndex],
+            label: (ctx) => `₱ ${ctx.raw.toLocaleString()}`
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: { display: false, drawBorder: false }, // walang vertical grid
+          ticks: {
+            color: "#444",
+            font: { size: 13, family: "'Segoe UI', sans-serif" }
+          }
+        },
+        y: {
+          grid: { color: "rgba(0,0,0,0.05)", drawBorder: false }, // light grid
+          ticks: {
+            color: "#666",
+            font: { size: 13, family: "'Segoe UI', sans-serif" },
+            callback: (val) => val >= 1000 ? (val / 1000) + "k" : val
+          }
+        }
+      },
+      elements: {
+        line: { borderJoinStyle: "round" }
+      }
     }
   });
 }
+
 renderRevenueChart("monthly");
-document.getElementById('revenueTrendSelect')?.addEventListener('change', e=>{
+
+// Dropdown change
+document.getElementById("revenueTrendSelect")?.addEventListener("change", e => {
   renderRevenueChart(e.target.value);
 });
 
-// 🔹 Analytics Modal Text 
-const analyticsModalBody = document.getElementById('analyticsModalBody');
-if (analyticsModalBody) {
-  // sort descending by totalSold, then take top 3
-  const top3 = salesData
-    .sort((a, b) => b.totalSold - a.totalSold)
-    .slice(0, 3);
 
-  const analyticsContent = `
-    <p><strong>Total Sales Orders:</strong> ${totalOrders}</p>
-    <h4>Top 3 Sales Orders:</h4>
-    <ul>
-      ${top3.map(p => `<li><strong>${p._id}</strong>: ${p.totalSold} sold</li>`).join('')}
-    </ul>
-  `;
+// keep analytics insertion
+analyticsModalBody.insertAdjacentHTML('afterbegin', analyticsContent);
 
-  analyticsModalBody.insertAdjacentHTML('afterbegin', analyticsContent);
-}
 </script>
