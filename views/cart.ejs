@@ -169,6 +169,13 @@
       </div>
     </div>
   </div>
+
+  <% if (limit) { %>
+  <div class="alert alert-danger mt-3">
+    ❌ You have reached the reservation limit for today.
+  </div>
+<% } %>
+
   <div class="reservation-form">
     <h2 class="form-title">Complete Your Reservation</h2>
     <form action="/reserve" method="POST">
@@ -183,6 +190,14 @@
       <div class="form-group">
         <label class="form-label">Contact Number</label>
         <input type="text" name="contact" required class="form-input"/>
+      </div>
+      <div class="form-group">
+        <label>Downpayment</label>
+<input type="number" name="downpayment" min="0" class="form-control" required />
+
+<label>Upload Proof of Payment</label>
+<input type="file" name="proof" accept="image/*" class="form-control" required />
+
       </div>
       <button type="submit" class="submit-button">Confirm Reservation</button>
     </form>
