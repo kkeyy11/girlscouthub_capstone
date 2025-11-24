@@ -1,17 +1,12 @@
+// controllers/cartController.js
 const Product = require('../models/Product');
 const Reservation = require('../models/Reservation');
 const { sendAppointmentEmail } = require('../utils/mailer');
 
-// ANTI-SPAM SETTINGS
-const MAX_RESERVATIONS_PER_DAY = 2; // LIMIT PER USER per day
-
 // View cart
 exports.viewCart = (req, res) => {
   const cart = req.session.cart || [];
-  const success = req.query.reserved === "success";
-  const limit = req.query.limit === "true";
-
-  res.render('cart', { cart, success, limit });
+  res.render('cart', { cart });
 };
 
 // Add to cart
@@ -37,33 +32,14 @@ exports.addToCart = async (req, res) => {
   }
 };
 
-// Reserve cart (create reservation)
+// Reserve cart (create reservation + notify admin)
 exports.reserveCart = async (req, res) => {
   try {
-    const { name, email, contact, downpayment } = req.body;
+    const { name, email, contact } = req.body;
     const cart = req.session.cart || [];
-
     if (cart.length === 0) return res.redirect('/cart');
 
-    // DAILY LIMIT CHECK
-    const todayStart = new Date();
-    todayStart.setHours(0, 0, 0, 0);
-
-    const reservationCount = await Reservation.countDocuments({
-      email,
-      date: { $gte: todayStart }
-    });
-
-    if (reservationCount >= MAX_RESERVATIONS_PER_DAY) {
-      return res.redirect('/cart?limit=true');
-    }
-
     const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-
-    let proofPath = null;
-    if (req.file) {
-      proofPath = `/uploads/proofs/${req.file.filename}`;
-    }
 
     const reservation = new Reservation({
       name,
@@ -71,41 +47,39 @@ exports.reserveCart = async (req, res) => {
       contact,
       items: cart,
       total,
-      downpayment: Number(downpayment) || 0,
-      proofOfPayment: proofPath
     });
 
     await reservation.save();
 
+    // Clear cart session
     req.session.cart = [];
 
-    // Notify admin
+    // ✉️ Notify admin
     await sendAppointmentEmail(
-      process.env.GMAIL_USER,
+      process.env.GMAIL_USER, // admin email
       '📩 New Reservation Created',
-      `A new reservation has been made by ${name} (${email}).  
-Contact: ${contact}  
-Total: ₱${total}  
-Downpayment: ₱${downpayment}  
+      `A new reservation has been made by ${name} (${email}).
+Contact: ${contact}
+Total: ₱${total}
 
-Please check admin panel.`
+Please check the admin panel for more details.`
     );
 
-    // Notify user
+    // ✉️ Notify user
     await sendAppointmentEmail(
       email,
       '✅ Reservation Received',
       `Hi ${name},
 
-We have received your reservation.
+We have received your reservation. Our team will review it and notify you once it is approved.
 
-Total: ₱${total}
-Downpayment: ₱${downpayment}
+Reservation Total: ₱${total}
 Status: Pending
 
-We will verify your proof of payment soon.`
+Thank you for choosing our service!`
     );
 
+     // ✅ Redirect to cart with success flag
     res.redirect('/cart?reserved=success');
   } catch (err) {
     console.error('Error reserving cart:', err);
@@ -113,11 +87,12 @@ We will verify your proof of payment soon.`
   }
 };
 
-// View reservations (ADMIN)
+// View reservations (grouped)
 exports.viewReservations = async (req, res) => {
   try {
     const reservations = await Reservation.find().sort({ date: -1 }).populate('items.productId');
 
+    // Group by email
     const groupedReservations = {};
     reservations.forEach(r => {
       if (!groupedReservations[r.email]) groupedReservations[r.email] = [];
@@ -131,7 +106,7 @@ exports.viewReservations = async (req, res) => {
   }
 };
 
-// Approve reservation
+// Approve reservation (notify user)
 exports.approveReservation = async (req, res) => {
   try {
     const reservation = await Reservation.findById(req.params.id);
@@ -140,16 +115,19 @@ exports.approveReservation = async (req, res) => {
     reservation.status = 'Approved';
     await reservation.save();
 
+    // ✉️ Notify user
     await sendAppointmentEmail(
       reservation.email,
       '🎉 Reservation Approved',
       `Hi ${reservation.name},
 
-Good news! Your reservation has been approved.
+Good news! Your reservation has been approved. 🎉
+You may now proceed with the next steps.
 
-Total: ₱${reservation.total}
-Downpayment: ₱${reservation.downpayment}
-Status: Approved`
+Reservation Total: ₱${reservation.total}
+Status: Approved
+
+Thank you for trusting us!`
     );
 
     res.redirect('/reservations');
@@ -170,10 +148,13 @@ exports.removeReservation = async (req, res) => {
   }
 };
 
-// USER: Reservation History
+// View reservation history
+// View reservation history (USER-SIDE only)
 exports.viewReservationHistory = async (req, res) => {
   try {
-    if (!req.session.email) return res.redirect('/login');
+    if (!req.session.email) {
+      return res.redirect('/login'); // kung hindi naka-login, redirect
+    }
 
     const reservations = await Reservation.find({ email: req.session.email })
       .sort({ date: -1 })
@@ -186,7 +167,8 @@ exports.viewReservationHistory = async (req, res) => {
   }
 };
 
-// USER: Delete reservation
+
+// Delete single reservation
 exports.deleteReservation = async (req, res) => {
   try {
     await Reservation.findByIdAndDelete(req.params.id);
@@ -197,10 +179,13 @@ exports.deleteReservation = async (req, res) => {
   }
 };
 
-// USER: Clear all reservations
+// Clear reservations by email
 exports.clearReservations = async (req, res) => {
   try {
-    await Reservation.deleteMany({ email: req.body.email });
+    const { email } = req.body;
+    if (!email) return res.redirect('/reservation-history');
+
+    await Reservation.deleteMany({ email });
     res.redirect('/reservation-history');
   } catch (err) {
     console.error(err);
@@ -208,7 +193,7 @@ exports.clearReservations = async (req, res) => {
   }
 };
 
-// USER: Reorder reservation
+// Reorder from previous reservation
 exports.reorderReservation = async (req, res) => {
   try {
     const prevReservation = await Reservation.findById(req.params.id).populate('items.productId');
@@ -219,7 +204,7 @@ exports.reorderReservation = async (req, res) => {
       name: item.name,
       description: item.description,
       price: item.price,
-      quantity: item.quantity
+      quantity: item.quantity,
     }));
 
     res.redirect('/cart');
@@ -229,15 +214,15 @@ exports.reorderReservation = async (req, res) => {
   }
 };
 
-// Admin: Get details
+// Get reservation details
 exports.getReservationDetails = async (req, res) => {
   try {
     const reservation = await Reservation.findById(req.params.id).populate('items.productId');
-    if (!reservation) return res.status(404).json({ error: 'Not found' });
+    if (!reservation) return res.status(404).json({ error: 'Reservation not found' });
 
     res.json(reservation);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Error' });
+    res.status(500).json({ error: 'Something went wrong' });
   }
 };
