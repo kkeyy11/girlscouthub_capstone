@@ -998,62 +998,122 @@
 </div>
 
 <script>
-const gallery = <%- JSON.stringify(siteContent.gallery || []) %>;
-let currentIndex = 0;
+  // Safely get gallery from EJS
+  const gallery = <%- JSON.stringify(siteContent?.gallery || []) %>;
+  let currentIndex = 0;
 
-function updateCarousel() {
-  const items = document.querySelectorAll('.carouselImage');
+  // Get carousel elements safely
+  const carousel = document.getElementById('galleryCarousel');
+  const lightboxModal = document.getElementById('lightboxModal');
+  const lightboxImg = document.getElementById('lightboxImg');
 
-  items.forEach((img, idx) => {
-    const pos = idx - currentIndex;
-    if(pos === 0) { // CENTER IMAGE
-      img.style.width = "120%";
-      img.style.height = "auto";
-      img.style.objectFit = "contain";
-      img.style.transform = "scale(1.1)";
-      img.style.opacity = "1";
-      img.style.zIndex = "2";
-    } else { // SIDE IMAGES
-      img.style.width = "70%";
-      img.style.height = "350px";
-      img.style.objectFit = "cover";
-      img.style.transform = "scale(0.7)";
-      img.style.opacity = "0.5";
-      img.style.zIndex = "1";
-    }
-  });
+  // Scroll gallery function
+  function scrollGallery(direction) {
+    if (!carousel) return;
+    const firstCard = carousel.querySelector('.card-carousel');
+    if (!firstCard) return;
+    const cardWidth = firstCard.offsetWidth;
+    carousel.scrollBy({ left: direction * cardWidth, behavior: 'smooth' });
+  }
 
-  const inner = document.getElementById('carouselInner');
-  const wrapper = document.querySelector('.carouselWrapper');
-  const wrapperWidth = wrapper.offsetWidth;
-  const centerOffset = wrapperWidth / 2 - items[currentIndex].offsetWidth / 2;
-  inner.style.transform = `translateX(-${items[currentIndex].offsetLeft - centerOffset}px)`;
-}
+  // Center scaling effect
+  function updateCenterCard() {
+    if (!carousel) return;
+    const cards = carousel.querySelectorAll('.card-carousel');
+    if (!cards || cards.length === 0) return;
 
-function moveCarousel(direction) {
-  if(gallery.length === 0) return;
-  currentIndex += direction;
-  if(currentIndex < 0) currentIndex = gallery.length - 1;
-  if(currentIndex >= gallery.length) currentIndex = 0;
+    const carouselCenter = carousel.scrollLeft + carousel.offsetWidth / 2;
+    cards.forEach(card => {
+      const cardCenter = card.offsetLeft + card.offsetWidth / 2;
+      const distance = Math.abs(carouselCenter - cardCenter);
+      const scale = Math.max(0.85, 1 - distance / 500);
+      card.style.transform = `scale(${scale})`;
+      card.style.boxShadow = `0 ${8 + (1 - scale) * 20}px ${20 + (1 - scale) * 30}px rgba(34,139,34,${0.15 + (1 - scale) * 0.1})`;
+      card.style.border = `1px solid rgba(34,139,34,${scale*0.5})`;
+    });
+  }
 
-  updateCarousel();
-}
+  if (carousel) {
+    carousel.addEventListener('scroll', updateCenterCard);
+    window.addEventListener('load', updateCenterCard);
+    window.addEventListener('resize', updateCenterCard);
+  }
 
-// Modal functions
-function openModal(filename) {
-  const modal = document.getElementById('imageModal');
-  const modalImg = document.getElementById('modalImage');
-  modalImg.src = '/uploads/' + filename;
-  modal.style.display = 'flex';
-}
+  // Lightbox
+  function openLightbox(src) {
+    if (!lightboxModal || !lightboxImg) return;
+    lightboxImg.src = src;
+    lightboxModal.style.display = 'flex';
+  }
+  function closeLightbox() {
+    if (!lightboxModal) return;
+    lightboxModal.style.display = 'none';
+  }
+  if (lightboxModal) {
+    lightboxModal.addEventListener('click', e => {
+      if (e.target === lightboxModal) closeLightbox();
+    });
+  }
 
-function closeModal() {
-  document.getElementById('imageModal').style.display = 'none';
-}
+  // For older carousel (carouselWrapper/carouselInner)
+  function updateCarousel() {
+    const items = document.querySelectorAll('.carouselImage');
+    if (!items || items.length === 0) return;
 
-// Initialize on load
-updateCarousel();
+    const wrapper = document.querySelector('.carouselWrapper');
+    const inner = document.getElementById('carouselInner');
+    if (!wrapper || !inner) return;
+
+    items.forEach((img, idx) => {
+      const pos = idx - currentIndex;
+      if(pos === 0) { // CENTER IMAGE
+        img.style.width = "120%";
+        img.style.height = "auto";
+        img.style.objectFit = "contain";
+        img.style.transform = "scale(1.1)";
+        img.style.opacity = "1";
+        img.style.zIndex = "2";
+      } else { // SIDE IMAGES
+        img.style.width = "70%";
+        img.style.height = "350px";
+        img.style.objectFit = "cover";
+        img.style.transform = "scale(0.7)";
+        img.style.opacity = "0.5";
+        img.style.zIndex = "1";
+      }
+    });
+
+    const wrapperWidth = wrapper.offsetWidth;
+    const centerOffset = wrapperWidth / 2 - items[currentIndex].offsetWidth / 2;
+    inner.style.transform = `translateX(-${items[currentIndex].offsetLeft - centerOffset}px)`;
+  }
+
+  function moveCarousel(direction) {
+    if (!gallery || gallery.length === 0) return;
+    currentIndex += direction;
+    if (currentIndex < 0) currentIndex = gallery.length - 1;
+    if (currentIndex >= gallery.length) currentIndex = 0;
+    updateCarousel();
+  }
+
+  // Initialize carousel safely
+  if (gallery.length > 0) updateCarousel();
+
+  // Modal functions for old carousel
+  function openModal(filename) {
+    const modal = document.getElementById('imageModal');
+    const modalImg = document.getElementById('modalImage');
+    if (!modal || !modalImg) return;
+    modalImg.src = '/uploads/' + filename;
+    modal.style.display = 'flex';
+  }
+  function closeModal() {
+    const modal = document.getElementById('imageModal');
+    if (!modal) return;
+    modal.style.display = 'none';
+  }
 </script>
+
 
 <style>
 .nav-btn {
