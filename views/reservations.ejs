@@ -102,6 +102,7 @@
 <main>
   <div class="table-container">
     <div class="table-wrapper">
+
       <!-- Title -->
       <h4 class="table-title mb-4 d-flex align-items-center gap-2">
         <i class="fas fa-calendar-check"></i> Reservations
@@ -142,19 +143,38 @@
               <th>Email</th>
               <th>Items</th>
               <th>Date</th>
+              <th>Proof</th>   <!-- ⭐  NEW COLUMN -->
               <th>Status</th>
               <th>Actions</th>
             </tr>
           </thead>
+
           <tbody>
             <% Object.keys(groupedReservations).forEach(user => {
                  groupedReservations[user].forEach(r => { %>
                 <tr data-user="<%= user %>" data-status="<%= r.status %>" data-date="<%= r.date %>">
+
                   <td><%= user %></td>
                   <td><%= r.contact %></td>
                   <td><%= r.email || 'N/A' %></td>
+
                   <td><%= r.items.map(item => `${item.name} (₱${item.price} x ${item.quantity})`).join(', ') %></td>
+
                   <td><%= r.date ? new Date(r.date).toLocaleDateString() : 'N/A' %></td>
+
+                  <!-- ⭐ PROOF IMAGE PREVIEW -->
+                  <td>
+  <% if (r.proofOfPayment) { %>
+    <a href="<%= r.proofOfPayment %>" target="_blank">
+      <img src="<%= r.proofOfPayment %>" 
+           style="width: 60px; height: 60px; object-fit: cover; border-radius: 6px; border: 1px solid #ccc;">
+    </a>
+  <% } else { %>
+    <span class="text-muted">No Proof</span>
+  <% } %>
+</td>
+
+
                   <td>
                     <span class="badge rounded-pill
                       <% if (r.status === 'Pending') { %> badge-pending <% } %>
@@ -165,6 +185,7 @@
                       <%= r.status %>
                     </span>
                   </td>
+
                   <td class="d-flex gap-1">
                     <form action="/approve/<%= r._id %>" method="POST" class="d-inline">
                       <button type="submit" class="btn btn-sm btn-success"><i class="fas fa-check"></i></button>
@@ -178,13 +199,17 @@
           </tbody>
         </table>
       </div>
+
       <% } else { %>
         <div class="alert alert-secondary text-center py-4">
           <h5 class="mb-0">📋 No reservations found.</h5>
         </div>
       <% } %>
 
-      <a href="/products" class="btn btn-dark mt-3"><i class="fas fa-arrow-left me-2"></i> Back to Products</a>
+      <a href="/products" class="btn btn-dark mt-3">
+        <i class="fas fa-arrow-left me-2"></i> Back to Products
+      </a>
+
     </div>
   </div>
 </main>
