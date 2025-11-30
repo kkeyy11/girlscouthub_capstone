@@ -6,12 +6,26 @@ const { sendAppointmentEmail } = require('../utils/mailer');
 const MAX_RESERVATIONS_PER_DAY = 2; // LIMIT PER USER per day
 
 // View cart
-exports.viewCart = (req, res) => {
-  const cart = req.session.cart || [];
-  const success = req.query.reserved === "success";
-  const limit = req.query.limit === "true";
+exports.viewCart = async (req, res) => {
+  try {
+    const cart = req.session.cart || [];
+    const success = req.query.reserved === "success";
+    const limit = req.query.limit === "true";
 
-  res.render('cart', { cart, success, limit });
+    let reservations = [];
+
+    // Fetch reservations for logged-in user
+    if (req.session.email) {
+      reservations = await Reservation.find({ email: req.session.email })
+        .sort({ date: -1 })
+        .populate('items.productId'); // ensures product info available
+    }
+
+    res.render('cart', { cart, success, limit, reservations });
+  } catch (err) {
+    console.error('Error loading cart:', err);
+    res.render('cart', { cart: [], success: false, limit: false, reservations: [] });
+  }
 };
 
 // Add to cart
