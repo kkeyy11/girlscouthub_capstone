@@ -257,7 +257,7 @@
 <div id="historyModal" class="modal">
   <div class="modal-content">
     <h2>Reservation History</h2>
-    <% if (typeof reservations !== 'undefined' && reservations.length > 0) { %>
+    <% if (reservations && Array.isArray(reservations) && reservations.length > 0) { %>
       <ul style="list-style:none;padding:0;">
         <% reservations.forEach(r => { %>
         <li style="border-bottom:1px solid var(--gray);padding:15px 0;">
@@ -274,20 +274,20 @@
           </div>
           <div><strong>Date:</strong> <%= r.date ? new Date(r.date).toLocaleDateString() : 'N/A' %></div>
           <% if (r.items && r.items.length) { %>
-        <div style="margin-top:10px;">
-          <strong>Items:</strong>
-          <ul style="list-style:none;padding:0;">
-            <% r.items.forEach(i => { %>
-            <li style="margin-bottom:8px;">
-              <div><strong>Product:</strong> <%= i.name %></div>
-              <div><strong>Description:</strong> <%= i.description || 'No description' %></div>
-              <div><strong>Qty:</strong> <%= i.quantity %></div>
-              <div><strong>Price:</strong> ₱<%= i.price.toLocaleString() %></div>
-            </li>
-            <% }); %>
-          </ul>
-        </div>
-        <% } %>
+            <div style="margin-top:10px;">
+              <strong>Items:</strong>
+              <ul style="list-style:none;padding:0;">
+                <% r.items.forEach(i => { %>
+                <li style="margin-bottom:8px;">
+                  <div><strong>Product:</strong> <%= i.name %></div>
+                  <div><strong>Description:</strong> <%= i.description || 'No description' %></div>
+                  <div><strong>Qty:</strong> <%= i.quantity %></div>
+                  <div><strong>Price:</strong> ₱<%= i.price.toLocaleString() %></div>
+                </li>
+                <% }); %>
+              </ul>
+            </div>
+          <% } %>
           <form action="/delete-reservation/<%= r._id %>" method="POST" style="margin-top:10px;display:inline-block;">
             <button type="submit" class="cancel-button">Delete</button>
           </form>
@@ -306,6 +306,7 @@
     <button id="closeHistory" class="submit-button" style="margin-top:20px;">Close</button>
   </div>
 </div>
+
 
 <!-- Review Modal -->
 <div id="reviewModal" class="modal">

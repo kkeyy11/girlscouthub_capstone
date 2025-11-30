@@ -12,7 +12,7 @@ exports.viewCart = async (req, res) => {
     const success = req.query.reserved === "success";
     const limit = req.query.limit === "true";
 
-    let reservations = [];
+    let reservations = []; // <CHANGE> Always initialize as empty array
 
     // Fetch reservation history for logged-in user
     if (req.session.email) {
@@ -21,10 +21,10 @@ exports.viewCart = async (req, res) => {
         .populate('items.productId');
     }
 
-    res.render('cart', { cart, success, limit, reservations });
+    res.render('cart', { cart, success, limit, reservations }); // <CHANGE> Always pass reservations
   } catch (err) {
     console.error('Error loading cart:', err);
-    res.render('cart', { cart: [], success: false, limit: false, reservations: [] });
+    res.render('cart', { cart: [], success: false, limit: false, reservations: [] }); // <CHANGE> Pass empty array on error
   }
 };
 
@@ -202,10 +202,10 @@ exports.viewReservationHistory = async (req, res) => {
 exports.deleteReservation = async (req, res) => {
   try {
     await Reservation.findByIdAndDelete(req.params.id);
-    res.redirect('/reservation-history');
+    res.redirect('/cart'); // <CHANGE> Redirect back to cart instead of history page
   } catch (err) {
     console.error(err);
-    res.redirect('/reservation-history');
+    res.redirect('/cart');
   }
 };
 
@@ -213,10 +213,10 @@ exports.deleteReservation = async (req, res) => {
 exports.clearReservations = async (req, res) => {
   try {
     await Reservation.deleteMany({ email: req.body.email });
-    res.redirect('/reservation-history');
+    res.redirect('/cart');
   } catch (err) {
     console.error(err);
-    res.redirect('/reservation-history');
+    res.redirect('/cart');
   }
 };
 
@@ -224,7 +224,7 @@ exports.clearReservations = async (req, res) => {
 exports.reorderReservation = async (req, res) => {
   try {
     const prevReservation = await Reservation.findById(req.params.id).populate('items.productId');
-    if (!prevReservation) return res.redirect('/reservation-history');
+    if (!prevReservation) return res.redirect('/cart');
 
     req.session.cart = prevReservation.items.map(item => ({
       productId: item.productId._id,
@@ -237,7 +237,7 @@ exports.reorderReservation = async (req, res) => {
     res.redirect('/cart');
   } catch (err) {
     console.error(err);
-    res.redirect('/reservation-history');
+    res.redirect('/cart');
   }
 };
 
