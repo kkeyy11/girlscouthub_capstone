@@ -119,7 +119,7 @@
         <tbody>
           <% reservations.forEach(res => { %>
             <tr>
-              <td><%= res.reservedBy %></td>
+              <td><%= res.user ? (res.user.firstName + ' ' + res.user.lastName) : 'N/A' %></td>
               <td>
                 <ul>
                   <% res.items.forEach(item => { %>
@@ -127,7 +127,7 @@
                   <% }) %>
                 </ul>
               </td>
-              <td><%= new Date(res.dateReserved).toLocaleString() %></td>
+              <td><%= res.date ? new Date(res.date).toLocaleString() : 'N/A' %></td>
               <td>
                 <form action="/reservations/approve/<%= res._id %>" method="POST">
                   <button type="submit">Approve</button>
@@ -159,8 +159,8 @@
         <tbody>
           <% approvedReservations.forEach(res => { %>
             <tr>
-              <td><%= res.reservedBy %></td>
-              <td><%= res.email %></td>
+              <td><%= res.user ? (res.user.firstName + ' ' + res.user.lastName) : 'N/A' %></td>
+              <td><%= res.user ? res.user.email : 'N/A' %></td>
               <td>
                 <ul>
                   <% res.items.forEach(item => { %>
@@ -168,7 +168,7 @@
                   <% }) %>
                 </ul>
               </td>
-              <td><%= new Date(res.dateReserved).toLocaleString() %></td>
+              <td><%= res.date ? new Date(res.date).toLocaleString() : 'N/A' %></td>
               <td class="approved">Approved</td>
             </tr>
           <% }) %>
