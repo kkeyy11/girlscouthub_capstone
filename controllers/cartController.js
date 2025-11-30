@@ -139,7 +139,7 @@ exports.viewReservations = async (req, res) => {
     const pendingReservations = reservations.filter(r => r.status === 'Pending');
     const approvedReservations = reservations.filter(r => r.status === 'Approved');
 
-    res.render('adminReservations', { 
+    res.render('reservationList', { 
       reservations: pendingReservations, 
       approvedReservations 
     });
