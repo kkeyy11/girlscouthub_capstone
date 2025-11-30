@@ -154,9 +154,9 @@
                  groupedReservations[user].forEach(r => { %>
                 <tr data-user="<%= user %>" data-status="<%= r.status %>" data-date="<%= r.date %>">
 
-                  <td><%= user %></td>
+                  <td><%= r.user?.name || 'N/A' %></td>
                   <td><%= r.contact %></td>
-                  <td><%= r.email || 'N/A' %></td>
+                  <td><%= r.user?.email || 'N/A' %></td>
 
                   <td><%= r.items.map(item => `${item.name} (₱${item.price} x ${item.quantity})`).join(', ') %></td>
 

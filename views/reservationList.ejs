@@ -119,7 +119,8 @@
         <tbody>
           <% reservations.forEach(res => { %>
             <tr>
-              <td><%= res.user ? res.user.firstName + ' ' + res.user.lastName : 'N/A' %></td>
+              <!-- Name comes from the populated user -->
+              <td><%= res.user ? res.user.firstName + ' ' + res.user.lastName : res.reservedBy %></td>
               <td>
                 <ul>
                   <% res.items.forEach(item => { %>
@@ -159,7 +160,8 @@
         <tbody>
           <% approvedReservations.forEach(res => { %>
             <tr>
-              <td><%= res.user ? res.user.firstName + ' ' + res.user.lastName : 'N/A' %></td>
+              <!-- Name & Email from populated user -->
+              <td><%= res.user ? res.user.firstName + ' ' + res.user.lastName : res.reservedBy %></td>
               <td><%= res.user ? res.user.email : 'N/A' %></td>
               <td>
                 <ul>
