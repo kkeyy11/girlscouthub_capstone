@@ -119,7 +119,7 @@
         <tbody>
           <% reservations.forEach(res => { %>
             <tr>
-              <td><%= res.user ? (res.user.firstName + ' ' + res.user.lastName) : 'N/A' %></td>
+              <td><%= res.user ? res.user.firstName + ' ' + res.user.lastName : 'N/A' %></td>
               <td>
                 <ul>
                   <% res.items.forEach(item => { %>
@@ -142,9 +142,9 @@
 
   <!-- Approved Reservations Section -->
   <h2><i class="fas fa-check-circle"></i> Approved Reservations</h2>
-  <% if (typeof approvedReservations !== 'undefined' && approvedReservations.length === 0) { %>
+  <% if (!approvedReservations || approvedReservations.length === 0) { %>
     <p>No approved reservations yet.</p>
-  <% } else if (typeof approvedReservations !== 'undefined' && approvedReservations.length > 0) { %>
+  <% } else { %>
     <div class="table-container">
       <table>
         <thead>
@@ -159,7 +159,7 @@
         <tbody>
           <% approvedReservations.forEach(res => { %>
             <tr>
-              <td><%= res.user ? (res.user.firstName + ' ' + res.user.lastName) : 'N/A' %></td>
+              <td><%= res.user ? res.user.firstName + ' ' + res.user.lastName : 'N/A' %></td>
               <td><%= res.user ? res.user.email : 'N/A' %></td>
               <td>
                 <ul>
