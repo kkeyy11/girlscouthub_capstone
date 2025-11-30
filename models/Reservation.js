@@ -1,8 +1,7 @@
 const mongoose = require('mongoose');
 
 const reservationSchema = new mongoose.Schema({
-  name: String,
-  email: String,
+  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // Reference user
   contact: String,
 
   items: [
@@ -16,8 +15,8 @@ const reservationSchema = new mongoose.Schema({
   ],
 
   total: Number,
-  downpayment: Number, // NEW FIELD
-  proofOfPayment: String, // NEW FIELD (image path)
+  downpayment: Number,
+  proofOfPayment: String, 
 
   status: {
     type: String,
@@ -30,5 +29,4 @@ const reservationSchema = new mongoose.Schema({
   }
 });
 
-module.exports =
-  mongoose.models.Reservation || mongoose.model('Reservation', reservationSchema);
+module.exports = mongoose.models.Reservation || mongoose.model('Reservation', reservationSchema);

@@ -2,8 +2,7 @@ const Product = require('../models/Product');
 const Reservation = require('../models/Reservation');
 const { sendAppointmentEmail } = require('../utils/mailer');
 
-// ANTI-SPAM SETTINGS
-const MAX_RESERVATIONS_PER_DAY = 2; // LIMIT PER USER per day
+const MAX_RESERVATIONS_PER_DAY = 2;
 
 // View cart
 exports.viewCart = async (req, res) => {
@@ -12,19 +11,17 @@ exports.viewCart = async (req, res) => {
     const success = req.query.reserved === "success";
     const limit = req.query.limit === "true";
 
-    let reservations = []; // <CHANGE> Always initialize as empty array
-
-    // Fetch reservation history for logged-in user
-    if (req.session.email) {
-      reservations = await Reservation.find({ email: req.session.email })
+    let reservations = [];
+    if (req.user) { // <-- use req.user instead of session email
+      reservations = await Reservation.find({ user: req.user._id })
         .sort({ date: -1 })
         .populate('items.productId');
     }
 
-    res.render('cart', { cart, success, limit, reservations }); // <CHANGE> Always pass reservations
+    res.render('cart', { cart, success, limit, reservations, user: req.user });
   } catch (err) {
     console.error('Error loading cart:', err);
-    res.render('cart', { cart: [], success: false, limit: false, reservations: [] }); // <CHANGE> Pass empty array on error
+    res.render('cart', { cart: [], success: false, limit: false, reservations: [], user: req.user || null });
   }
 };
 
@@ -51,20 +48,20 @@ exports.addToCart = async (req, res) => {
   }
 };
 
-// Reserve cart (create reservation)
+// Reserve cart
 exports.reserveCart = async (req, res) => {
   try {
-    const { name, email, contact, downpayment } = req.body;
-    const cart = req.session.cart || [];
+    if (!req.user) return res.redirect('/login'); // Ensure user is logged in
 
+    const { contact, downpayment } = req.body;
+    const cart = req.session.cart || [];
     if (cart.length === 0) return res.redirect('/cart');
 
-    // DAILY LIMIT CHECK
     const todayStart = new Date();
     todayStart.setHours(0, 0, 0, 0);
 
     const reservationCount = await Reservation.countDocuments({
-      email,
+      user: req.user._id,
       date: { $gte: todayStart }
     });
 
@@ -80,8 +77,7 @@ exports.reserveCart = async (req, res) => {
     }
 
     const reservation = new Reservation({
-      name,
-      email,
+      user: req.user._id, // reference user
       contact,
       items: cart,
       total,
@@ -96,7 +92,7 @@ exports.reserveCart = async (req, res) => {
     await sendAppointmentEmail(
       process.env.GMAIL_USER,
       '📩 New Reservation Created',
-      `A new reservation has been made by ${name} (${email}).  
+      `A new reservation has been made by ${req.user.firstName} ${req.user.lastName} (${req.user.email}).  
 Contact: ${contact}  
 Total: ₱${total}  
 Downpayment: ₱${downpayment}  
@@ -106,9 +102,9 @@ Please check admin panel.`
 
     // Notify user
     await sendAppointmentEmail(
-      email,
+      req.user.email,
       '✅ Reservation Received',
-      `Hi ${name},
+      `Hi ${req.user.firstName},
 
 We have received your reservation.
 
@@ -125,6 +121,10 @@ We will verify your proof of payment soon.`
     res.status(500).send('Error reserving cart');
   }
 };
+
+// All other controller methods remain unchanged
+// ...
+
 
 // Admin: View reservations
 exports.viewReservations = async (req, res) => {
