@@ -3,99 +3,21 @@
 
 <main>
   <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background-color: #f5f5f5;
-      margin: 0;
-      padding: 0;
-    }
-
-    main {
-      margin-left: 220px; /* space para sa sidebar */
-      padding: 90px 30px 30px; /* space para sa navbar at content */
-      min-height: 100vh;
-      box-sizing: border-box;
-    }
-
-    h1 {
-      font-size: 1.8rem;
-      color: #2c3e50;
-      text-align: center;
-      margin-bottom: 30px;
-    }
-
-    h2 {
-      margin-top: 40px;
-      color: #1a202c;
-      font-size: 1.3rem;
-      border-bottom: 2px solid #cbd5e0;
-      padding-bottom: 6px;
-    }
-
-    .table-container {
-      width: 100%;
-      overflow-x: auto; /* scroll kapag masikip */
-      margin-top: 10px;
-    }
-
-    table {
-      width: 100%;
-      min-width: 700px; /* para di masikip */
-      border-collapse: collapse;
-      background: #fff;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-      border-radius: 10px;
-      overflow: hidden;
-    }
-
-    th, td {
-      border: 1px solid #e2e8f0;
-      padding: 12px;
-      text-align: left;
-      font-size: 14px;
-      vertical-align: top;
-    }
-
-    th {
-      background-color: #f1f5f9;
-      color: #2d3748;
-    }
-
-    ul {
-      margin: 0;
-      padding-left: 20px;
-    }
-
-    button {
-      padding: 6px 12px;
-      background-color: #38a169;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      font-size: 13px;
-      cursor: pointer;
-      transition: background-color 0.2s;
-    }
-
-    button:hover {
-      background-color: #2f855a;
-    }
-
-    .approved {
-      color: green;
-      font-weight: bold;
-    }
-
-    /* Responsive adjustments */
+    body { font-family: 'Segoe UI', sans-serif; background-color: #f5f5f5; margin: 0; padding: 0; }
+    main { margin-left: 220px; padding: 90px 30px 30px; min-height: 100vh; box-sizing: border-box; }
+    h1 { font-size: 1.8rem; color: #2c3e50; text-align: center; margin-bottom: 30px; }
+    h2 { margin-top: 40px; color: #1a202c; font-size: 1.3rem; border-bottom: 2px solid #cbd5e0; padding-bottom: 6px; }
+    .table-container { width: 100%; overflow-x: auto; margin-top: 10px; }
+    table { width: 100%; min-width: 700px; border-collapse: collapse; background: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.05); border-radius: 10px; overflow: hidden; }
+    th, td { border: 1px solid #e2e8f0; padding: 12px; text-align: left; font-size: 14px; vertical-align: top; }
+    th { background-color: #f1f5f9; color: #2d3748; }
+    ul { margin: 0; padding-left: 20px; }
+    button { padding: 6px 12px; background-color: #38a169; color: white; border: none; border-radius: 5px; font-size: 13px; cursor: pointer; transition: background-color 0.2s; }
+    button:hover { background-color: #2f855a; }
+    .approved { color: green; font-weight: bold; }
     @media (max-width: 768px) {
-      main {
-        margin-left: 0; /* tanggal sidebar offset */
-        padding: 100px 15px 30px;
-      }
-
-      table {
-        min-width: 600px; /* adjust para readable pa rin */
-      }
+      main { margin-left: 0; padding: 100px 15px 30px; }
+      table { min-width: 600px; }
     }
   </style>
 
@@ -103,7 +25,7 @@
 
   <!-- Pending Reservations Section -->
   <h2><i class="fas fa-hourglass-half"></i> Pending Reservations</h2>
-  <% if (reservations.length === 0) { %>
+  <% if (!reservations || reservations.length === 0) { %>
     <p>No pending reservations.</p>
   <% } else { %>
     <div class="table-container">
@@ -119,7 +41,9 @@
         <tbody>
           <% reservations.forEach(res => { %>
             <tr>
-              <td><%= res.reservedBy %></td>
+              <td>
+                <%= res.user ? res.user.firstName + ' ' + res.user.lastName : (res.name || 'N/A') %>
+              </td>
               <td>
                 <ul>
                   <% res.items.forEach(item => { %>
@@ -127,7 +51,7 @@
                   <% }) %>
                 </ul>
               </td>
-              <td><%= new Date(res.dateReserved).toLocaleString() %></td>
+              <td><%= new Date(res.date).toLocaleString() %></td>
               <td>
                 <form action="/reservations/approve/<%= res._id %>" method="POST">
                   <button type="submit">Approve</button>
@@ -142,9 +66,9 @@
 
   <!-- Approved Reservations Section -->
   <h2><i class="fas fa-check-circle"></i> Approved Reservations</h2>
-  <% if (typeof approvedReservations !== 'undefined' && approvedReservations.length === 0) { %>
+  <% if (!approvedReservations || approvedReservations.length === 0) { %>
     <p>No approved reservations yet.</p>
-  <% } else if (typeof approvedReservations !== 'undefined' && approvedReservations.length > 0) { %>
+  <% } else { %>
     <div class="table-container">
       <table>
         <thead>
@@ -159,8 +83,8 @@
         <tbody>
           <% approvedReservations.forEach(res => { %>
             <tr>
-              <td><%= res.reservedBy %></td>
-              <td><%= res.email %></td>
+              <td><%= res.user ? res.user.firstName + ' ' + res.user.lastName : (res.name || 'N/A') %></td>
+              <td><%= res.user ? res.user.email : (res.email || 'N/A') %></td>
               <td>
                 <ul>
                   <% res.items.forEach(item => { %>
@@ -168,7 +92,7 @@
                   <% }) %>
                 </ul>
               </td>
-              <td><%= new Date(res.dateReserved).toLocaleString() %></td>
+              <td><%= new Date(res.date).toLocaleString() %></td>
               <td class="approved">Approved</td>
             </tr>
           <% }) %>
