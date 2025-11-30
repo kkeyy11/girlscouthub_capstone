@@ -25,7 +25,7 @@
 
   <!-- Pending Reservations Section -->
   <h2><i class="fas fa-hourglass-half"></i> Pending Reservations</h2>
-  <% if (!reservations || reservations.length === 0) { %>
+  <% if (!pendingReservations || pendingReservations.length === 0) { %>
     <p>No pending reservations.</p>
   <% } else { %>
     <div class="table-container">
@@ -39,11 +39,9 @@
           </tr>
         </thead>
         <tbody>
-          <% reservations.forEach(res => { %>
+          <% pendingReservations.forEach(res => { %>
             <tr>
-              <td>
-                <%= res.user ? res.user.firstName + ' ' + res.user.lastName : (res.name || 'N/A') %>
-              </td>
+              <td><%= res.user ? res.user.firstName + ' ' + res.user.lastName : (res.name || 'N/A') %></td>
               <td>
                 <ul>
                   <% res.items.forEach(item => { %>

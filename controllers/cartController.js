@@ -12,10 +12,11 @@ exports.viewCart = async (req, res) => {
     const limit = req.query.limit === "true";
 
     let reservations = [];
-    if (req.user) { // <-- use req.user instead of session email
+    if (req.user) { // fetch reservations for logged-in user
       reservations = await Reservation.find({ user: req.user._id })
         .sort({ date: -1 })
-        .populate('items.productId');
+        .populate('items.productId')
+        .populate('user'); // populate user reference
     }
 
     res.render('cart', { cart, success, limit, reservations, user: req.user });
@@ -51,7 +52,7 @@ exports.addToCart = async (req, res) => {
 // Reserve cart
 exports.reserveCart = async (req, res) => {
   try {
-    if (!req.user) return res.redirect('/login'); // Ensure user is logged in
+    if (!req.user) return res.redirect('/login');
 
     const { contact, downpayment } = req.body;
     const cart = req.session.cart || [];
@@ -70,14 +71,13 @@ exports.reserveCart = async (req, res) => {
     }
 
     const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-
     let proofPath = null;
-    if (req.file) {
-      proofPath = `/uploads/proofs/${req.file.filename}`;
-    }
+    if (req.file) proofPath = `/uploads/proofs/${req.file.filename}`;
 
     const reservation = new Reservation({
-      user: req.user._id, // reference user
+      user: req.user._id,
+      name: req.user.firstName + ' ' + req.user.lastName, // store for old logic
+      email: req.user.email, // store for old logic
       contact,
       items: cart,
       total,
@@ -122,21 +122,19 @@ We will verify your proof of payment soon.`
   }
 };
 
-// All other controller methods remain unchanged
-// ...
-
-
 // Admin: View reservations
 exports.viewReservations = async (req, res) => {
   try {
-    const reservations = await Reservation.find().sort({ date: -1 }).populate('items.productId');
-    const groupedReservations = {};
-    reservations.forEach(r => {
-      if (!groupedReservations[r.email]) groupedReservations[r.email] = [];
-      groupedReservations[r.email].push(r);
-    });
+    const reservations = await Reservation.find()
+      .sort({ date: -1 })
+      .populate('items.productId')
+      .populate('user'); // populate user reference
 
-    res.render('reservations', { groupedReservations });
+    // separate pending and approved
+    const pendingReservations = reservations.filter(r => r.status === 'Pending');
+    const approvedReservations = reservations.filter(r => r.status === 'Approved');
+
+    res.render('reservations', { pendingReservations, approvedReservations });
   } catch (err) {
     console.error(err);
     res.redirect('/');
@@ -146,16 +144,19 @@ exports.viewReservations = async (req, res) => {
 // Admin: Approve reservation
 exports.approveReservation = async (req, res) => {
   try {
-    const reservation = await Reservation.findById(req.params.id);
+    const reservation = await Reservation.findById(req.params.id).populate('user');
     if (!reservation) return res.redirect('/reservations');
 
     reservation.status = 'Approved';
     await reservation.save();
 
+    const name = reservation.user ? `${reservation.user.firstName} ${reservation.user.lastName}` : reservation.name;
+    const email = reservation.user ? reservation.user.email : reservation.email;
+
     await sendAppointmentEmail(
-      reservation.email,
+      email,
       '🎉 Reservation Approved',
-      `Hi ${reservation.name},
+      `Hi ${name},
 
 Good news! Your reservation has been approved.
 
@@ -182,14 +183,15 @@ exports.removeReservation = async (req, res) => {
   }
 };
 
-// USER: Reservation history page (optional separate route)
+// USER: Reservation history
 exports.viewReservationHistory = async (req, res) => {
   try {
-    if (!req.session.email) return res.redirect('/login');
+    if (!req.user) return res.redirect('/login');
 
-    const reservations = await Reservation.find({ email: req.session.email })
+    const reservations = await Reservation.find({ user: req.user._id })
       .sort({ date: -1 })
-      .populate('items.productId');
+      .populate('items.productId')
+      .populate('user');
 
     res.render('reservationHistory', { reservations });
   } catch (err) {
@@ -202,7 +204,7 @@ exports.viewReservationHistory = async (req, res) => {
 exports.deleteReservation = async (req, res) => {
   try {
     await Reservation.findByIdAndDelete(req.params.id);
-    res.redirect('/cart'); // <CHANGE> Redirect back to cart instead of history page
+    res.redirect('/cart');
   } catch (err) {
     console.error(err);
     res.redirect('/cart');
@@ -212,7 +214,8 @@ exports.deleteReservation = async (req, res) => {
 // USER: Clear all reservations
 exports.clearReservations = async (req, res) => {
   try {
-    await Reservation.deleteMany({ email: req.body.email });
+    if (!req.user) return res.redirect('/login');
+    await Reservation.deleteMany({ user: req.user._id });
     res.redirect('/cart');
   } catch (err) {
     console.error(err);
@@ -241,12 +244,11 @@ exports.reorderReservation = async (req, res) => {
   }
 };
 
-// Admin: Get reservation details (for reorder preview)
+// Admin: Get reservation details
 exports.getReservationDetails = async (req, res) => {
   try {
-    const reservation = await Reservation.findById(req.params.id).populate('items.productId');
+    const reservation = await Reservation.findById(req.params.id).populate('items.productId').populate('user');
     if (!reservation) return res.status(404).json({ error: 'Not found' });
-
     res.json(reservation);
   } catch (err) {
     console.error(err);
