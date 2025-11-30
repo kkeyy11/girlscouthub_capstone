@@ -154,7 +154,7 @@
                  groupedReservations[user].forEach(r => { %>
                 <tr data-user="<%= user %>" data-status="<%= r.status %>" data-date="<%= r.date %>">
 
-                  <td><%= r.user?.name || 'N/A' %></td>
+                  <td><%= r.name || 'N/A' %></td>
                   <td><%= r.contact %></td>
                   <td><%= r.user?.email || 'N/A' %></td>
 
