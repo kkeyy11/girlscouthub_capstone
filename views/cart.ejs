@@ -107,6 +107,34 @@
       max-height:80vh;
       overflow-y:auto;
     }
+    .info-icon {
+  font-size: 20px;
+  cursor: pointer;
+  padding: 5px;
+  user-select: none;
+}
+
+.info-tooltip {
+  display: none;
+  position: absolute;
+  right: -10px;
+  bottom: -125px;
+  width: 260px;
+  background: #f8fff3;
+  border: 1px solid #b8d8b1;
+  padding: 12px;
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  font-size: 0.9rem;
+  color: #2d3436;
+  z-index: 10;
+}
+
+.info-icon:hover + .info-tooltip,
+.info-icon:focus + .info-tooltip {
+  display: block;
+}
+
   </style>
 </head>
 <body>
@@ -197,7 +225,21 @@
     <label>Upload Proof of Payment</label>
     <input type="file" name="proof" accept="image/*" class="form-control" required />
   </div>
+  <!-- <button type="submit" class="submit-button">Confirm Reservation</button> -->
+   <div style="display:flex;align-items:center;gap:10px;position:relative;">
   <button type="submit" class="submit-button">Confirm Reservation</button>
+
+  <!-- Info Icon -->
+  <div class="info-icon" tabindex="0">ℹ️</div>
+
+  <!-- Tooltip Info Box -->
+  <div class="info-tooltip">
+    <strong>Reservation Rules</strong><br><br>
+    • Users can only reserve <strong>3 products per day</strong>.<br>
+    • <strong>Confirmed reservations</strong> will be <strong>refunded after 3 days</strong> of not claiming at the Girl Scout Hub office.
+  </div>
+</div>
+
 </form>
 
   </div>
@@ -479,6 +521,14 @@ function closeReorderModal() {
   function closeReorderModal() {
     reorderModal.style.display = "none";
   }
+
+  document.querySelectorAll(".info-icon").forEach(icon => {
+  icon.addEventListener("click", () => {
+    const tooltip = icon.nextElementSibling;
+    tooltip.style.display = tooltip.style.display === "block" ? "none" : "block";
+  });
+});
+
 
   document.querySelectorAll(".reorderBtn").forEach(btn => {
     btn.addEventListener("click", () => {
