@@ -258,19 +258,24 @@
 <div id="historyModal" class="modal">
   <div class="modal-content">
     <h2>Reservation History</h2>
+
     <% if (reservations && Array.isArray(reservations) && reservations.length > 0) { %>
       <ul style="list-style:none;padding:0;">
         <% reservations.forEach(r => { %>
         <li style="border-bottom:1px solid var(--gray);padding:15px 0;">
+
           <div><strong>Name:</strong> 
-  <%= reservation.user ? reservation.user.firstName + " " + reservation.user.lastName : "Unknown" %>
+            <%= r.user ? r.user.firstName + " " + r.user.lastName : "Unknown" %>
           </div>
 
-<div><strong>Email:</strong> 
-  <%= reservation.user ? reservation.user.email : "Unknown" %>
-</div>
+          <div><strong>Email:</strong> 
+            <%= r.user ? r.user.email : "Unknown" %>
+          </div>
+
           <div><strong>Contact:</strong> <%= r.contact %></div>
+
           <div><strong>Total:</strong> ₱<%= r.total ? r.total.toLocaleString() : '0' %></div>
+
           <div><strong>Status:</strong>
             <% if (r.status === 'Approved') { %>
               <span style="color:green;font-weight:bold;">Approved</span>
@@ -278,7 +283,11 @@
               <span style="color:orange;font-weight:bold;">Pending</span>
             <% } %>
           </div>
-          <div><strong>Date:</strong> <%= r.date ? new Date(r.date).toLocaleDateString() : 'N/A' %></div>
+
+          <div><strong>Date:</strong> 
+            <%= r.date ? new Date(r.date).toLocaleDateString() : 'N/A' %>
+          </div>
+
           <% if (r.items && r.items.length) { %>
             <div style="margin-top:10px;">
               <strong>Items:</strong>
@@ -294,24 +303,36 @@
               </ul>
             </div>
           <% } %>
+
           <form action="/delete-reservation/<%= r._id %>" method="POST" style="margin-top:10px;display:inline-block;">
             <button type="submit" class="cancel-button">Delete</button>
           </form>
+
           <% if (r.status === 'Approved') { %>
             <button class="review-button" onclick="openReviewModal('<%= r._id %>')">Leave Review</button>
+
             <form method="POST" class="reorderForm" style="display:inline-block;">
-              <button type="button" class="review-button reorderBtn" style="background:#27ae60;" data-id="<%= r._id %>">Re-Order</button>
+              <button type="button" 
+                      class="review-button reorderBtn" 
+                      style="background:#27ae60;" 
+                      data-id="<%= r._id %>">
+                Re-Order
+              </button>
             </form>
           <% } %>
+
         </li>
         <% }); %>
       </ul>
+
     <% } else { %>
       <p>No reservation history found.</p>
     <% } %>
+
     <button id="closeHistory" class="submit-button" style="margin-top:20px;">Close</button>
   </div>
 </div>
+
 
 
 <!-- Review Modal -->
