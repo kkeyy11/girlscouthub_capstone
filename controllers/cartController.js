@@ -126,7 +126,7 @@
     // ...
 
 
-    // Admin: View reservations
+    // View reservations (grouped by user)
 exports.viewReservations = async (req, res) => {
   try {
     // Fetch all reservations and populate the 'user' field
@@ -135,19 +135,25 @@ exports.viewReservations = async (req, res) => {
       .populate('items.productId')
       .populate('user'); // <-- populate user reference
 
-    // Split reservations by status
-    const pendingReservations = reservations.filter(r => r.status === 'Pending');
-    const approvedReservations = reservations.filter(r => r.status === 'Approved');
-
-    res.render('reservations', { 
-      reservations: pendingReservations, 
-      approvedReservations 
+    // Group by user's email (from populated user)
+    const groupedReservations = {};
+    reservations.forEach(r => {
+      const email = r.user ? r.user.email : 'unknown';
+      if (!groupedReservations[email]) groupedReservations[email] = [];
+      groupedReservations[email].push({
+        ...r._doc, // spread the reservation data
+        name: r.user ? `${r.user.firstName} ${r.user.lastName}` : 'Unknown User',
+        email: email
+      });
     });
+
+    res.render('reservations', { groupedReservations });
   } catch (err) {
     console.error(err);
     res.redirect('/');
   }
 };
+
 
 
     // Admin: Approve reservation
