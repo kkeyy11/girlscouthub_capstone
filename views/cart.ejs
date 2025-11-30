@@ -262,8 +262,13 @@
       <ul style="list-style:none;padding:0;">
         <% reservations.forEach(r => { %>
         <li style="border-bottom:1px solid var(--gray);padding:15px 0;">
-          <div><strong>Name:</strong> <%= r.name %></div>
-          <div><strong>Email:</strong> <%= r.email %></div>
+          <div><strong>Name:</strong> 
+  <%= reservation.user ? reservation.user.firstName + " " + reservation.user.lastName : "Unknown" %>
+          </div>
+
+<div><strong>Email:</strong> 
+  <%= reservation.user ? reservation.user.email : "Unknown" %>
+</div>
           <div><strong>Contact:</strong> <%= r.contact %></div>
           <div><strong>Total:</strong> ₱<%= r.total ? r.total.toLocaleString() : '0' %></div>
           <div><strong>Status:</strong>

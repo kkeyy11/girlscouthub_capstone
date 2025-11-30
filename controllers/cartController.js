@@ -197,19 +197,21 @@ exports.viewReservations = async (req, res) => {
 
     // USER: Reservation history page (optional separate route)
     exports.viewReservationHistory = async (req, res) => {
-      try {
-        if (!req.session.email) return res.redirect('/login');
+  try {
+    if (!req.user) return res.redirect('/login');
 
-        const reservations = await Reservation.find({ email: req.session.email })
-          .sort({ date: -1 })
-          .populate('items.productId');
+    const reservations = await Reservation.find({ user: req.user._id })
+      .sort({ date: -1 })
+      .populate('items.productId')
+      .populate('user');
 
-        res.render('reservationHistory', { reservations });
-      } catch (err) {
-        console.error(err);
-        res.redirect('/');
-      }
-    };
+    res.render('reservationHistory', { reservations, user: req.user });
+  } catch (err) {
+    console.error(err);
+    res.redirect('/');
+  }
+};
+
 
     // USER: Delete reservation
     exports.deleteReservation = async (req, res) => {
