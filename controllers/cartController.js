@@ -12,11 +12,10 @@ exports.viewCart = async (req, res) => {
     const limit = req.query.limit === "true";
 
     let reservations = [];
-    if (req.user) { // fetch reservations for logged-in user
+    if (req.user) { // <-- use req.user instead of session email
       reservations = await Reservation.find({ user: req.user._id })
         .sort({ date: -1 })
-        .populate('items.productId')
-        .populate('user'); // populate user reference
+        .populate('items.productId');
     }
 
     res.render('cart', { cart, success, limit, reservations, user: req.user });
@@ -52,7 +51,7 @@ exports.addToCart = async (req, res) => {
 // Reserve cart
 exports.reserveCart = async (req, res) => {
   try {
-    if (!req.user) return res.redirect('/login');
+    if (!req.user) return res.redirect('/login'); // Ensure user is logged in
 
     const { contact, downpayment } = req.body;
     const cart = req.session.cart || [];
@@ -71,13 +70,14 @@ exports.reserveCart = async (req, res) => {
     }
 
     const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
     let proofPath = null;
-    if (req.file) proofPath = `/uploads/proofs/${req.file.filename}`;
+    if (req.file) {
+      proofPath = `/uploads/proofs/${req.file.filename}`;
+    }
 
     const reservation = new Reservation({
-      user: req.user._id,
-      name: req.user.firstName + ' ' + req.user.lastName, // store for old logic
-      email: req.user.email, // store for old logic
+      user: req.user._id, // reference user
       contact,
       items: cart,
       total,
@@ -122,19 +122,21 @@ We will verify your proof of payment soon.`
   }
 };
 
+// All other controller methods remain unchanged
+// ...
+
+
 // Admin: View reservations
 exports.viewReservations = async (req, res) => {
   try {
-    const reservations = await Reservation.find()
-      .sort({ date: -1 })
-      .populate('items.productId')
-      .populate('user'); // populate user reference
+    const reservations = await Reservation.find().sort({ date: -1 }).populate('items.productId');
+    const groupedReservations = {};
+    reservations.forEach(r => {
+      if (!groupedReservations[r.email]) groupedReservations[r.email] = [];
+      groupedReservations[r.email].push(r);
+    });
 
-    // separate pending and approved
-    const pendingReservations = reservations.filter(r => r.status === 'Pending');
-    const approvedReservations = reservations.filter(r => r.status === 'Approved');
-
-    res.render('reservations', { pendingReservations, approvedReservations });
+    res.render('reservations', { groupedReservations });
   } catch (err) {
     console.error(err);
     res.redirect('/');
@@ -144,19 +146,16 @@ exports.viewReservations = async (req, res) => {
 // Admin: Approve reservation
 exports.approveReservation = async (req, res) => {
   try {
-    const reservation = await Reservation.findById(req.params.id).populate('user');
+    const reservation = await Reservation.findById(req.params.id);
     if (!reservation) return res.redirect('/reservations');
 
     reservation.status = 'Approved';
     await reservation.save();
 
-    const name = reservation.user ? `${reservation.user.firstName} ${reservation.user.lastName}` : reservation.name;
-    const email = reservation.user ? reservation.user.email : reservation.email;
-
     await sendAppointmentEmail(
-      email,
+      reservation.email,
       '🎉 Reservation Approved',
-      `Hi ${name},
+      `Hi ${reservation.name},
 
 Good news! Your reservation has been approved.
 
@@ -183,15 +182,14 @@ exports.removeReservation = async (req, res) => {
   }
 };
 
-// USER: Reservation history
+// USER: Reservation history page (optional separate route)
 exports.viewReservationHistory = async (req, res) => {
   try {
-    if (!req.user) return res.redirect('/login');
+    if (!req.session.email) return res.redirect('/login');
 
-    const reservations = await Reservation.find({ user: req.user._id })
+    const reservations = await Reservation.find({ email: req.session.email })
       .sort({ date: -1 })
-      .populate('items.productId')
-      .populate('user');
+      .populate('items.productId');
 
     res.render('reservationHistory', { reservations });
   } catch (err) {
@@ -204,7 +202,7 @@ exports.viewReservationHistory = async (req, res) => {
 exports.deleteReservation = async (req, res) => {
   try {
     await Reservation.findByIdAndDelete(req.params.id);
-    res.redirect('/cart');
+    res.redirect('/cart'); // <CHANGE> Redirect back to cart instead of history page
   } catch (err) {
     console.error(err);
     res.redirect('/cart');
@@ -214,8 +212,7 @@ exports.deleteReservation = async (req, res) => {
 // USER: Clear all reservations
 exports.clearReservations = async (req, res) => {
   try {
-    if (!req.user) return res.redirect('/login');
-    await Reservation.deleteMany({ user: req.user._id });
+    await Reservation.deleteMany({ email: req.body.email });
     res.redirect('/cart');
   } catch (err) {
     console.error(err);
@@ -244,14 +241,15 @@ exports.reorderReservation = async (req, res) => {
   }
 };
 
-// Admin: Get reservation details
+// Admin: Get reservation details (for reorder preview)
 exports.getReservationDetails = async (req, res) => {
   try {
-    const reservation = await Reservation.findById(req.params.id).populate('items.productId').populate('user');
+    const reservation = await Reservation.findById(req.params.id).populate('items.productId');
     if (!reservation) return res.status(404).json({ error: 'Not found' });
+
     res.json(reservation);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Error' });
   }
-};
+}; then ito yung current cartController.js ko ngayon.. now please revise the files without removing any existing logic heheh. i want the codes to be full code and ready to copy and paste
