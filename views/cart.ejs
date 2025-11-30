@@ -102,43 +102,39 @@
       background:white;
       padding:20px;
       border-radius:8px;
-      max-width:600px;
+      max-width:500px;
       width:90%;
       max-height:80vh;
       overflow-y:auto;
     }
     .info-icon {
-      font-size: 20px;
-      cursor: pointer;
-      padding: 5px;
-      user-select: none;
-    }
-    .info-tooltip {
-      display: none;
-      position: absolute;
-      right: -10px;
-      bottom: -125px;
-      width: 260px;
-      background: #f8fff3;
-      border: 1px solid #b8d8b1;
-      padding: 12px;
-      border-radius: 8px;
-      box-shadow: var(--shadow);
-      font-size: 0.9rem;
-      color: #2d3436;
-      z-index: 10;
-    }
-    .info-icon:hover + .info-tooltip,
-    .info-icon:focus + .info-tooltip {
-      display: block;
-    }
-    .reorder-item {display:flex;justify-content:space-between;align-items:center;padding:15px;border-bottom:1px solid var(--gray);background:#f9f9f9;border-radius:6px;margin-bottom:10px;}
-    .reorder-item-details {flex:1;}
-    .reorder-item-name {font-weight:600;color:var(--dark);margin-bottom:5px;}
-    .reorder-item-price {color:var(--primary);font-weight:500;}
-    .reorder-item-qty {background:var(--primary);color:white;padding:4px 8px;border-radius:12px;font-size:0.85rem;margin-left:10px;}
-    .reorder-total {text-align:right;margin-top:15px;padding-top:15px;border-top:2px solid var(--primary);font-size:1.2rem;font-weight:600;color:var(--primary);}
-    .reorder-warning {background:#fff3cd;border:1px solid #ffeaa7;color:#856404;padding:10px;border-radius:6px;margin-bottom:15px;font-size:0.9rem;}
+  font-size: 20px;
+  cursor: pointer;
+  padding: 5px;
+  user-select: none;
+}
+
+.info-tooltip {
+  display: none;
+  position: absolute;
+  right: -10px;
+  bottom: -125px;
+  width: 260px;
+  background: #f8fff3;
+  border: 1px solid #b8d8b1;
+  padding: 12px;
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  font-size: 0.9rem;
+  color: #2d3436;
+  z-index: 10;
+}
+
+.info-icon:hover + .info-tooltip,
+.info-icon:focus + .info-tooltip {
+  display: block;
+}
+
   </style>
 </head>
 <body>
@@ -156,7 +152,7 @@
         </li>
         <li>
           <a href="/cart" class="cart-icon">🛒
-            <span class="cart-count"><%= cart && cart.length > 0 ? cart.length : 0 %></span>
+            <span class="cart-count"><%= typeof cart !== 'undefined' && cart.length > 0 ? cart.length : 0 %></span>
           </a>
         </li>
       </ul>
@@ -165,98 +161,103 @@
 </header>
 
 <div class="container">
-<% if (reserved) { %>
+<% if (typeof reserved !== 'undefined' && reserved === 'success') { %>
   <div style="background:#d4edda;color:#155724;padding:12px;border-radius:6px;margin:20px 0;">
     ✅ Reservation submitted successfully! Please wait for approval.
   </div>
 <% } %>
 
-<h1 class="page-title">Your Shopping Cart</h1>
+  <h1 class="page-title">Your Shopping Cart</h1>
 
-<% if (cart && cart.length > 0) { %>
-<div class="cart-container">
-  <ul class="cart-items">
-    <% let total = 0; cart.forEach(item => { total += item.price * item.quantity; %>
-    <li class="cart-item">
-      <div class="item-details">
-        <span class="item-name"><%= item.name %></span>
-        <span class="item-price">₱<%= item.price.toLocaleString() %></span>
+  <% if (typeof cart !== 'undefined' && cart.length > 0) { %>
+  <div class="cart-container">
+    <ul class="cart-items">
+      <% let total = 0; cart.forEach(item => { total += item.price * item.quantity; %>
+      <li class="cart-item">
+        <div class="item-details">
+          <span class="item-name"><%= item.name %></span>
+          <span class="item-price">₱<%= item.price.toLocaleString() %></span>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;">
+          <span class="item-quantity">Qty: <%= item.quantity %></span>
+          <span class="item-description" style="font-size:0.9rem;color:#555;max-width:200px;text-align:right;">
+            <%= item.description || 'No description provided.' %>
+          </span>
+        </div>
+        <form action="/cancel-item/<%= item._id %>" method="POST">
+          <button type="submit" class="cancel-button">Remove</button>
+        </form>
+      </li>
+      <% }); %>
+    </ul>
+    <div class="cart-summary">
+      <div class="cart-total">
+        <span>Total:</span>
+        <span class="total-amount">₱<%= total.toLocaleString() %></span>
       </div>
-      <div style="display:flex;flex-direction:column;align-items:flex-end;">
-        <span class="item-quantity">Qty: <%= item.quantity %></span>
-        <span class="item-description" style="font-size:0.9rem;color:#555;max-width:200px;text-align:right;">
-          <%= item.description || 'No description provided.' %>
-        </span>
-      </div>
-      <form action="/cancel-item/<%= item._id %>" method="POST">
-        <button type="submit" class="cancel-button">Remove</button>
-      </form>
-    </li>
-    <% }); %>
-  </ul>
-  <div class="cart-summary">
-    <div class="cart-total">
-      <span>Total:</span>
-      <span class="total-amount">₱<%= total.toLocaleString() %></span>
     </div>
+  </div>
+
+  <% if (limit) { %>
+  <div class="alert alert-danger mt-3">
+    ❌ You have reached the reservation limit for today.
+  </div>
+<% } %>
+
+  <div class="reservation-form">
+    <h2 class="form-title">Complete Your Reservation</h2>
+    <form action="/reserve" method="POST" enctype="multipart/form-data">
+  <div class="form-group">
+    <label class="form-label">Your Name</label>
+    <input type="text" name="name" required class="form-input"/>
+  </div>
+  <div class="form-group">
+    <label class="form-label">Email</label>
+    <input type="email" name="email" required class="form-input"/>
+  </div>
+  <div class="form-group">
+    <label class="form-label">Contact Number</label>
+    <input type="text" name="contact" required class="form-input"/>
+  </div>
+  <div class="form-group">
+    <label>Downpayment</label>
+    <input type="number" name="downpayment" min="0" class="form-control" required />
+    <label>Upload Proof of Payment</label>
+    <input type="file" name="proof" accept="image/*" class="form-control" required />
+  </div>
+  <!-- <button type="submit" class="submit-button">Confirm Reservation</button> -->
+   <div style="display:flex;align-items:center;gap:10px;position:relative;">
+  <button type="submit" class="submit-button">Confirm Reservation</button>
+
+  <!-- Info Icon -->
+  <div class="info-icon" tabindex="0">ℹ️</div>
+
+  <!-- Tooltip Info Box -->
+  <div class="info-tooltip">
+    <strong>Reservation Rules</strong><br><br>
+    • Users can only reserve <strong>3 products per day</strong>.<br>
+    • <strong>Confirmed reservations</strong> will be <strong>refunded after 3 days</strong> of not claiming at the Girl Scout Hub office.
   </div>
 </div>
 
-<% if (limit) { %>
-<div style="background:#f8d7da;color:#721c24;padding:12px;border-radius:6px;margin:15px 0;">
-  ❌ You have reached the reservation limit for today.
-</div>
-<% } %>
+</form>
 
-<div class="reservation-form">
-  <h2 class="form-title">Complete Your Reservation</h2>
-  <form action="/reserve" method="POST" enctype="multipart/form-data">
-    <div class="form-group">
-      <label class="form-label">Your Name</label>
-      <input type="text" name="name" required class="form-input"/>
-    </div>
-    <div class="form-group">
-      <label class="form-label">Email</label>
-      <input type="email" name="email" required class="form-input"/>
-    </div>
-    <div class="form-group">
-      <label class="form-label">Contact Number</label>
-      <input type="text" name="contact" required class="form-input"/>
-    </div>
-    <div class="form-group">
-      <label>Downpayment</label>
-      <input type="number" name="downpayment" min="0" class="form-control" required />
-      <label>Upload Proof of Payment</label>
-      <input type="file" name="proof" accept="image/*" class="form-control" required />
-    </div>
-    <div style="display:flex;align-items:center;gap:10px;position:relative;">
-      <button type="submit" class="submit-button">Confirm Reservation</button>
-      <div class="info-icon" tabindex="0">ℹ️</div>
-      <div class="info-tooltip">
-        <strong>Reservation Rules</strong><br><br>
-        • Users can only reserve <strong>3 products per day</strong>.<br>
-        • <strong>Confirmed reservations</strong> will be <strong>refunded after 3 days</strong> of not claiming at the Girl Scout Hub office.
-      </div>
-    </div>
-  </form>
-</div>
-
-<a href="/products" class="nav-link continue-shopping">Continue Shopping</a>
-
-<% } else { %>
-<div class="empty-cart">
-  <div class="empty-cart-icon">🛒</div>
-  <p class="empty-cart-message">Your cart is empty</p>
-  <a href="/products" class="nav-link">Browse Products</a>
-</div>
-<% } %>
+  </div>
+  <a href="/products" class="nav-link continue-shopping">Continue Shopping</a>
+  <% } else { %>
+  <div class="empty-cart">
+    <div class="empty-cart-icon">🛒</div>
+    <p class="empty-cart-message">Your cart is empty</p>
+    <a href="/products" class="nav-link">Browse Products</a>
+  </div>
+  <% } %>
 </div>
 
 <!-- Reservation History Modal -->
 <div id="historyModal" class="modal">
   <div class="modal-content">
     <h2>Reservation History</h2>
-    <% if (reservations && reservations.length > 0) { %>
+    <% if (typeof reservations !== 'undefined' && reservations.length > 0) { %>
       <ul style="list-style:none;padding:0;">
         <% reservations.forEach(r => { %>
         <li style="border-bottom:1px solid var(--gray);padding:15px 0;">
@@ -273,26 +274,28 @@
           </div>
           <div><strong>Date:</strong> <%= r.date ? new Date(r.date).toLocaleDateString() : 'N/A' %></div>
           <% if (r.items && r.items.length) { %>
-          <div style="margin-top:10px;">
-            <strong>Items:</strong>
-            <ul style="list-style:none;padding:0;">
-              <% r.items.forEach(i => { %>
-              <li style="margin-bottom:8px;">
-                <div><strong>Product:</strong> <%= i.name %></div>
-                <div><strong>Description:</strong> <%= i.description || 'No description' %></div>
-                <div><strong>Qty:</strong> <%= i.quantity %></div>
-                <div><strong>Price:</strong> ₱<%= i.price.toLocaleString() %></div>
-              </li>
-              <% }); %>
-            </ul>
-          </div>
-          <% } %>
+        <div style="margin-top:10px;">
+          <strong>Items:</strong>
+          <ul style="list-style:none;padding:0;">
+            <% r.items.forEach(i => { %>
+            <li style="margin-bottom:8px;">
+              <div><strong>Product:</strong> <%= i.name %></div>
+              <div><strong>Description:</strong> <%= i.description || 'No description' %></div>
+              <div><strong>Qty:</strong> <%= i.quantity %></div>
+              <div><strong>Price:</strong> ₱<%= i.price.toLocaleString() %></div>
+            </li>
+            <% }); %>
+          </ul>
+        </div>
+        <% } %>
           <form action="/delete-reservation/<%= r._id %>" method="POST" style="margin-top:10px;display:inline-block;">
             <button type="submit" class="cancel-button">Delete</button>
           </form>
           <% if (r.status === 'Approved') { %>
             <button class="review-button" onclick="openReviewModal('<%= r._id %>')">Leave Review</button>
-            <button type="button" class="review-button reorderBtn" data-id="<%= r._id %>" style="background:#27ae60;">Re-Order</button>
+            <form method="POST" class="reorderForm" style="display:inline-block;">
+              <button type="button" class="review-button reorderBtn" style="background:#27ae60;" data-id="<%= r._id %>">Re-Order</button>
+            </form>
           <% } %>
         </li>
         <% }); %>
@@ -317,19 +320,170 @@
   </div>
 </div>
 
-<!-- Reorder Modal -->
-<div id="reorderModal" class="modal">
+<!-- Reorder Confirmation Modal -->
+<!-- <div id="reorderModal" class="modal">
   <div class="modal-content">
     <h2>Confirm Re-Order</h2>
-    <p style="margin-bottom: 15px; color: #666;">This will create a new reservation with the following items:</p>
-    <div id="reorderPreview"></div>
-    <form id="confirmReorderForm" method="POST" style="margin-top:20px;">
-      <input type="hidden" name="notification" value="Customer re-ordered this reservation." />
-      <button type="submit" class="submit-button">Yes, Create Reservation</button>
+    <p>Are you sure you want to reorder this reservation?</p>
+    <form id="confirmReorderForm" method="POST">
+      <button type="submit" class="submit-button">Yes, Re-Order</button>
       <button type="button" onclick="closeReorderModal()" class="submit-button" style="background:#e74c3c;margin-top:10px;">Cancel</button>
     </form>
   </div>
+</div> -->
+<!-- Enhanced Reorder Confirmation Modal -->
+<!-- Enhanced Reorder Confirmation Modal -->
+<!-- Enhanced Reorder Confirmation Modal -->
+<div id="reorderModal" class="modal">
+  <div class="modal-content" style="max-width: 600px;">
+    <h2>Confirm Re-Order</h2>
+    <p style="margin-bottom: 15px; color: #666;">This will create a new reservation with the following items:</p>
+    <div id="reorderPreview">
+      <!-- Items will be loaded here -->
+    </div>
+    <div style="margin-top: 20px;">
+      <!-- <form id="confirmReorderForm" method="POST">
+        <button type="submit" class="submit-button">Yes, Create Reservation</button>
+        <button type="button" onclick="closeReorderModal()" class="submit-button" style="background:#e74c3c;margin-top:10px;">Cancel</button>
+      </form> -->
+      <form id="confirmReorderForm" method="POST">
+  <input type="hidden" name="notification" value="Customer re-ordered this reservation." />
+  <button type="submit" class="submit-button">Yes, Create Reservation</button>
+  <button type="button" onclick="closeReorderModal()" class="submit-button" style="background:#e74c3c;margin-top:10px;">Cancel</button>
+</form>
+
+    </div>
+  </div>
 </div>
+
+<style>
+.reorder-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  border-bottom: 1px solid var(--gray);
+  background: #f9f9f9;
+  border-radius: 6px;
+  margin-bottom: 10px;
+}
+
+.reorder-item-details {
+  flex: 1;
+}
+
+.reorder-item-name {
+  font-weight: 600;
+  color: var(--dark);
+  margin-bottom: 5px;
+}
+
+.reorder-item-price {
+  color: var(--primary);
+  font-weight: 500;
+}
+
+.reorder-item-qty {
+  background: var(--primary);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  margin-left: 10px;
+}
+
+.reorder-total {
+  text-align: right;
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 2px solid var(--primary);
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.reorder-warning {
+  background: #fff3cd;
+  border: 1px solid #ffeaa7;
+  color: #856404;
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 15px;
+  font-size: 0.9rem;
+}
+</style>
+
+<script>
+// Enhanced reorder functionality
+document.querySelectorAll(".reorderBtn").forEach(btn => {
+  btn.addEventListener("click", async () => {
+    const reservationId = btn.getAttribute("data-id");
+    
+    try {
+      // Fetch reservation details for preview
+      const response = await fetch(`/get-reservation/${reservationId}`);
+      const reservation = await response.json();
+      
+      if (reservation.error) {
+        alert('Error loading reservation details');
+        return;
+      }
+      
+      // Build the preview HTML
+      let previewHTML = '<h3 style="margin-bottom: 15px;">Items for new reservation:</h3>';
+      let total = 0;
+      let hasWarnings = false;
+      let warningMessage = '';
+      
+      reservation.items.forEach(item => {
+        const itemTotal = item.price * item.quantity;
+        total += itemTotal;
+        
+        previewHTML += `
+          <div class="reorder-item">
+            <div class="reorder-item-details">
+              <div class="reorder-item-name">${item.name}</div>
+              <div class="reorder-item-price">₱${item.price.toLocaleString()}</div>
+              ${item.description ? `<div style="font-size:0.85rem;color:#666;margin-top:3px;">${item.description}</div>` : ''}
+            </div>
+            <div class="reorder-item-qty">Qty: ${item.quantity}</div>
+          </div>
+        `;
+        
+        // Check for stock warnings (if available in response)
+        if (item.stockWarning) {
+          hasWarnings = true;
+          warningMessage += `• ${item.name}: ${item.stockWarning}<br>`;
+        }
+      });
+      
+      previewHTML += `<div class="reorder-total">Total: ₱${total.toLocaleString()}</div>`;
+      
+      // Add warnings if any
+      if (hasWarnings) {
+        previewHTML = `<div class="reorder-warning"><strong>Stock Warnings:</strong><br>${warningMessage}</div>` + previewHTML;
+      }
+      
+      // Update modal content
+      document.getElementById("reorderPreview").innerHTML = previewHTML;
+      
+      // Set form action
+      confirmReorderForm.action = `/reorder/${reservationId}`;
+      
+      // Show modal
+      reorderModal.style.display = "flex";
+      
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Error loading reservation details');
+    }
+  });
+});
+
+function closeReorderModal() {
+  reorderModal.style.display = "none";
+}
+</script>
 
 <footer>
   <div class="container footer-container">
@@ -341,72 +495,48 @@
 </footer>
 
 <script>
-const historyButton = document.getElementById("historyButton");
-const historyModal = document.getElementById("historyModal");
-const closeHistory = document.getElementById("closeHistory");
-const reviewModal = document.getElementById("reviewModal");
-const reservationIdInput = document.getElementById("reservationId");
-const reorderModal = document.getElementById("reorderModal");
-const confirmReorderForm = document.getElementById("confirmReorderForm");
+  const historyButton = document.getElementById("historyButton");
+  const historyModal = document.getElementById("historyModal");
+  const closeHistory = document.getElementById("closeHistory");
+  const reviewModal = document.getElementById("reviewModal");
+  const reservationIdInput = document.getElementById("reservationId");
+  const reorderModal = document.getElementById("reorderModal");
+  const confirmReorderForm = document.getElementById("confirmReorderForm");
 
-historyButton.onclick = () => historyModal.style.display = "flex";
-closeHistory.onclick = () => historyModal.style.display = "none";
+  historyButton.onclick = () => historyModal.style.display = "flex";
+  closeHistory.onclick = () => historyModal.style.display = "none";
+  window.onclick = e => {
+    if (e.target === historyModal) historyModal.style.display = "none";
+    if (e.target === reviewModal) reviewModal.style.display = "none";
+    if (e.target === reorderModal) reorderModal.style.display = "none";
+  };
 
-window.onclick = e => {
-  if(e.target === historyModal) historyModal.style.display = "none";
-  if(e.target === reviewModal) reviewModal.style.display = "none";
-  if(e.target === reorderModal) reorderModal.style.display = "none";
-};
+  function openReviewModal(reservationId) {
+    reservationIdInput.value = reservationId;
+    reviewModal.style.display = "flex";
+  }
+  function closeReviewModal() {
+    reviewModal.style.display = "none";
+  }
+  function closeReorderModal() {
+    reorderModal.style.display = "none";
+  }
 
-function openReviewModal(reservationId){
-  reservationIdInput.value = reservationId;
-  reviewModal.style.display = "flex";
-}
-function closeReviewModal(){ reviewModal.style.display = "none"; }
-function closeReorderModal(){ reorderModal.style.display = "none"; }
-
-document.querySelectorAll(".info-icon").forEach(icon=>{
-  icon.addEventListener("click",()=>{
+  document.querySelectorAll(".info-icon").forEach(icon => {
+  icon.addEventListener("click", () => {
     const tooltip = icon.nextElementSibling;
-    tooltip.style.display = tooltip.style.display==='block'?'none':'block';
+    tooltip.style.display = tooltip.style.display === "block" ? "none" : "block";
   });
 });
 
-// Enhanced reorder preview
-document.querySelectorAll(".reorderBtn").forEach(btn=>{
-  btn.addEventListener("click", async ()=>{
-    const reservationId = btn.getAttribute("data-id");
-    try {
-      const response = await fetch(`/get-reservation/${reservationId}`);
-      const reservation = await response.json();
-      if(reservation.error){ alert('Error loading reservation details'); return; }
 
-      let previewHTML = '<h3 style="margin-bottom:15px;">Items for new reservation:</h3>';
-      let total=0, hasWarnings=false, warningMessage='';
-
-      reservation.items.forEach(item=>{
-        total += item.price * item.quantity;
-        previewHTML += `<div class="reorder-item">
-          <div class="reorder-item-details">
-            <div class="reorder-item-name">${item.name}</div>
-            <div class="reorder-item-price">₱${item.price.toLocaleString()}</div>
-            ${item.description?`<div style="font-size:0.85rem;color:#666;margin-top:3px;">${item.description}</div>`:''}
-          </div>
-          <div class="reorder-item-qty">Qty: ${item.quantity}</div>
-        </div>`;
-        if(item.stockWarning){ hasWarnings=true; warningMessage+=`• ${item.name}: ${item.stockWarning}<br>`; }
-      });
-
-      if(hasWarnings) previewHTML = `<div class="reorder-warning"><strong>Stock Warnings:</strong><br>${warningMessage}</div>`+previewHTML;
-      previewHTML += `<div class="reorder-total">Total: ₱${total.toLocaleString()}</div>`;
-
-      document.getElementById("reorderPreview").innerHTML = previewHTML;
+  document.querySelectorAll(".reorderBtn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const reservationId = btn.getAttribute("data-id");
       confirmReorderForm.action = `/reorder/${reservationId}`;
       reorderModal.style.display = "flex";
-
-    } catch(err){ console.error(err); alert('Error loading reservation details'); }
+    });
   });
-});
 </script>
 </body>
 </html>
