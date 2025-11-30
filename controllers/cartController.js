@@ -14,11 +14,11 @@ exports.viewCart = async (req, res) => {
 
     let reservations = [];
 
-    // Fetch reservations for logged-in user
+    // Fetch reservation history for logged-in user
     if (req.session.email) {
       reservations = await Reservation.find({ email: req.session.email })
         .sort({ date: -1 })
-        .populate('items.productId'); // ensures product info available
+        .populate('items.productId');
     }
 
     res.render('cart', { cart, success, limit, reservations });
@@ -90,7 +90,6 @@ exports.reserveCart = async (req, res) => {
     });
 
     await reservation.save();
-
     req.session.cart = [];
 
     // Notify admin
@@ -127,11 +126,10 @@ We will verify your proof of payment soon.`
   }
 };
 
-// View reservations (ADMIN)
+// Admin: View reservations
 exports.viewReservations = async (req, res) => {
   try {
     const reservations = await Reservation.find().sort({ date: -1 }).populate('items.productId');
-
     const groupedReservations = {};
     reservations.forEach(r => {
       if (!groupedReservations[r.email]) groupedReservations[r.email] = [];
@@ -145,7 +143,7 @@ exports.viewReservations = async (req, res) => {
   }
 };
 
-// Approve reservation
+// Admin: Approve reservation
 exports.approveReservation = async (req, res) => {
   try {
     const reservation = await Reservation.findById(req.params.id);
@@ -173,7 +171,7 @@ Status: Approved`
   }
 };
 
-// Remove reservation
+// Admin: Remove reservation
 exports.removeReservation = async (req, res) => {
   try {
     await Reservation.findByIdAndDelete(req.params.id);
@@ -184,7 +182,7 @@ exports.removeReservation = async (req, res) => {
   }
 };
 
-// USER: Reservation History
+// USER: Reservation history page (optional separate route)
 exports.viewReservationHistory = async (req, res) => {
   try {
     if (!req.session.email) return res.redirect('/login');
@@ -243,7 +241,7 @@ exports.reorderReservation = async (req, res) => {
   }
 };
 
-// Admin: Get details
+// Admin: Get reservation details (for reorder preview)
 exports.getReservationDetails = async (req, res) => {
   try {
     const reservation = await Reservation.findById(req.params.id).populate('items.productId');
