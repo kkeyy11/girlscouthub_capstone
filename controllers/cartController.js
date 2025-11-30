@@ -252,4 +252,4 @@ exports.getReservationDetails = async (req, res) => {
     console.error(err);
     res.status(500).json({ error: 'Error' });
   }
-}; then ito yung current cartController.js ko ngayon.. now please revise the files without removing any existing logic heheh. i want the codes to be full code and ready to copy and paste
+}; 
