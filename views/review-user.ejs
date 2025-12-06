@@ -29,6 +29,15 @@
         margin-bottom: 10px;
     }
 
+    .review-form input[type=number] {
+        width: 60px;
+        padding: 6px;
+        font-size: 16px;
+        margin-bottom: 10px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+    }
+
     .review-form button {
         width: fit-content;
         padding: 8px 16px;
@@ -50,50 +59,66 @@
     .review-list small {
         color: #7f8c8d;
     }
+
+    .stars {
+        margin-bottom: 6px;
+        font-size: 1.1rem;
+    }
 </style>
-<br>
-<br>
+
 <div class="review-container">
-  <h1>User Reviews</h1>
+    <h1>User Reviews</h1>
+    <p style="text-align:center;color:#7f8c8d;margin-bottom:30px;">
+        Share your experience with your approved reservations. Your feedback helps us improve!
+    </p>
 
-  <h2>Leave a Review</h2>
-  <form method="POST" action="/user/reviews" class="review-form">
+    <!-- ADD REVIEW SECTION -->
+    <h2>Leave a Review</h2>
+    <form method="POST" action="/user/reviews" class="review-form">
+        <textarea 
+          name="message" 
+          rows="4" 
+          placeholder="Write your thoughts about your experience..."
+          required><%= reviews[0]?.message || '' %></textarea>
 
-    <label>Rating</label>
-    <div style="margin-bottom:10px;">
-      <% for(let i=1;i<=5;i++){ %>
-        <label style="margin-right:6px;">
-          <input type="radio" name="rating" value="<%= i %>" required> ⭐
-        </label>
-      <% } %>
-    </div>
+        <label for="rating">Rating (1-5 stars)</label>
+        <input 
+          type="number" 
+          name="rating" 
+          min="1" max="5" 
+          value="<%= reviews[0]?.rating || 5 %>" 
+          required
+        >
 
-    <textarea name="message" rows="4" placeholder="Write your experience..." required></textarea>
-    <button type="submit">Submit Review</button>
-  </form>
+        <button type="submit"><%= reviews.length > 0 ? 'Update Review' : 'Submit Review' %></button>
+    </form>
 
-  <hr>
+    <hr style="margin:40px 0;opacity:.3;">
 
-  <h2>Your Submitted Review</h2>
+    <!-- LIST REVIEWS -->
+    <h2>Your Submitted Reviews</h2>
 
-  <% if (reviews.length > 0) { %>
-    <ul class="review-list">
-      <% reviews.forEach(review => { %>
-        <li>
-          <div>
-            <% for(let i=1;i<=5;i++){ %>
-              <%= i <= review.rating ? '⭐' : '☆' %>
-            <% } %>
-          </div>
-          <%= review.message %><br>
-          <small>Submitted on <%= new Date(review.createdAt).toLocaleString() %></small>
-        </li>
-      <% }) %>
-    </ul>
-  <% } else { %>
-    <p>You haven’t submitted any reviews yet.</p>
-  <% } %>
+    <% if (reviews && reviews.length > 0) { %>
+      <ul class="review-list">
+          <% reviews.forEach(review => { %>
+              <li>
+                  <div class="stars">
+                    <% for(let i=1;i<=5;i++){ %>
+                        <%= i <= review.rating ? '⭐' : '☆' %>
+                    <% } %>
+                  </div>
+                  <%= review.message %><br>
+                  <small>
+                    Submitted on <%= new Date(review.createdAt).toLocaleString() %>
+                  </small>
+              </li>
+          <% }) %>
+      </ul>
+    <% } else { %>
+      <p style="text-align:center;color:#999;">
+        You haven’t submitted any reviews yet.
+      </p>
+    <% } %>
 </div>
-
 
 <%- include('./layouts/footer') %>
