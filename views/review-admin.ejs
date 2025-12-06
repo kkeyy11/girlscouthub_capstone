@@ -291,31 +291,22 @@ h1 i { color: var(--primary); }
     </div>
   <% } else { %>
     <ul class="admin-review-list mt-3">
-  <% reviews.forEach(review => { 
-    let sentimentClass = '';
-    if(review.sentiment.toLowerCase() === 'positive') sentimentClass='review-positive';
-    else if(review.sentiment.toLowerCase() === 'neutral') sentimentClass='review-neutral';
-    else if(review.sentiment.toLowerCase() === 'negative') sentimentClass='review-negative';
-  %>
-    <li class="review-card <%= sentimentClass %>">
-      <div class="sentiment-badge"><%= review.sentiment %></div>
-      <div class="review-message"><%= review.message %></div>
-      <div class="review-meta">
-        <div>
-          <i class="fas fa-user"></i> 
-          <%= review.user ? (review.user.firstName + ' ' + review.user.lastName + ' (' + review.user.username + ')') : 'Unknown User' %>
-        </div>
-        <% if(review.reservation){ %>
-          <div>
-            <i class="fas fa-box"></i> Reservation: #<%= review.reservation._id %> - ₱<%= review.reservation.total %>
+      <% reviews.forEach(review => { 
+        let sentimentClass = '';
+        if(review.sentiment.toLowerCase() === 'positive') sentimentClass='review-positive';
+        else if(review.sentiment.toLowerCase() === 'neutral') sentimentClass='review-neutral';
+        else if(review.sentiment.toLowerCase() === 'negative') sentimentClass='review-negative';
+      %>
+        <li class="review-card <%= sentimentClass %>">
+          <div class="sentiment-badge"><%= review.sentiment %></div>
+          <div class="review-message"><%= review.message %></div>
+          <div class="review-meta">
+            <div><i class="fas fa-user"></i> <%= review.user?.username || 'Unknown User' %></div>
+            <div><i class="fas fa-clock"></i> <%= new Date(review.createdAt).toLocaleString() %></div>
           </div>
-        <% } %>
-        <div><i class="fas fa-clock"></i> <%= new Date(review.createdAt).toLocaleString() %></div>
-      </div>
-    </li>
-  <% }) %>
-</ul>
-
+        </li>
+      <% }) %>
+    </ul>
   <% } %>
 </div>
 
