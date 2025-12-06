@@ -298,13 +298,19 @@ h1 i { color: var(--primary); }
         else if(review.sentiment.toLowerCase() === 'negative') sentimentClass='review-negative';
       %>
         <li class="review-card <%= sentimentClass %>">
-          <div class="sentiment-badge"><%= review.sentiment %></div>
-          <div class="review-message"><%= review.message %></div>
-          <div class="review-meta">
-            <div><i class="fas fa-user"></i> <%= review.user?.username || 'Unknown User' %></div>
-            <div><i class="fas fa-clock"></i> <%= new Date(review.createdAt).toLocaleString() %></div>
-          </div>
-        </li>
+  <div class="sentiment-badge"><%= review.sentiment %></div>
+  <div style="margin-bottom:6px;">
+    <% for(let i=1;i<=5;i++){ %>
+      <%= i <= review.rating ? '⭐' : '☆' %>
+    <% } %>
+  </div>
+  <div class="review-message"><%= review.message %></div>
+  <div class="review-meta">
+    <div><i class="fas fa-user"></i> <%= review.user?.firstName + ' ' + review.user?.lastName || 'Unknown User' %></div>
+    <div><i class="fas fa-clock"></i> <%= new Date(review.createdAt).toLocaleString() %></div>
+  </div>
+</li>
+
       <% }) %>
     </ul>
   <% } %>

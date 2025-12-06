@@ -54,46 +54,45 @@
 <br>
 <br>
 <div class="review-container">
-    <h1>User Reviews</h1>
-    <p style="text-align:center;color:#7f8c8d;margin-bottom:30px;">
-        Share your experience with your approved reservations. Your feedback helps us improve!
-    </p>
+  <h1>User Reviews</h1>
 
-    <!-- ADD REVIEW SECTION -->
-    <h2>Leave a Review</h2>
-    <form method="POST" action="/user/reviews" class="review-form">
-        
+  <h2>Leave a Review</h2>
+  <form method="POST" action="/user/reviews" class="review-form">
 
-        <textarea 
-          name="message" 
-          rows="4" 
-          placeholder="Write your thoughts about your experience..."
-          required></textarea>
+    <label>Rating</label>
+    <div style="margin-bottom:10px;">
+      <% for(let i=1;i<=5;i++){ %>
+        <label style="margin-right:6px;">
+          <input type="radio" name="rating" value="<%= i %>" required> ⭐
+        </label>
+      <% } %>
+    </div>
 
-        <button type="submit">Submit Review</button>
-    </form>
+    <textarea name="message" rows="4" placeholder="Write your experience..." required></textarea>
+    <button type="submit">Submit Review</button>
+  </form>
 
-    <hr style="margin:40px 0;opacity:.3;">
+  <hr>
 
-    <!-- LIST REVIEWS -->
-    <h2>Your Submitted Reviews</h2>
+  <h2>Your Submitted Review</h2>
 
-    <% if (reviews && reviews.length > 0) { %>
-      <ul class="review-list">
-          <% reviews.forEach(review => { %>
-              <li>
-                  <%= review.message %><br>
-                  <small>
-                    Submitted on <%= new Date(review.createdAt).toLocaleString() %>
-                  </small>
-              </li>
-          <% }) %>
-      </ul>
-    <% } else { %>
-      <p style="text-align:center;color:#999;">
-        You haven’t submitted any reviews yet.
-      </p>
-    <% } %>
+  <% if (reviews.length > 0) { %>
+    <ul class="review-list">
+      <% reviews.forEach(review => { %>
+        <li>
+          <div>
+            <% for(let i=1;i<=5;i++){ %>
+              <%= i <= review.rating ? '⭐' : '☆' %>
+            <% } %>
+          </div>
+          <%= review.message %><br>
+          <small>Submitted on <%= new Date(review.createdAt).toLocaleString() %></small>
+        </li>
+      <% }) %>
+    </ul>
+  <% } else { %>
+    <p>You haven’t submitted any reviews yet.</p>
+  <% } %>
 </div>
 
 
