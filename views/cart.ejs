@@ -303,7 +303,7 @@
           </form>
 
           <% if (r.status === 'Approved') { %>
-            <button class="review-button" onclick="openReviewModal('<%= r._id %>')">Leave Review</button>
+            <!-- <button class="review-button" onclick="openReviewModal('<%= r._id %>')">Leave Review</button> -->
 
             <form method="POST" class="reorderForm" style="display:inline-block;">
               <button type="button" 
@@ -330,7 +330,7 @@
 
 
 <!-- Review Modal -->
-<div id="reviewModal" class="modal">
+<!-- <div id="reviewModal" class="modal">
   <div class="modal-content">
     <h2>Leave a Review</h2>
     <form id="reviewForm" action="/user/reviews" method="POST">
@@ -340,7 +340,7 @@
     </form>
     <button onclick="closeReviewModal()" class="submit-button" style="margin-top:10px;background:#e74c3c;">Cancel</button>
   </div>
-</div>
+</div> -->
 
 <!-- Reorder Confirmation Modal -->
 <!-- <div id="reorderModal" class="modal">

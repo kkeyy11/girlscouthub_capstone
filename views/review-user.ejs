@@ -55,22 +55,46 @@
 <br>
 <div class="review-container">
     <h1>User Reviews</h1>
-<br>
-<br>
-    <!-- <form method="POST" action="/user/reviews" class="review-form">
-        <textarea name="message" rows="4" placeholder="Write your review here..." required></textarea>
-        <button type="submit">Submit Review</button>
-    </form> -->
+    <p style="text-align:center;color:#7f8c8d;margin-bottom:30px;">
+        Share your experience with your approved reservations. Your feedback helps us improve!
+    </p>
 
+    <!-- ADD REVIEW SECTION -->
+    <h2>Leave a Review</h2>
+    <form method="POST" action="/user/reviews" class="review-form">
+        <input type="hidden" name="reservationId" value="<%= reservationId || '' %>"/>
+
+        <textarea 
+          name="message" 
+          rows="4" 
+          placeholder="Write your thoughts about your experience..."
+          required></textarea>
+
+        <button type="submit">Submit Review</button>
+    </form>
+
+    <hr style="margin:40px 0;opacity:.3;">
+
+    <!-- LIST REVIEWS -->
     <h2>Your Submitted Reviews</h2>
-    <ul class="review-list">
-        <% reviews.forEach(review => { %>
-            <li>
-                <%= review.message %><br>
-                <small><%= new Date(review.createdAt).toLocaleString() %></small>
-            </li>
-        <% }) %>
-    </ul>
+
+    <% if (reviews && reviews.length > 0) { %>
+      <ul class="review-list">
+          <% reviews.forEach(review => { %>
+              <li>
+                  <%= review.message %><br>
+                  <small>
+                    Submitted on <%= new Date(review.createdAt).toLocaleString() %>
+                  </small>
+              </li>
+          <% }) %>
+      </ul>
+    <% } else { %>
+      <p style="text-align:center;color:#999;">
+        You haven’t submitted any reviews yet.
+      </p>
+    <% } %>
 </div>
+
 
 <%- include('./layouts/footer') %>
