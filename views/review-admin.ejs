@@ -300,6 +300,13 @@ h1 i { color: var(--primary); }
         <li class="review-card <%= sentimentClass %>">
           <div class="sentiment-badge"><%= review.sentiment %></div>
           <div class="review-message"><%= review.message %></div>
+
+          <small style="color:#6b7280">
+  <i class="fas fa-box"></i>
+  <strong>Product:</strong>
+  <%= review.product?.name || 'Unknown Product' %>
+</small>
+
           <div class="review-meta">
             <div><i class="fas fa-user"></i> <%= review.user?.username || 'Unknown User' %></div>
             <div><i class="fas fa-clock"></i> <%= new Date(review.createdAt).toLocaleString() %></div>
