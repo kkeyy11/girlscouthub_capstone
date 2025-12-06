@@ -13,6 +13,11 @@ const reviewSchema = new mongoose.Schema({
         required: true
     },
 
+    reservation: { // NEW: link review to a reservation if needed
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Reservation',
+    },
+
     message: {
         type: String,
         required: true
