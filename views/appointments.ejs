@@ -140,67 +140,75 @@ input[type="date"]:focus, textarea:focus {
 
 <div class="appointment-wrapper">
   <div class="appointment-card">
-    <div class="page-header">
-      <h1><i class="fas fa-calendar-check"></i> Book Appointment</h1>
-      <p>Select a date, time, and reason</p>
-    </div>
+    <h2>Book Appointment</h2>
 
-    <form id="appointmentForm" onsubmit="return submitAppointment(event)">
-      <div>
-        <div class="section-title"><i class="fas fa-calendar-alt"></i> Date</div>
-        <input type="date" id="date" name="date" required>
+    <!-- ✅ FIXED FORM (method + action added) -->
+    <form id="appointmentForm" method="POST" action="/user/appointments">
+
+      <label>Date</label>
+      <input type="date" name="date" id="date" required>
+
+      <label>Time</label>
+      <div class="time-grid">
+        <% const times = ['09:00','10:00','11:00','12:00','01:00','02:00','03:00','04:00','05:00']; %>
+        <% times.forEach(time => { %>
+          <div class="time-slot" onclick="selectTime('<%= time %>', event)">
+            <%= time %>
+          </div>
+        <% }) %>
       </div>
 
-      <div>
-        <div class="section-title"><i class="fas fa-clock"></i> Time</div>
-        <div class="time-grid">
-          <% const times = ['09:00','10:00','11:00','12:00','01:00','02:00','03:00','04:00','05:00']; %>
-          <% times.forEach(time => { %>
-            <div class="time-slot" onclick="selectTime('<%= time %>', event)"><%= time %></div>
-          <% }) %>
-        </div>
-        <input type="hidden" id="selectedTime" name="time">
-      </div>
+      <!-- ✅ ADDED: hidden input REQUIRED for backend -->
+      <input type="hidden" name="time" id="selectedTime" required>
 
-      <div>
-        <div class="section-title"><i class="fas fa-comment-dots"></i> Reason</div>
-        <textarea id="description" name="description" rows="2" placeholder="Enter reason..." required></textarea>
-      </div>
+      <label>Reason</label>
+      <textarea name="description" required></textarea>
 
-      <button type="submit" class="submit-button"><i class="fas fa-paper-plane"></i> Submit</button>
+      <button type="submit">Submit</button>
     </form>
+
+    <!-- ✅ ✅ ✅ ADDED: USER APPOINTMENT LIST -->
+    <% if (appointments && appointments.length > 0) { %>
+      <hr style="margin:20px 0;">
+
+      <h3>Your Appointments</h3>
+
+      <% appointments.forEach(app => { %>
+        <div style="font-size:13px;margin-bottom:8px;">
+          📅 <%= new Date(app.date).toDateString() %> |
+          🕒 <%= app.time %> |
+          🏷 <%= app.status %>
+
+          <% if (app.status === 'Pending') { %>
+            <!-- ✅ CANCEL BUTTON -->
+            <form method="POST"
+                  action="/user/appointments/delete/<%= app._id %>"
+                  style="display:inline;">
+              <button style="font-size:11px;">Cancel</button>
+            </form>
+          <% } %>
+        </div>
+      <% }) %>
+    <% } %>
+
   </div>
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-  const dateInput = document.getElementById('date');
-  const today = new Date().toISOString().split('T')[0];
-  dateInput.min = today;
-});
-
+/* ✅ SAME UI JS – NO FORM BLOCKING */
 function selectTime(time, event) {
-  document.querySelectorAll('.time-slot').forEach(slot => slot.classList.remove('active'));
-  event.currentTarget.classList.add('active');
+  document.querySelectorAll('.time-slot').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
   document.getElementById('selectedTime').value = time;
 }
 
-function submitAppointment(e) {
-  e.preventDefault();
-  const date = document.getElementById('date').value;
-  const time = document.getElementById('selectedTime').value;
-  const desc = document.getElementById('description').value;
-
-  if(!date || !time || !desc.trim()) {
-    alert("Please complete all fields.");
-    return false;
+/* ✅ ADDED: simple validation */
+document.getElementById('appointmentForm').addEventListener('submit', function(e) {
+  if (!document.getElementById('selectedTime').value) {
+    e.preventDefault();
+    alert('Please select time');
   }
-
-  alert(`Appointment booked on ${date} at ${time}`);
-  document.getElementById('appointmentForm').reset();
-  document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('active'));
-  return false;
-}
+});
 </script>
 
 <%- include('./layouts/footer') %>

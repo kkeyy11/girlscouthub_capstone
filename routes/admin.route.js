@@ -19,7 +19,10 @@ router.get('/appointments-list', adminController.getAllAppointments);
 router.post('/appointments/update-status/:id/:status', adminController.updateAppointmentStatus);
 
 
-
+router.post(
+  '/appointments/delete/:id',
+  adminController.deleteAppointment
+);
 
 //event
 router.get('/event', eventController.getEventForm);

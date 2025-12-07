@@ -71,48 +71,7 @@ deleteAppointment: async (req, res, next) => {
 },
 
 
-    // getInventory: async (req, res, next) => {
-    //     try {
-    //         const inventory = await Inventory.find();
-    //         res.render('inventory', { inventory });
-    //     } catch (error) {
-    //         next(error);
-    //     }
-    // },
-
-    // createInventory: async (req, res, next) => {
-    //     const { itemName, quantity, price } = req.body;
-    //     try {
-    //         const newInventoryItem = new Inventory({ itemName, quantity, price });
-    //         await newInventoryItem.save();
-    //         req.flash('success', 'Inventory item added successfully!');
-    //         res.redirect('/admin/inventory');
-    //     } catch (error) {
-    //         next(error);
-    //     }
-    // },
-
-    // updateInventory: async (req, res, next) => {
-    //     const { itemId, itemName, quantity, price } = req.body;
-    //     try {
-    //         await Inventory.findByIdAndUpdate(itemId, { itemName, quantity, price });
-    //         req.flash('success', 'Inventory item updated successfully!');
-    //         res.redirect('/admin/inventory');
-    //     } catch (error) {
-    //         next(error);
-    //     }
-    // },
-
-    // deleteInventory: async (req, res, next) => {
-    //     const { itemId } = req.params;
-    //     try {
-    //         await Inventory.findByIdAndDelete(itemId);
-    //         req.flash('success', 'Inventory item deleted successfully!');
-    //         res.redirect('/admin/inventory');
-    //     } catch (error) {
-    //         next(error);
-    //     }
-    // },
+    
 };
 
 module.exports = adminController;
