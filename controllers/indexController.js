@@ -27,23 +27,25 @@ const indexController = {
 
       // Actual sales per category
       const productSales = await Reservation.aggregate([
-        { $unwind: "$items" },
-        {
-          $lookup: {
-            from: "products",
-            localField: "items.productId",
-            foreignField: "_id",
-            as: "productDetails"
-          }
-        },
-        { $unwind: "$productDetails" },
-        {
-          $group: {
-            _id: "$productDetails.category",
-            totalSales: { $sum: "$items.quantity" }
-          }
-        }
-      ]);
+  { $unwind: "$items" },
+  {
+    $lookup: {
+      from: "products",
+      localField: "items.productId",
+      foreignField: "_id",
+      as: "productDetails"
+    }
+  },
+  { $unwind: { path: "$productDetails", preserveNullAndEmptyArrays: true } },
+  {
+    $group: {
+      _id: "$productDetails.category",
+      totalSales: { $sum: "$items.quantity" }
+    }
+  },
+  { $match: { _id: { $ne: null } } }, // ignore null categories
+  { $sort: { totalSales: -1 } }       // optional: sort by most sold
+]);
 
       // Total revenue
       const totalRevenueAgg = await Reservation.aggregate([
