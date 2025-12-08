@@ -60,15 +60,23 @@ getAllAppointments: async (req, res, next) => {
 
     // Delete appointment
 deleteAppointment: async (req, res, next) => {
-    const { id } = req.params;
-    try {
-        await Appointment.findByIdAndDelete(id);
-        req.flash('success', 'Appointment deleted successfully.');
-        res.redirect('/admin/appointments');
-    } catch (error) {
-        next(error);
+  const { id } = req.params;
+
+  try {
+    const deleted = await Appointment.findByIdAndDelete(id);
+
+    if (!deleted) {
+      return res.status(404).json({ message: 'Appointment not found' });
     }
+
+    // ✅ IMPORTANT: respond with JSON, NOT redirect
+    res.status(200).json({ message: 'Appointment deleted successfully' });
+
+  } catch (error) {
+    next(error);
+  }
 },
+
 
 
     
