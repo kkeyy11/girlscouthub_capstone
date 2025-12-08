@@ -149,28 +149,14 @@ input[type="date"]:focus, textarea:focus {
       <input type="date" name="date" id="date" required>
 
       <label>Time</label>
-<div class="time-grid">
-  <% 
-    const times = ['09:00','10:00','11:00','12:00','01:00','02:00','03:00','04:00','05:00']; 
-
-    // Step 3: get all booked times for selected date
-    const bookedTimesForDate = bookedAppointments
-      .filter(a => a.date.toISOString().split('T')[0] === (appointments[0]?.date?.toISOString().split('T')[0] || ''))
-      .map(a => a.time);
-  %>
-
-  <% times.forEach(time => { 
-       const isBooked = bookedTimesForDate.includes(time);
-       const isUserBooked = appointments.some(a => a.time === time && new Date(a.date).toISOString().split('T')[0] === (appointments[0]?.date?.toISOString().split('T')[0] || ''));
-  %>
-    <div class="time-slot <%= isUserBooked ? 'active' : '' %>" 
-         onclick="<%= isBooked && !isUserBooked ? '' : `selectTime('${time}', event)` %>" 
-         style="<%= isBooked && !isUserBooked ? 'background:#ddd;color:#999;cursor:not-allowed;' : '' %>">
-      <%= time %>
-    </div>
-  <% }) %>
-</div>
-
+      <div class="time-grid">
+        <% const times = ['09:00','10:00','11:00','12:00','01:00','02:00','03:00','04:00','05:00']; %>
+        <% times.forEach(time => { %>
+          <div class="time-slot" onclick="selectTime('<%= time %>', event)">
+            <%= time %>
+          </div>
+        <% }) %>
+      </div>
 
       <!-- ✅ ADDED: hidden input REQUIRED for backend -->
       <input type="hidden" name="time" id="selectedTime" required>

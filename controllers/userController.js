@@ -12,17 +12,12 @@ const userController = {
 
     getAppointments: async (req, res, next) => {
     try {
-        const userAppointments = await Appointment.find({ user: req.user._id });
-        const bookedAppointments = await Appointment.find({ date: { $gte: new Date() } }); // all future appointments
-        res.render('appointments', { 
-            appointments: userAppointments,
-            bookedAppointments
-        });
+        const appointments = await Appointment.find({ user: req.user._id });
+        res.render('appointments', { appointments });
     } catch (error) {
         next(error);
     }
 },
-
 
 
     addAppointment: async (req, res, next) => {
