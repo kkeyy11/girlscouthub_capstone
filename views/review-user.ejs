@@ -2,11 +2,22 @@
 <%- include('./layouts/navbar') %>
 
 <style>
-.review-container {
+/* ===== Container Layout ===== */
+.page-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
     padding: 2rem;
+    justify-content: center;
+    background: #f0f4f8;
+}
+
+/* ===== Review Container ===== */
+.review-container {
+    flex: 1 1 450px;
     max-width: 700px;
-    margin: auto;
     background: #f5fdf8;
+    padding: 2rem;
     border-radius: 12px;
     box-shadow: 0 6px 18px rgba(0,0,0,0.08);
 }
@@ -84,60 +95,135 @@
     font-size: 1.2rem;
     margin-bottom: 6px;
 }
+
+/* ===== Event Container ===== */
+.event-container {
+    flex: 1 1 300px;
+    max-width: 400px;
+    background: #ffffff;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    max-height: 600px;
+    overflow-y: auto;
+}
+
+.event-container h2 {
+    text-align: center;
+    margin-bottom: 1rem;
+    color: #1f3d2e;
+}
+
+.event-item {
+    margin-bottom: 20px;
+    padding: 12px;
+    border-radius: 8px;
+    background-color: #f9fafb;
+    border-left: 6px solid #27ae60;
+}
+
+.event-item img {
+    width: 100%;
+    border-radius: 8px;
+    margin-bottom: 8px;
+}
+
+.event-item small {
+    color: #7f8c8d;
+    display: block;
+    margin-top: 6px;
+}
+
+/* ===== Responsive ===== */
+@media(max-width: 992px){
+    .page-container {
+        flex-direction: column;
+        align-items: center;
+    }
+}
 </style>
 
-<div class="review-container">
-    <h1>User Reviews</h1>
-    <p style="text-align:center;color:#555;margin-bottom:30px;">
-        Share your experience with your approved reservations. Your feedback helps us improve!
-    </p>
+<div class="page-container">
 
-    <!-- ADD REVIEW SECTION -->
-    <h2>Leave a Review</h2>
-    <form method="POST" action="/user/reviews" class="review-form">
-        <textarea 
-          name="message" 
-          rows="4" 
-          placeholder="Write your thoughts about your experience..."
-          required><%= reviews[0]?.message || '' %></textarea>
+    <!-- ===== Reviews ===== -->
+    <div class="review-container">
+        <h1>User Reviews</h1>
+        <p style="text-align:center;color:#555;margin-bottom:30px;">
+            Share your experience with your approved reservations. Your feedback helps us improve!
+        </p>
 
-        <div class="star-rating" id="starRating">
-            <% for(let i=1;i<=5;i++){ %>
-                <span data-value="<%= i %>" class="<%= i <= (reviews[0]?.rating || 5) ? 'selected' : '' %>">&#9733;</span>
-            <% } %>
-        </div>
+        <!-- ADD REVIEW SECTION -->
+        <h2>Leave a Review</h2>
+        <form method="POST" action="/user/reviews" class="review-form">
+            <textarea 
+                name="message" 
+                rows="4" 
+                placeholder="Write your thoughts about your experience..."
+                required><%= reviews[0]?.message || '' %></textarea>
 
-        <input type="hidden" name="rating" id="ratingInput" value="<%= reviews[0]?.rating || 5 %>">
+            <div class="star-rating" id="starRating">
+                <% for(let i=1;i<=5;i++){ %>
+                    <span data-value="<%= i %>" class="<%= i <= (reviews[0]?.rating || 5) ? 'selected' : '' %>">&#9733;</span>
+                <% } %>
+            </div>
 
-        <button type="submit"><%= reviews.length > 0 ? 'Update Review' : 'Submit Review' %></button>
-    </form>
+            <input type="hidden" name="rating" id="ratingInput" value="<%= reviews[0]?.rating || 5 %>">
 
-    <hr style="margin:40px 0;opacity:.3;">
+            <button type="submit"><%= reviews.length > 0 ? 'Update Review' : 'Submit Review' %></button>
+        </form>
 
-    <!-- LIST REVIEWS -->
-    <h2>Your Submitted Reviews</h2>
+        <hr style="margin:40px 0;opacity:.3;">
 
-    <% if (reviews && reviews.length > 0) { %>
-      <ul class="review-list">
-          <% reviews.forEach(review => { %>
-              <li>
-                  <div class="stars">
-                    <% for(let i=1;i<=5;i++){ %>
-                        <%= i <= review.rating ? '⭐' : '☆' %>
+        <!-- LIST REVIEWS -->
+        <h2>Your Submitted Reviews</h2>
+
+        <% if (reviews && reviews.length > 0) { %>
+            <ul class="review-list">
+                <% reviews.forEach(review => { %>
+                    <li>
+                        <div class="stars">
+                            <% for(let i=1;i<=5;i++){ %>
+                                <%= i <= review.rating ? '⭐' : '☆' %>
+                            <% } %>
+                        </div>
+                        <%= review.message %><br>
+                        <small>
+                            Submitted on <%= new Date(review.createdAt).toLocaleString() %>
+                        </small>
+                    </li>
+                <% }) %>
+            </ul>
+        <% } else { %>
+            <p style="text-align:center;color:#999;">
+                You haven’t submitted any reviews yet.
+            </p>
+        <% } %>
+    </div>
+
+    <!-- ===== Events ===== -->
+    <div class="event-container">
+        <h2>Upcoming Events</h2>
+        <% if (events && events.length > 0) { %>
+            <% events.forEach(event => { %>
+                <div class="event-item">
+                    <% if(event.image){ %>
+                        <img src="<%= event.image %>" alt="<%= event.title %>">
                     <% } %>
-                  </div>
-                  <%= review.message %><br>
-                  <small>
-                    Submitted on <%= new Date(review.createdAt).toLocaleString() %>
-                  </small>
-              </li>
-          <% }) %>
-      </ul>
-    <% } else { %>
-      <p style="text-align:center;color:#999;">
-        You haven’t submitted any reviews yet.
-      </p>
-    <% } %>
+                    <strong><%= event.title %></strong>
+                    <p><%= event.description %></p>
+                    <small>
+                        <%= new Date(event.date).toLocaleDateString() %> 
+                        <%= event.time %> - <%= new Date(event.endDate).toLocaleDateString() %> 
+                        <%= event.endTime %> <br>
+                        Location: <%= event.location %>
+                    </small>
+                </div>
+            <% }) %>
+        <% } else { %>
+            <p style="text-align:center;color:#999;">No upcoming events available.</p>
+        <% } %>
+    </div>
+
 </div>
 
 <script>
