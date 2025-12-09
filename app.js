@@ -30,10 +30,6 @@ app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-const methodOverride = require('method-override');
-app.use(methodOverride('_method'));
-
-
 // ----------------------
 // Handle favicon automatically
 // ----------------------
@@ -171,19 +167,12 @@ app.use((err, req, res, next) => {
 // ----------------------
 function ensureAdmin(req, res, next) {
   if (req.user && req.user.role === 'admin') {
-    return next();
+    next();
+  } else {
+    req.flash('warning', 'You are not authorized');
+    res.redirect('/');
   }
-
-  if (req.xhr || req.headers.accept.indexOf('json') > -1) {
-    // JSON/fetch request
-    return res.status(403).json({ message: 'Unauthorized' });
-  }
-
-  // Regular browser request
-  req.flash('warning', 'You are not authorized');
-  return res.redirect('/');
 }
-
 
 // ----------------------
 // Connect to MongoDB & start server
