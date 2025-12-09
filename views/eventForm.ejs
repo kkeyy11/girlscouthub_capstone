@@ -79,62 +79,67 @@
 }
 </style>
 
-<main class="container py-5">
-  <!-- Header -->
-  <div class="text-center mb-5">
-    <h1 class="page-title">
-      <i class="fas fa-bullhorn"></i>  Announcements
-    </h1>
-    <p class="page-subtitle">Create and share important events with your troop</p>
-  </div>
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
 
-  <!-- Success Message -->
-  <div id="successMessage" class="success-message mb-4">
-    <i class="fas fa-check-circle me-2"></i> Event created successfully!
-  </div>
+<main class="container-fluid py-4">
+  <div class="row g-4">
 
-  <!-- Form Container -->
-  <div class="card mx-auto" style="max-width: 600px;">
-    <div class="card-body p-4">
-      <form action="/admin/event" method="POST" id="eventForm" class="position-relative">
+    <!-- ✅ LEFT: FORM -->
+    <div class="col-md-4">
+      <div class="card p-4">
+        <form action="/admin/event" method="POST" enctype="multipart/form-data" id="eventForm">
+          <input type="hidden" name="id" id="eventId">
 
-        <!-- Event Title -->
-        <div class="mb-4 position-relative">
-          <i class="fas fa-heading input-icon"></i>
-          <input type="text" name="title" class="form-control ps-5" placeholder="Event Title" required maxlength="100">
-        </div>
+          <input class="form-control mb-3" name="title" id="title" placeholder="Title" required>
+          <textarea class="form-control mb-3" name="description" id="description" placeholder="Description" required></textarea>
+          <input type="date" class="form-control mb-3" name="date" id="date" required>
+          <input type="time" class="form-control mb-3" name="time" id="time" required>
+          <input class="form-control mb-3" name="location" id="location" placeholder="Location" required>
 
-        <!-- Description -->
-        <div class="mb-4 position-relative">
-          <i class="fas fa-align-left input-icon"></i>
-          <textarea name="description" class="form-control ps-5" rows="4" placeholder="Event Description" maxlength="500" required></textarea>
-        </div>
+          <!-- ✅ Image upload -->
+          <input type="file" class="form-control mb-3" name="image">
 
-        <!-- Date & Time -->
-        <div class="row mb-4">
-          <div class="col-md-6 position-relative mb-3 mb-md-0">
-            <i class="fas fa-calendar-alt input-icon"></i>
-            <input type="date" name="date" class="form-control ps-5" min="<%= new Date().toISOString().split('T')[0] %>" required>
-          </div>
-          <div class="col-md-6 position-relative">
-            <i class="fas fa-clock input-icon"></i>
-            <input type="time" name="time" class="form-control ps-5" required>
-          </div>
-        </div>
-
-        <!-- Location -->
-        <div class="mb-4 position-relative">
-          <i class="fas fa-map-marker-alt input-icon"></i>
-          <input type="text" name="location" class="form-control ps-5" placeholder="Event Location" maxlength="100" required>
-        </div>
-
-        <!-- Submit -->
-        <button type="submit" class="btn btn-success w-100 py-2" id="submitBtn">
-          <i class="fas fa-paper-plane me-2"></i> Create Announcement
-        </button>
-
-      </form>
+          <button class="btn btn-success w-100" id="submitBtn">Create Event</button>
+        </form>
+      </div>
     </div>
+
+    <!-- ✅ MIDDLE: FLASHCARDS -->
+    <div class="col-md-4">
+      <% events.forEach(event => { %>
+        <div class="card mb-3 p-3">
+          <% if (event.image) { %>
+            <img src="/uploads/events/<%= event.image %>" class="img-fluid rounded mb-2">
+          <% } %>
+          <h5><%= event.title %></h5>
+          <small><%= event.date.toDateString() %> • <%= event.time %></small>
+
+          <div class="mt-2 d-flex gap-2">
+            <button class="btn btn-sm btn-outline-primary"
+              onclick="editEvent('<%= event._id %>',
+                '<%= event.title %>',
+                '<%= event.description %>',
+                '<%= event.date.toISOString().split('T')[0] %>',
+                '<%= event.time %>',
+                '<%= event.location %>')">
+              Edit
+            </button>
+
+            <form action="/admin/event/delete/<%= event._id %>" method="POST">
+              <button class="btn btn-sm btn-outline-danger">Delete</button>
+            </form>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+
+    <!-- ✅ RIGHT: CALENDAR -->
+    <div class="col-md-4">
+      <div class="card p-3">
+        <div id="calendar"></div>
+      </div>
+    </div>
+
   </div>
 </main>
 
@@ -155,6 +160,33 @@ function showSuccessMessage() {
   msg.classList.add('show');
   setTimeout(() => msg.classList.remove('show'), 4000);
 }
+
+
+  function editEvent(id, title, description, date, time, location) {
+    document.getElementById('eventForm').action = `/admin/event/${id}`;
+    document.getElementById('submitBtn').innerText = 'Update Event';
+
+    title && (document.getElementById('title').value = title);
+    description && (document.getElementById('description').value = description);
+    date && (document.getElementById('date').value = date);
+    time && (document.getElementById('time').value = time);
+    location && (document.getElementById('location').value = location);
+  }
+
+  // ✅ Calendar
+  document.addEventListener('DOMContentLoaded', function () {
+    new FullCalendar.Calendar(document.getElementById('calendar'), {
+      initialView: 'dayGridMonth',
+      events: [
+        <% events.forEach(e => { %>
+          {
+            title: "<%= e.title %>",
+            start: "<%= e.date.toISOString() %>"
+          },
+        <% }) %>
+      ]
+    }).render();
+  });
 </script>
 
 <%- include('./layouts/footer') %>
