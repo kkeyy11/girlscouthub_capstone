@@ -2,168 +2,193 @@
 <%- include('./layouts/navbar') %>
 
 <style>
-/* ===== Container Layout ===== */
-.page-container {
+/* ===== GENERAL PAGE LAYOUT ===== */
+body {
+    background: #eef3f7;
+    font-family: "Inter", sans-serif;
+}
+
+.page-wrapper {
     display: flex;
-    flex-wrap: wrap;
     gap: 2rem;
     padding: 2rem;
     justify-content: center;
-    background: #f0f4f8;
+    flex-wrap: wrap;
 }
 
-/* ===== Review Container ===== */
-.review-container {
-    flex: 1 1 450px;
+/* ===== REVIEW PANEL ===== */
+.review-panel {
+    flex: 1 1 480px;
     max-width: 700px;
-    background: #f5fdf8;
-    padding: 2rem;
-    border-radius: 12px;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    background: #ffffff;
+    padding: 2rem 2.5rem;
+    border-radius: 14px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    border: 1px solid #e7e7e7;
 }
 
-.review-container h1,
-.review-container h2 {
-    color: #1f3d2e;
+.review-panel h1,
+.review-panel h2 {
     text-align: center;
+    color: #1c352d;
 }
 
-.review-form {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 2rem;
+.review-panel p {
+    text-align: center;
+    color: #666;
+    margin-bottom: 25px;
 }
 
+/* FORM */
 .review-form textarea {
-    padding: 12px;
-    font-size: 16px;
+    width: 100%;
+    padding: 14px;
+    border: 1px solid #cfd4da;
+    font-size: 15px;
+    border-radius: 10px;
     resize: vertical;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    margin-bottom: 12px;
+    background: #fafafa;
+    transition: .2s;
+}
+
+.review-form textarea:focus {
+    border-color: #27ae60;
+    background: #fff;
 }
 
 .star-rating {
     display: flex;
-    font-size: 2rem;
     justify-content: center;
-    margin-bottom: 12px;
+    margin: 12px 0 15px;
+    font-size: 2.2rem;
     cursor: pointer;
 }
 
 .star-rating span {
-    color: #ccc;
-    transition: color 0.2s;
+    color: #d0d0d0;
+    transition: 0.25s;
 }
 
-.star-rating span.selected,
-.star-rating span:hover,
-.star-rating span:hover ~ span {
-    color: #ffb400;
+.star-rating span.selected {
+    color: #ffc240;
+}
+
+.star-rating span.hover {
+    color: #ffd77a;
 }
 
 .review-form button {
-    width: fit-content;
-    align-self: center;
-    padding: 10px 20px;
-    background-color: #27ae60;
-    color: white;
+    margin-top: 10px;
+    padding: 12px 28px;
     border: none;
+    background: #27ae60;
+    color: #fff;
     border-radius: 8px;
-    cursor: pointer;
     font-size: 16px;
+    cursor: pointer;
     transition: 0.2s;
 }
 
 .review-form button:hover {
-    background-color: #1e8449;
+    background: #1f8b4e;
 }
 
-.review-list li {
+/* List of Reviews */
+.review-list {
+    padding: 0;
+    margin-top: 20px;
+}
+
+.review-item {
+    list-style: none;
+    padding: 16px;
     margin-bottom: 15px;
-    padding: 12px;
-    border-radius: 8px;
-    background-color: #ffffff;
-    border-left: 6px solid #27ae60;
+    background: #ffffff;
+    border-left: 5px solid #27ae60;
+    border-radius: 10px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.06);
 }
 
-.review-list small {
-    color: #7f8c8d;
+.review-item small {
+    color: #7b8b8c;
 }
 
-.review-list .stars {
-    font-size: 1.2rem;
-    margin-bottom: 6px;
+/* Rating stars in submitted list */
+.submitted-stars {
+    color: #ffc240;
+    font-size: 1.3rem;
+    margin-bottom: 5px;
 }
 
-/* ===== Event Container ===== */
-.event-container {
-    flex: 1 1 300px;
+/* ===== EVENT PANEL ===== */
+.event-panel {
+    flex: 1 1 320px;
     max-width: 400px;
     background: #ffffff;
-    padding: 1.5rem;
-    border-radius: 12px;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
-    max-height: 600px;
+    padding: 1.8rem;
+    border-radius: 14px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    border: 1px solid #e7e7e7;
+    max-height: 650px;
     overflow-y: auto;
 }
 
-.event-container h2 {
+.event-panel h2 {
     text-align: center;
     margin-bottom: 1rem;
-    color: #1f3d2e;
+    color: #1c352d;
 }
 
-.event-item {
-    margin-bottom: 20px;
-    padding: 12px;
-    border-radius: 8px;
-    background-color: #f9fafb;
-    border-left: 6px solid #27ae60;
+.event-card {
+    background: #f9fafb;
+    padding: 16px;
+    border-radius: 10px;
+    margin-bottom: 18px;
+    border-left: 5px solid #27ae60;
 }
 
-.event-item img {
+.event-card img {
     width: 100%;
     border-radius: 8px;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
 }
 
-.event-item small {
-    color: #7f8c8d;
-    display: block;
-    margin-top: 6px;
+.event-card small {
+    color: #758283;
 }
 
-/* ===== Responsive ===== */
-@media(max-width: 992px){
-    .page-container {
+/* ===== Responsiveness ===== */
+@media (max-width: 900px) {
+    .page-wrapper {
         flex-direction: column;
-        align-items: center;
+        padding: 1rem;
     }
 }
 </style>
 
-<div class="page-container">
-
-    <!-- ===== Reviews ===== -->
-    <div class="review-container">
+<div class="page-wrapper">
+    
+    <!-- ========================= REVIEWS ========================= -->
+    <div class="review-panel">
         <h1>User Reviews</h1>
-        <p style="text-align:center;color:#555;margin-bottom:30px;">
-            Share your experience with your approved reservations. Your feedback helps us improve!
-        </p>
+        <p>Share your experience with your approved reservations. Your feedback helps us improve!</p>
 
-        <!-- ADD REVIEW SECTION -->
+        <!-- REVIEW FORM -->
         <h2>Leave a Review</h2>
+
         <form method="POST" action="/user/reviews" class="review-form">
             <textarea 
                 name="message" 
                 rows="4" 
-                placeholder="Write your thoughts about your experience..."
+                placeholder="Write your thoughts..."
                 required><%= reviews[0]?.message || '' %></textarea>
 
             <div class="star-rating" id="starRating">
                 <% for(let i=1;i<=5;i++){ %>
-                    <span data-value="<%= i %>" class="<%= i <= (reviews[0]?.rating || 5) ? 'selected' : '' %>">&#9733;</span>
+                    <span data-value="<%= i %>" 
+                          class="<%= i <= (reviews[0]?.rating || 5) ? 'selected' : '' %>">
+                          &#9733;
+                    </span>
                 <% } %>
             </div>
 
@@ -172,55 +197,53 @@
             <button type="submit"><%= reviews.length > 0 ? 'Update Review' : 'Submit Review' %></button>
         </form>
 
-        <hr style="margin:40px 0;opacity:.3;">
+        <hr style="margin:35px 0; opacity:.3;">
 
-        <!-- LIST REVIEWS -->
+        <!-- SUBMITTED REVIEWS -->
         <h2>Your Submitted Reviews</h2>
 
         <% if (reviews && reviews.length > 0) { %>
             <ul class="review-list">
                 <% reviews.forEach(review => { %>
-                    <li>
-                        <div class="stars">
+                    <li class="review-item">
+                        <div class="submitted-stars">
                             <% for(let i=1;i<=5;i++){ %>
                                 <%= i <= review.rating ? '⭐' : '☆' %>
                             <% } %>
                         </div>
-                        <%= review.message %><br>
-                        <small>
-                            Submitted on <%= new Date(review.createdAt).toLocaleString() %>
-                        </small>
+                        <strong><%= review.message %></strong><br>
+                        <small>Submitted on <%= new Date(review.createdAt).toLocaleString() %></small>
                     </li>
                 <% }) %>
             </ul>
         <% } else { %>
-            <p style="text-align:center;color:#999;">
-                You haven’t submitted any reviews yet.
-            </p>
+            <p style="text-align:center; color:#999;">You haven’t submitted any reviews yet.</p>
         <% } %>
     </div>
 
-    <!-- ===== Events ===== -->
-    <div class="event-container">
+    <!-- ========================= EVENTS ========================= -->
+    <div class="event-panel">
         <h2>Upcoming Events</h2>
+
         <% if (events && events.length > 0) { %>
             <% events.forEach(event => { %>
-                <div class="event-item">
-                    <% if(event.image){ %>
+                <div class="event-card">
+                    <% if (event.image) { %>
                         <img src="<%= event.image %>" alt="<%= event.title %>">
                     <% } %>
                     <strong><%= event.title %></strong>
                     <p><%= event.description %></p>
                     <small>
                         <%= new Date(event.date).toLocaleDateString() %> 
-                        <%= event.time %> - <%= new Date(event.endDate).toLocaleDateString() %> 
-                        <%= event.endTime %> <br>
+                        <%= event.time %> — 
+                        <%= new Date(event.endDate).toLocaleDateString() %> 
+                        <%= event.endTime %><br>
                         Location: <%= event.location %>
                     </small>
                 </div>
             <% }) %>
         <% } else { %>
-            <p style="text-align:center;color:#999;">No upcoming events available.</p>
+            <p style="text-align:center; color:#999;">No upcoming events available.</p>
         <% } %>
     </div>
 
@@ -232,31 +255,25 @@ const ratingInput = document.getElementById('ratingInput');
 
 stars.forEach(star => {
     star.addEventListener('click', () => {
-        const value = star.getAttribute('data-value');
+        const value = star.dataset.value;
         ratingInput.value = value;
+
         stars.forEach(s => s.classList.remove('selected'));
         stars.forEach(s => {
-            if(s.getAttribute('data-value') <= value){
-                s.classList.add('selected');
-            }
+            if (s.dataset.value <= value) s.classList.add('selected');
         });
     });
 
     star.addEventListener('mouseover', () => {
-        const value = star.getAttribute('data-value');
+        const value = star.dataset.value;
         stars.forEach(s => s.classList.remove('hover'));
         stars.forEach(s => {
-            if(s.getAttribute('data-value') <= value){
-                s.classList.add('hover');
-                s.style.color = '#ffdb70';
-            }
+            if (s.dataset.value <= value) s.classList.add('hover');
         });
     });
 
     star.addEventListener('mouseout', () => {
-        stars.forEach(s => {
-            s.style.color = s.classList.contains('selected') ? '#ffb400' : '#ccc';
-        });
+        stars.forEach(s => s.classList.remove('hover'));
     });
 });
 </script>
