@@ -16,14 +16,14 @@ body {
     flex-wrap: wrap;
 }
 
-/* ===== REVIEW PANEL ===== */
+/* ===== REVIEW PANEL (NOW CARD STYLE) ===== */
 .review-panel {
     flex: 1 1 480px;
     max-width: 700px;
     background: #ffffff;
     padding: 2rem 2.5rem;
-    border-radius: 14px;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    border-radius: 16px;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.08);
     border: 1px solid #e7e7e7;
 }
 
@@ -31,12 +31,14 @@ body {
 .review-panel h2 {
     text-align: center;
     color: #1c352d;
+    font-weight: 700;
 }
 
 .review-panel p {
     text-align: center;
     color: #666;
     margin-bottom: 25px;
+    font-size: 15px;
 }
 
 /* FORM */
@@ -45,10 +47,11 @@ body {
     padding: 14px;
     border: 1px solid #cfd4da;
     font-size: 15px;
-    border-radius: 10px;
+    border-radius: 12px;
     resize: vertical;
     background: #fafafa;
     transition: .2s;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.04);
 }
 
 .review-form textarea:focus {
@@ -56,12 +59,14 @@ body {
     background: #fff;
 }
 
+/* Star Rating */
 .star-rating {
     display: flex;
     justify-content: center;
-    margin: 12px 0 15px;
+    margin: 12px 0 18px;
     font-size: 2.2rem;
     cursor: pointer;
+    gap: 6px;
 }
 
 .star-rating span {
@@ -77,6 +82,7 @@ body {
     color: #ffd77a;
 }
 
+/* Submit Button */
 .review-form button {
     margin-top: 10px;
     padding: 12px 28px;
@@ -87,13 +93,15 @@ body {
     font-size: 16px;
     cursor: pointer;
     transition: 0.2s;
+    width: 100%;
+    font-weight: 600;
 }
 
 .review-form button:hover {
     background: #1f8b4e;
 }
 
-/* List of Reviews */
+/* ===== REVIEW LIST (CARD STYLE) ===== */
 .review-list {
     padding: 0;
     margin-top: 20px;
@@ -101,33 +109,39 @@ body {
 
 .review-item {
     list-style: none;
-    padding: 16px;
+    padding: 18px;
     margin-bottom: 15px;
     background: #ffffff;
     border-left: 5px solid #27ae60;
-    border-radius: 10px;
+    border-radius: 12px;
     box-shadow: 0 3px 10px rgba(0,0,0,0.06);
+}
+
+.review-item strong {
+    font-size: 15px;
+    color: #333;
 }
 
 .review-item small {
     color: #7b8b8c;
 }
 
-/* Rating stars in submitted list */
+/* Rating stars */
 .submitted-stars {
     color: #ffc240;
     font-size: 1.3rem;
-    margin-bottom: 5px;
+    margin-bottom: 6px;
+    letter-spacing: 2px;
 }
 
-/* ===== EVENT PANEL ===== */
+/* ===== EVENT PANEL (KEPT EXACTLY BUT CLEANED VISUALS) ===== */
 .event-panel {
     flex: 1 1 320px;
     max-width: 400px;
     background: #ffffff;
     padding: 1.8rem;
-    border-radius: 14px;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    border-radius: 16px;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.08);
     border: 1px solid #e7e7e7;
     max-height: 650px;
     overflow-y: auto;
@@ -137,20 +151,27 @@ body {
     text-align: center;
     margin-bottom: 1rem;
     color: #1c352d;
+    font-weight: 700;
 }
 
 .event-card {
     background: #f9fafb;
     padding: 16px;
-    border-radius: 10px;
+    border-radius: 12px;
     margin-bottom: 18px;
     border-left: 5px solid #27ae60;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
 }
 
 .event-card img {
     width: 100%;
-    border-radius: 8px;
+    border-radius: 10px;
     margin-bottom: 10px;
+}
+
+.event-card p {
+    margin: 6px 0;
+    color: #444;
 }
 
 .event-card small {
@@ -268,8 +289,7 @@ stars.forEach(star => {
         const value = star.dataset.value;
         stars.forEach(s => s.classList.remove('hover'));
         stars.forEach(s => {
-            if (s.dataset.value <= value) s.classList.add('hover');
-        });
+            if (s.dataset.value <= value) s.classList.add('hover'));
     });
 
     star.addEventListener('mouseout', () => {
