@@ -55,10 +55,7 @@ exports.removeCartItem = (req, res) => {
 
     if (!req.session.cart) req.session.cart = [];
 
-    // Remove the item with matching productId
-    req.session.cart = req.session.cart.filter(
-      item => item.productId.toString() !== itemId
-    );
+    req.session.cart = req.session.cart.filter(item => String(item.productId) !== String(itemId));
 
     res.redirect('/cart');
   } catch (err) {
@@ -66,6 +63,7 @@ exports.removeCartItem = (req, res) => {
     res.redirect('/cart');
   }
 };
+
 
     // Reserve cart
     exports.reserveCart = async (req, res) => {
