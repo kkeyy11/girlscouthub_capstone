@@ -61,18 +61,20 @@ getAllAppointments: async (req, res, next) => {
     // Delete appointment
 deleteAppointment: async (req, res, next) => {
   const { id } = req.params;
+  console.log('Deleting appointment with ID:', id); // Add this line
 
   try {
     const deleted = await Appointment.findByIdAndDelete(id);
+    console.log('Deleted:', deleted); // Add this line
 
     if (!deleted) {
       return res.status(404).json({ message: 'Appointment not found' });
     }
 
-    // ✅ IMPORTANT: respond with JSON, NOT redirect
     res.status(200).json({ message: 'Appointment deleted successfully' });
 
   } catch (error) {
+    console.error(error); // Log errors
     next(error);
   }
 },
