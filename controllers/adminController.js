@@ -58,33 +58,38 @@ getAllAppointments: async (req, res, next) => {
         }
     },
 
-    // Delete appointment
+ // Delete appointment
 deleteAppointment: async (req, res, next) => {
-    const { id } = req.params;
-    console.log('🚀 Attempting to delete appointment with ID:', id);
+  const { id } = req.params;
+  console.log('🚀 Attempting to delete appointment with ID:', id);
 
-    // Validate MongoDB ObjectId
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      console.log('❌ Invalid appointment ID:', id);
-      return res.status(400).json({ message: 'Invalid appointment ID' });
+  // Validate MongoDB ObjectId
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    console.log('❌ Invalid appointment ID:', id);
+    req.flash('error', 'Invalid appointment ID.');
+    return res.redirect('/admin/appointments');
+  }
+
+  try {
+    const deleted = await Appointment.findByIdAndDelete(id);
+
+    if (!deleted) {
+      console.log('⚠️ Appointment not found for ID:', id);
+      req.flash('error', 'Appointment not found.');
+      return res.redirect('/admin/appointments');
     }
 
-    try {
-      const deleted = await Appointment.findByIdAndDelete(id);
+    console.log('✅ Successfully deleted appointment:', deleted._id);
+    req.flash('success', 'Appointment deleted successfully!');
+    return res.redirect('/admin/appointments'); // ✅ redirect instead of returning JSON
 
-      if (!deleted) {
-        console.log('⚠️ Appointment not found for ID:', id);
-        return res.status(404).json({ message: 'Appointment not found' });
-      }
+  } catch (err) {
+    console.error('❌ Error deleting appointment:', err);
+    req.flash('error', 'Server error while deleting appointment.');
+    return res.redirect('/admin/appointments');
+  }
+},
 
-      console.log('✅ Successfully deleted appointment:', deleted._id, deleted.user?.email || '');
-      return res.status(200).json({ message: 'Appointment deleted successfully' });
-
-    } catch (err) {
-      console.error('❌ Error deleting appointment:', err);
-      return res.status(500).json({ message: 'Server error' });
-    }
-  },
 
 
 
