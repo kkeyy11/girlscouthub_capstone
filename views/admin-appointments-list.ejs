@@ -744,7 +744,7 @@ tbody td {
               <th>Actions</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody id="tableBody">
             <% appointments.forEach(appointment => { %>
               <% if (appointment.user) { %>
                 <tr class="appointment-row"
@@ -782,9 +782,12 @@ tbody td {
                       <button class="action-btn btn-cancel" onclick="updateStatus(event, '<%= appointment._id %>', 'Cancelled')" title="Cancel Appointment">
                         <i class="fas fa-times"></i>
                       </button>
+                      <!-- Commented out delete button -->
+                      <!--
                       <button class="action-btn btn-delete" onclick="deleteAppointment(event, '<%= appointment._id %>')" title="Delete Appointment">
                         <i class="fas fa-trash"></i>
                       </button>
+                      -->
                     </div>
                   </td>
                 </tr>
@@ -792,6 +795,13 @@ tbody td {
             <% }); %>
           </tbody>
         </table>
+      </div>
+
+      <!-- Pagination Controls -->
+      <div id="paginationControls" style="text-align:center; margin-top: 12px;">
+        <button id="prevPage" disabled>Previous</button>
+        <span id="pageInfo"></span>
+        <button id="nextPage">Next</button>
       </div>
     <% } else { %>
       <div class="empty-state">
@@ -802,7 +812,7 @@ tbody td {
     <% } %>
   </div>
 
-  <!-- Details Modal -->
+  <!-- Details Modal (keep as-is) -->
   <div class="modal" id="detailsModal">
     <div class="modal-content">
       <button class="modal-close" onclick="closeModal()">&times;</button>
@@ -817,6 +827,42 @@ tbody td {
 </main>
 
 <script>
+
+// Pagination
+const rowsPerPage = 5;
+let currentPage = 1;
+
+const rows = Array.from(document.querySelectorAll('.appointment-row'));
+const totalPages = Math.ceil(rows.length / rowsPerPage);
+
+function renderPage(page) {
+  const start = (page - 1) * rowsPerPage;
+  const end = start + rowsPerPage;
+  rows.forEach((row, i) => {
+    row.style.display = (i >= start && i < end) ? '' : 'none';
+  });
+
+  document.getElementById('pageInfo').innerText = `Page ${page} of ${totalPages}`;
+  document.getElementById('prevPage').disabled = page === 1;
+  document.getElementById('nextPage').disabled = page === totalPages;
+}
+
+document.getElementById('prevPage').addEventListener('click', () => {
+  if (currentPage > 1) {
+    currentPage--;
+    renderPage(currentPage);
+  }
+});
+
+document.getElementById('nextPage').addEventListener('click', () => {
+  if (currentPage < totalPages) {
+    currentPage++;
+    renderPage(currentPage);
+  }
+});
+
+
+
 // Remove the old dropdown functions and add these new ones:
 
 function updateStatus(event, appointmentId, status) {
