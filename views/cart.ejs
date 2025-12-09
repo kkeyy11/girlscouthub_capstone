@@ -184,9 +184,9 @@
             <%= item.description || 'No description provided.' %>
           </span>
         </div>
-        <form action="/cancel-item/<%= item._id %>" method="POST">
-          <button type="submit" class="cancel-button">Remove</button>
-        </form>
+        <form action="/cancel-item/<%= item.productId %>" method="POST">
+  <button type="submit" class="cancel-button">Remove</button>
+</form>
       </li>
       <% }); %>
     </ul>

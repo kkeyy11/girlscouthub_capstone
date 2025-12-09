@@ -17,6 +17,9 @@ router.get('/reservations', cartController.viewReservations);
 router.post('/approve/:id', cartController.approveReservation);
 router.post('/remove/:id', cartController.removeReservation);
 
+// Remove single item from cart
+router.post('/cancel-item/:id', cartController.removeCartItem);
+
 //bago
 router.get('/reservation-history', cartController.viewReservationHistory);
 

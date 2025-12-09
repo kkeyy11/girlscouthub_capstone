@@ -48,6 +48,25 @@
       }
     };
 
+    // In your cartController.js, add this at the bottom (or near other cart methods)
+exports.removeCartItem = (req, res) => {
+  try {
+    const itemId = req.params.id;
+
+    if (!req.session.cart) req.session.cart = [];
+
+    // Remove the item with matching productId
+    req.session.cart = req.session.cart.filter(
+      item => item.productId.toString() !== itemId
+    );
+
+    res.redirect('/cart');
+  } catch (err) {
+    console.error('Error removing item from cart:', err);
+    res.redirect('/cart');
+  }
+};
+
     // Reserve cart
     exports.reserveCart = async (req, res) => {
       try {
