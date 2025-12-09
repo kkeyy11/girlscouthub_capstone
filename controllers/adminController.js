@@ -60,25 +60,31 @@ getAllAppointments: async (req, res, next) => {
 
     // Delete appointment
 deleteAppointment: async (req, res, next) => {
-  const { id } = req.params;
-  console.log('Deleting appointment with ID:', id); // ✅ log for Railway
+    const { id } = req.params;
+    console.log('🚀 Attempting to delete appointment with ID:', id);
 
-  try {
-    const deleted = await Appointment.findByIdAndDelete(id);
-
-    if (!deleted) {
-      console.log('Appointment not found:', id);
-      return res.status(404).json({ message: 'Appointment not found' });
+    // Validate MongoDB ObjectId
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      console.log('❌ Invalid appointment ID:', id);
+      return res.status(400).json({ message: 'Invalid appointment ID' });
     }
 
-    console.log('Deleted appointment:', deleted);
-    return res.status(200).json({ message: 'Appointment deleted successfully' });
+    try {
+      const deleted = await Appointment.findByIdAndDelete(id);
 
-  } catch (err) {
-    console.error('Error deleting appointment:', err);
-    return res.status(500).json({ message: 'Server error' });
-  }
-},
+      if (!deleted) {
+        console.log('⚠️ Appointment not found for ID:', id);
+        return res.status(404).json({ message: 'Appointment not found' });
+      }
+
+      console.log('✅ Successfully deleted appointment:', deleted._id, deleted.user?.email || '');
+      return res.status(200).json({ message: 'Appointment deleted successfully' });
+
+    } catch (err) {
+      console.error('❌ Error deleting appointment:', err);
+      return res.status(500).json({ message: 'Server error' });
+    }
+  },
 
 
 

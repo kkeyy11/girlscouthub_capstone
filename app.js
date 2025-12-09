@@ -167,12 +167,19 @@ app.use((err, req, res, next) => {
 // ----------------------
 function ensureAdmin(req, res, next) {
   if (req.user && req.user.role === 'admin') {
-    next();
-  } else {
-    req.flash('warning', 'You are not authorized');
-    res.redirect('/');
+    return next();
   }
+
+  if (req.xhr || req.headers.accept.indexOf('json') > -1) {
+    // JSON/fetch request
+    return res.status(403).json({ message: 'Unauthorized' });
+  }
+
+  // Regular browser request
+  req.flash('warning', 'You are not authorized');
+  return res.redirect('/');
 }
+
 
 // ----------------------
 // Connect to MongoDB & start server
