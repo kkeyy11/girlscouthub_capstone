@@ -61,21 +61,22 @@ getAllAppointments: async (req, res, next) => {
     // Delete appointment
 deleteAppointment: async (req, res, next) => {
   const { id } = req.params;
-  console.log('Deleting appointment with ID:', id); // Add this line
+  console.log('Deleting appointment with ID:', id); // ✅ log for Railway
 
   try {
     const deleted = await Appointment.findByIdAndDelete(id);
-    console.log('Deleted:', deleted); // Add this line
 
     if (!deleted) {
+      console.log('Appointment not found:', id);
       return res.status(404).json({ message: 'Appointment not found' });
     }
 
-    res.status(200).json({ message: 'Appointment deleted successfully' });
+    console.log('Deleted appointment:', deleted);
+    return res.status(200).json({ message: 'Appointment deleted successfully' });
 
-  } catch (error) {
-    console.error(error); // Log errors
-    next(error);
+  } catch (err) {
+    console.error('Error deleting appointment:', err);
+    return res.status(500).json({ message: 'Server error' });
   }
 },
 
