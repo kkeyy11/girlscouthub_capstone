@@ -3,7 +3,7 @@ const Sentiment = require('sentiment');
 const sentiment = new Sentiment();
 const { spawn } = require('child_process');
 const path = require('path');
-const Event = require('../models/event.model');
+const Event = require('../models/Event');
 
 /* Simple English detector */
 function isEnglish(text) {
