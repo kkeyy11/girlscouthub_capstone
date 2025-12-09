@@ -30,10 +30,10 @@
 /* Card Styling */
 .card {
   border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
   transition: transform 0.2s;
 }
-.card:hover { transform: translateY(-4px); }
+.card:hover { transform: translateY(-3px); }
 
 .form-control, .form-select {
   border-radius: 8px;
@@ -46,7 +46,7 @@
   box-shadow: 0 0 0 0.2rem rgba(5,150,105,0.25);
 }
 
-/* Layout Adjustments */
+/* Layout */
 main.container-fluid {
   margin-left: 220px;
   padding-top: 100px;
@@ -63,18 +63,61 @@ main.container-fluid {
 
 .col-xl-3, .col-lg-4, .col-md-6 { min-width: 280px; }
 
-.card img { max-height: 150px; object-fit: cover; }
+/* Squarish flashcards */
+.card.flashcard {
+  aspect-ratio: 1 / 1; /* squarish */
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.card.flashcard img {
+  height: 50%;
+  object-fit: cover;
+  border-radius: 8px;
+}
+.card.flashcard h5 {
+  font-size: 1rem;
+  margin: 0.5rem 0 0 0;
+}
+.card.flashcard small {
+  font-size: 0.8rem;
+  color: var(--text-light);
+}
 
 /* Calendar */
 #calendar {
   max-height: 600px;
-  overflow-y: auto;
   border-radius: 12px;
   padding: 10px;
+  background-color: #fff;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.05);
+  font-family: 'Inter', sans-serif;
 }
 
 /* Modal Event Cards */
 .modal-body .card { margin-bottom: 15px; }
+
+/* FullCalendar theming */
+.fc .fc-toolbar-title {
+  font-weight: 600;
+  font-size: 1.2rem;
+}
+.fc .fc-button {
+  background-color: var(--primary);
+  border: none;
+  color: var(--white);
+  border-radius: 6px;
+}
+.fc .fc-button:hover { background-color: var(--primary-dark); }
+.fc .fc-daygrid-event {
+  background-color: var(--primary);
+  color: var(--white);
+  border-radius: 6px;
+  font-size: 0.85rem;
+  padding: 2px 4px;
+}
+.fc .fc-event-time { display: none; }
 
 @media (max-width: 1200px) {
   main.container-fluid { margin-left: 0; padding-top: 120px; }
@@ -119,16 +162,16 @@ main.container-fluid {
     <!-- ✅ RIGHT: FLASHCARDS -->
     <div class="col-xl-3 col-lg-4 col-md-6">
       <% events.slice(0,3).forEach(event => { %>
-        <div class="card mb-3 p-3">
+        <div class="card flashcard p-3">
           <% if (event.image) { %>
-            <img src="/uploads/events/<%= event.image %>" alt="<%= event.title %>" class="img-fluid rounded mb-2">
+            <img src="/uploads/events/<%= event.image %>" alt="<%= event.title %>">
           <% } else { %>
-            <img src="/images/placeholder.png" alt="No Image" class="img-fluid rounded mb-2">
+            <img src="/images/placeholder.png" alt="No Image">
           <% } %>
-          <h5><%= event.title %></h5>
-          <small>
-            <%= event.date.toDateString() %> • <%= event.time %> - <%= event.endTime %>
-          </small>
+          <div>
+            <h5><%= event.title %></h5>
+            <small><%= event.date.toDateString() %> • <%= event.time %> - <%= event.endTime %></small>
+          </div>
           <div class="mt-2 d-flex gap-2 flex-wrap">
             <button class="btn btn-sm btn-outline-primary"
               onclick="editEvent(
@@ -168,16 +211,16 @@ main.container-fluid {
       </div>
       <div class="modal-body">
         <% events.slice(3).forEach(event => { %>
-          <div class="card p-3">
+          <div class="card flashcard p-3">
             <% if (event.image) { %>
-              <img src="/uploads/events/<%= event.image %>" alt="<%= event.title %>" class="img-fluid rounded mb-2">
+              <img src="/uploads/events/<%= event.image %>" alt="<%= event.title %>">
             <% } else { %>
-              <img src="/images/placeholder.png" alt="No Image" class="img-fluid rounded mb-2">
+              <img src="/images/placeholder.png" alt="No Image">
             <% } %>
-            <h5><%= event.title %></h5>
-            <small>
-              <%= event.date.toDateString() %> • <%= event.time %> - <%= event.endTime %>
-            </small>
+            <div>
+              <h5><%= event.title %></h5>
+              <small><%= event.date.toDateString() %> • <%= event.time %> - <%= event.endTime %></small>
+            </div>
             <div class="mt-2 d-flex gap-2 flex-wrap">
               <button class="btn btn-sm btn-outline-primary"
                 onclick="editEvent(
@@ -258,4 +301,3 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 
 <%- include('./layouts/footer') %>
-  
