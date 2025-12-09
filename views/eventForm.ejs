@@ -3,230 +3,615 @@
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 
 <style>
 :root {
-  --primary: #059669;
-  --primary-light: #10b981;
+  --primary: #10b981;
+  --primary-light: #d1fae5;
   --primary-dark: #047857;
-  --secondary: #34d399;
-  --accent: #6ee7b7;
-  --text: #1f2937;
+  --text-dark: #1f2937;
   --text-light: #6b7280;
+  --text-lighter: #9ca3af;
+  --bg-light: #f9fafb;
+  --border: #e5e7eb;
   --white: #ffffff;
 }
 
-/* Page Title */
-.page-title {
-  font-size: 1.8rem;
-  font-weight: 700;
-  background: linear-gradient(135deg, var(--primary), var(--primary-light));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  margin-bottom: 0.5rem;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-/* Form & Cards */
-.card {
-  border-radius: 12px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
-  transition: transform 0.2s;
-}
-.card:hover { transform: translateY(-2px); }
-
-.form-control, .form-select {
-  border-radius: 8px;
-  border: 1px solid #d1d5db;
-  padding-left: 2rem;
-  transition: all 0.3s;
-}
-.form-control:focus, .form-select:focus {
-  border-color: var(--primary);
-  box-shadow: 0 0 0 0.2rem rgba(5,150,105,0.25);
+body {
+  background-color: var(--bg-light);
+  color: var(--text-dark);
 }
 
-/* Layout */
+/* Page Layout */
 main.container-fluid {
   margin-left: 220px;
-  padding-top: 80px;
-  background-color: #fefbfb;
+  padding-top: 100px;
+  padding-left: 2rem;
+  padding-right: 2rem;
   min-height: 100vh;
 }
 
-.row.g-4 {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  justify-content: flex-start;
+/* Page Header */
+.page-header {
+  margin-bottom: 2rem;
 }
 
-.col-xl-3, .col-lg-4, .col-md-6 { min-width: 260px; }
+.page-header h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 0.5rem;
+}
 
-/* Flashcards */
-.card.flashcard {
-  width: 100%;
-  max-width: 220px;
-  height: 220px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 0.5rem;
-}
-.card.flashcard img {
-  width: 100%;
-  height: 50%;
-  object-fit: cover;
-  border-radius: 8px;
-}
-.card.flashcard h5 {
-  font-size: 1rem;
-  margin: 0.25rem 0;
-}
-.card.flashcard small {
-  font-size: 0.75rem;
+.page-header p {
   color: var(--text-light);
+  font-size: 1rem;
 }
 
-/* Calendar */
-#calendar {
-  background-color: #fff;
-  border-radius: 12px;
-  padding: 10px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.05);
-  font-family: 'Inter', sans-serif;
+/* Main Layout Grid */
+.layout-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr 1.1fr;
+  gap: 2rem;
+  align-items: start;
 }
+
+/* Form Card */
+.form-card {
+  background: var(--white);
+  border-radius: 16px;
+  padding: 2rem;
+  border: 1px solid var(--border);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  height: fit-content;
+}
+
+.form-card h2 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.form-card h2 i {
+  color: var(--primary);
+}
+
+.form-group {
+  margin-bottom: 1.2rem;
+}
+
+.form-group label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.form-control, .form-select {
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  background-color: var(--white);
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+  outline: none;
+}
+
+.form-control::placeholder {
+  color: var(--text-lighter);
+}
+
+textarea.form-control {
+  resize: vertical;
+  min-height: 90px;
+}
+
+.btn-primary-submit {
+  width: 100%;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  border: none;
+  color: var(--white);
+  padding: 0.9rem 1.5rem;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.btn-primary-submit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(16, 185, 129, 0.3);
+}
+
+.btn-primary-submit:active {
+  transform: translateY(0);
+}
+
+/* Calendar Card */
+.calendar-card {
+  background: var(--white);
+  border-radius: 16px;
+  padding: 1.5rem;
+  border: 1px solid var(--border);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.calendar-card h2 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.calendar-card h2 i {
+  color: var(--primary);
+}
+
+/* FullCalendar Styling */
+#calendar {
+  font-family: inherit;
+}
+
 .fc {
-  --fc-border-color: #e5e7eb;
+  --fc-border-color: var(--border);
+  --fc-button-text-color: var(--text-dark);
+  --fc-button-border-color: var(--border);
+  --fc-button-bg-color: var(--white);
+  --fc-button-hover-bg-color: var(--bg-light);
+  --fc-button-hover-border-color: var(--border);
   --fc-event-bg-color: var(--primary);
   --fc-event-border-color: var(--primary-dark);
-  --fc-event-text-color: #fff;
+  --fc-event-text-color: var(--white);
+  --fc-highlight-color: rgba(16, 185, 129, 0.05);
 }
-.fc .fc-daygrid-day-number {
+
+.fc .fc-button-primary {
+  background-color: var(--primary);
+  border-color: var(--primary);
+  color: var(--white);
   font-weight: 500;
-  color: var(--text);
 }
-.fc .fc-daygrid-day:hover {
-  background-color: #f0fdf4;
-  cursor: default;
+
+.fc .fc-button-primary:hover {
+  background-color: var(--primary-dark);
+  border-color: var(--primary-dark);
 }
+
+.fc .fc-button-primary.fc-button-active {
+  background-color: var(--primary-dark);
+  border-color: var(--primary-dark);
+}
+
+.fc .fc-col-header-cell {
+  padding: 1rem 0;
+  font-weight: 600;
+  color: var(--text-dark);
+  border-color: var(--border);
+}
+
+.fc .fc-daygrid-day-number {
+  padding: 0.5rem;
+  color: var(--text-dark);
+  font-weight: 500;
+}
+
+.fc .fc-daygrid-day {
+  border-color: var(--border);
+}
+
+.fc .fc-daygrid-day-frame {
+  min-height: 100px;
+}
+
 .fc .fc-daygrid-event {
   border-radius: 6px;
   font-size: 0.8rem;
-  padding: 2px 4px;
-}
-.fc .fc-button {
-  background-color: var(--primary);
+  margin: 2px 2px;
+  padding: 3px 5px;
   border: none;
-  color: #fff;
-  border-radius: 6px;
-  font-size: 0.85rem;
 }
-.fc .fc-button:hover { background-color: var(--primary-dark); }
 
-/* Modal Events */
-.modal-body .card { margin-bottom: 0.8rem; }
+.fc .fc-daygrid-day.fc-day-other {
+  background-color: rgba(0, 0, 0, 0.02);
+}
 
-@media (max-width: 1200px) {
-  main.container-fluid { margin-left: 0; padding-top: 100px; }
-  .row.g-4 { justify-content: center; }
-  #calendar { max-height: 400px; }
+.fc .fc-daygrid-day:hover {
+  background-color: var(--primary-light);
+}
+
+/* Events Cards */
+.events-card {
+  background: var(--white);
+  border-radius: 16px;
+  padding: 1.5rem;
+  border: 1px solid var(--border);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.events-card h2 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.events-card h2 i {
+  color: var(--primary);
+}
+
+.events-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-height: 620px;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+}
+
+.events-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.events-container::-webkit-scrollbar-track {
+  background: var(--bg-light);
+  border-radius: 10px;
+}
+
+.events-container::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 10px;
+}
+
+.events-container::-webkit-scrollbar-thumb:hover {
+  background: var(--text-lighter);
+}
+
+.event-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  background: var(--bg-light);
+}
+
+.event-item:hover {
+  border-color: var(--primary);
+  background: var(--primary-light);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
+}
+
+.event-image {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.event-title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  line-height: 1.3;
+}
+
+.event-time {
+  font-size: 0.85rem;
+  color: var(--text-light);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.event-time i {
+  color: var(--primary);
+}
+
+.event-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.btn-edit, .btn-delete {
+  flex: 1;
+  padding: 0.6rem 0.75rem;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-edit {
+  background: var(--primary);
+  color: var(--white);
+  border-color: var(--primary);
+}
+
+.btn-edit:hover {
+  background: var(--primary-dark);
+  border-color: var(--primary-dark);
+  transform: translateY(-1px);
+}
+
+.btn-delete {
+  background: var(--white);
+  color: #dc2626;
+  border-color: #fecaca;
+}
+
+.btn-delete:hover {
+  background: #fee2e2;
+  border-color: #dc2626;
+  transform: translateY(-1px);
+}
+
+.view-all-btn {
+  width: 100%;
+  padding: 0.85rem;
+  background: var(--primary);
+  color: var(--white);
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.view-all-btn:hover {
+  background: var(--primary-dark);
+  transform: translateY(-2px);
+}
+
+/* Modal */
+.modal-content {
+  border-radius: 16px;
+  border: none;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+}
+
+.modal-header {
+  border-bottom: 1px solid var(--border);
+  padding: 1.5rem;
+}
+
+.modal-header h5 {
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+.modal-body {
+  padding: 1.5rem;
+}
+
+.btn-close {
+  background-color: var(--bg-light);
+}
+
+/* Responsive Design */
+@media (max-width: 1400px) {
+  .layout-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  .events-card {
+    grid-column: 1 / -1;
+  }
+  
+  .events-container {
+    max-height: 300px;
+  }
+}
+
+@media (max-width: 1024px) {
+  main.container-fluid {
+    margin-left: 0;
+    padding-top: 100px;
+  }
+  
+  .layout-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .form-card, .calendar-card, .events-card {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  main.container-fluid {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  .page-header h1 {
+    font-size: 1.8rem;
+  }
+  
+  .form-card, .calendar-card, .events-card {
+    padding: 1.5rem;
+  }
 }
 </style>
 
-<main class="container-fluid">
-  <div class="row g-4">
+<div class="page-header">
+  <h1><i class="fas fa-calendar-alt" style="color: var(--primary);"></i> Event Management</h1>
+  <p>Create, view, and manage all your Girl Scout events in one place</p>
+</div>
 
-    <!-- FORM -->
-    <div class="col-xl-3 col-lg-4 col-md-6">
-      <div class="card p-3">
-        <h2 class="page-title">Create / Edit Event</h2>
-        <form action="/admin/event" method="POST" enctype="multipart/form-data" id="eventForm">
-          <input type="hidden" name="id" id="eventId">
+<main class="layout-grid">
 
-          <input class="form-control mb-2" name="title" id="title" placeholder="Title" required>
-          <textarea class="form-control mb-2" name="description" id="description" placeholder="Description" rows="2" required></textarea>
-          <input type="date" class="form-control mb-2" name="date" id="date" required>
-          <input type="time" class="form-control mb-2" name="time" id="time" required>
-          <input type="date" class="form-control mb-2" name="endDate" id="endDate" required>
-          <input type="time" class="form-control mb-2" name="endTime" id="endTime" required>
-          <input class="form-control mb-2" name="location" id="location" placeholder="Location" required>
+  <!-- FORM SECTION -->
+  <div class="form-card">
+    <h2><i class="fas fa-plus-circle"></i> Create / Edit Event</h2>
+    <form action="/admin/event" method="POST" enctype="multipart/form-data" id="eventForm">
+      <input type="hidden" name="id" id="eventId">
 
-          <input type="file" class="form-control mb-2" name="image">
-
-          <button class="btn btn-success w-100" id="submitBtn">Create Event</button>
-        </form>
+      <div class="form-group">
+        <label for="title">Event Title</label>
+        <input type="text" class="form-control" name="title" id="title" placeholder="e.g., Cookie Sales Training" required>
       </div>
-    </div>
 
-    <!-- CALENDAR -->
-    <div class="col-xl-4 col-lg-4 col-md-6">
-      <div class="card p-2">
-        <div id="calendar"></div>
+      <div class="form-group">
+        <label for="description">Description</label>
+        <textarea class="form-control" name="description" id="description" placeholder="Describe your event..." required></textarea>
       </div>
-    </div>
 
-    <!-- FLASHCARDS -->
-    <div class="col-xl-3 col-lg-4 col-md-6 d-flex flex-wrap justify-content-start gap-2">
-      <% events.slice(0,3).forEach(event => { %>
-        <div class="card flashcard">
+      <div class="form-group">
+        <label for="date">Start Date</label>
+        <input type="date" class="form-control" name="date" id="date" required>
+      </div>
+
+      <div class="form-group">
+        <label for="time">Start Time</label>
+        <input type="time" class="form-control" name="time" id="time" required>
+      </div>
+
+      <div class="form-group">
+        <label for="endDate">End Date</label>
+        <input type="date" class="form-control" name="endDate" id="endDate" required>
+      </div>
+
+      <div class="form-group">
+        <label for="endTime">End Time</label>
+        <input type="time" class="form-control" name="endTime" id="endTime" required>
+      </div>
+
+      <div class="form-group">
+        <label for="location">Location</label>
+        <input type="text" class="form-control" name="location" id="location" placeholder="Event location" required>
+      </div>
+
+      <div class="form-group">
+        <label for="image">Event Image</label>
+        <input type="file" class="form-control" name="image">
+        <small style="color: var(--text-lighter);">JPG, PNG (Max 5MB)</small>
+      </div>
+
+      <button type="submit" class="btn-primary-submit" id="submitBtn">
+        <i class="fas fa-save"></i> Create Event
+      </button>
+    </form>
+  </div>
+
+  <!-- CALENDAR SECTION -->
+  <div class="calendar-card">
+    <h2><i class="fas fa-calendar"></i> Event Calendar</h2>
+    <div id="calendar"></div>
+  </div>
+
+  <!-- EVENTS SECTION -->
+  <div class="events-card">
+    <h2><i class="fas fa-star"></i> Recent Events</h2>
+    <div class="events-container">
+      <% events.slice(0, 3).forEach(event => { %>
+        <div class="event-item">
           <% if (event.image) { %>
-            <img src="/uploads/events/<%= event.image %>" alt="<%= event.title %>">
+            <img src="/uploads/events/<%= event.image %>" alt="<%= event.title %>" class="event-image">
           <% } else { %>
-            <img src="/images/placeholder.png" alt="No Image">
+            <img src="/images/placeholder.png" alt="No Image" class="event-image">
           <% } %>
-          <div>
-            <h5><%= event.title %></h5>
-            <small><%= event.date.toDateString() %> • <%= event.time %> - <%= event.endTime %></small>
+          <h3 class="event-title"><%= event.title %></h3>
+          <div class="event-time">
+            <i class="fas fa-clock"></i>
+            <%= event.date.toDateString() %> • <%= event.time %>
           </div>
-          <div class="d-flex gap-1 mt-1">
-            <button class="btn btn-sm btn-outline-primary"
-              onclick="editEvent(
-                '<%= event._id %>',
-                '<%= event.title %>',
-                '<%= event.description %>',
-                '<%= event.date.toISOString().split('T')[0] %>',
-                '<%= event.time %>',
-                '<%= event.endDate ? event.endDate.toISOString().split('T')[0] : '' %>',
-                '<%= event.endTime || '' %>',
-                '<%= event.location %>'
-              )">Edit</button>
-            <form action="/admin/event/delete/<%= event._id %>" method="POST">
-              <button class="btn btn-sm btn-outline-danger">Delete</button>
+          <div class="event-actions">
+            <button class="btn-edit" onclick="editEvent(
+              '<%= event._id %>',
+              '<%= event.title %>',
+              '<%= event.description %>',
+              '<%= event.date.toISOString().split('T')[0] %>',
+              '<%= event.time %>',
+              '<%= event.endDate ? event.endDate.toISOString().split('T')[0] : '' %>',
+              '<%= event.endTime || '' %>',
+              '<%= event.location %>'
+            )">
+              <i class="fas fa-edit"></i> Edit
+            </button>
+            <form action="/admin/event/delete/<%= event._id %>" method="POST" style="flex: 1;">
+              <button type="submit" class="btn-delete" style="width: 100;">
+                <i class="fas fa-trash"></i> Delete
+              </button>
             </form>
           </div>
         </div>
       <% }) %>
-      <% if (events.length > 3) { %>
-        <button class="btn btn-primary mt-2" data-bs-toggle="modal" data-bs-target="#allEventsModal">View All Events</button>
-      <% } %>
     </div>
-
+    <% if (events.length > 3) { %>
+      <button class="view-all-btn" data-bs-toggle="modal" data-bs-target="#allEventsModal" style="margin-top: 1rem;">
+        <i class="fas fa-arrow-right"></i> View All Events
+      </button>
+    <% } %>
   </div>
+
 </main>
 
-<!-- Modal All Events -->
+<!-- Modal: All Events -->
 <div class="modal fade" id="allEventsModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-scrollable">
+  <div class="modal-dialog modal-dialog-scrollable" style="max-width: 500px;">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">All Events</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        <h5 class="modal-title">
+          <i class="fas fa-list" style="color: var(--primary); margin-right: 0.5rem;"></i>
+          All Events
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <% events.slice(3).forEach(event => { %>
-          <div class="card flashcard">
-            <% if (event.image) { %>
-              <img src="/uploads/events/<%= event.image %>" alt="<%= event.title %>">
-            <% } else { %>
-              <img src="/images/placeholder.png" alt="No Image">
-            <% } %>
-            <div>
-              <h5><%= event.title %></h5>
-              <small><%= event.date.toDateString() %> • <%= event.time %> - <%= event.endTime %></small>
-            </div>
-            <div class="d-flex gap-1 mt-1">
-              <button class="btn btn-sm btn-outline-primary"
-                onclick="editEvent(
+        <div class="events-container" style="max-height: 500px; padding-right: 0;">
+          <% events.slice(3).forEach(event => { %>
+            <div class="event-item">
+              <% if (event.image) { %>
+                <img src="/uploads/events/<%= event.image %>" alt="<%= event.title %>" class="event-image">
+              <% } else { %>
+                <img src="/images/placeholder.png" alt="No Image" class="event-image">
+              <% } %>
+              <h3 class="event-title"><%= event.title %></h3>
+              <div class="event-time">
+                <i class="fas fa-clock"></i>
+                <%= event.date.toDateString() %> • <%= event.time %>
+              </div>
+              <div class="event-actions">
+                <button class="btn-edit" onclick="editEvent(
                   '<%= event._id %>',
                   '<%= event.title %>',
                   '<%= event.description %>',
@@ -235,13 +620,18 @@ main.container-fluid {
                   '<%= event.endDate ? event.endDate.toISOString().split('T')[0] : '' %>',
                   '<%= event.endTime || '' %>',
                   '<%= event.location %>'
-                )">Edit</button>
-              <form action="/admin/event/delete/<%= event._id %>" method="POST">
-                <button class="btn btn-sm btn-outline-danger">Delete</button>
-              </form>
+                )">
+                  <i class="fas fa-edit"></i> Edit
+                </button>
+                <form action="/admin/event/delete/<%= event._id %>" method="POST" style="flex: 1;">
+                  <button type="submit" class="btn-delete" style="width: 100%;">
+                    <i class="fas fa-trash"></i> Delete
+                  </button>
+                </form>
+              </div>
             </div>
-          </div>
-        <% }) %>
+          <% }) %>
+        </div>
       </div>
     </div>
   </div>
@@ -254,13 +644,13 @@ main.container-fluid {
 document.getElementById('eventForm').addEventListener('submit', function() {
   const btn = document.getElementById('submitBtn');
   btn.disabled = true;
-  btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Creating...';
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating...';
 });
 
 function editEvent(id, title, description, date, time, endDate, endTime, location) {
   const form = document.getElementById('eventForm');
   form.action = `/admin/event/${id}`;
-  document.getElementById('submitBtn').innerText = 'Update Event';
+  document.getElementById('submitBtn').innerHTML = '<i class="fas fa-update"></i> Update Event';
 
   document.getElementById('title').value = title || '';
   document.getElementById('description').value = description || '';
@@ -269,6 +659,8 @@ function editEvent(id, title, description, date, time, endDate, endTime, locatio
   document.getElementById('endDate').value = endDate || '';
   document.getElementById('endTime').value = endTime || '';
   document.getElementById('location').value = location || '';
+  
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 document.addEventListener('DOMContentLoaded', function () {
