@@ -3,6 +3,7 @@ const Sentiment = require('sentiment');
 const sentiment = new Sentiment();
 const { spawn } = require('child_process');
 const path = require('path');
+const Event = require('../models/event.model');
 
 /* Simple English detector */
 function isEnglish(text) {
@@ -15,7 +16,8 @@ function isEnglish(text) {
 exports.getUserReviews = async (req, res) => {
   try {
     const reviews = await Review.find({ user: req.user._id });
-    res.render('review-user', { reviews });
+    const events = await Event.find().sort({ date: 1 }); // upcoming events
+    res.render('review-user', { reviews, events });
   } catch (err) {
     console.error(err);
     res.status(500).send("Error loading reviews");
