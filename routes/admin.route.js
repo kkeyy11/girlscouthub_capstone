@@ -19,7 +19,7 @@ router.get('/appointments-list', adminController.getAllAppointments);
 router.post('/appointments/update-status/:id/:status', adminController.updateAppointmentStatus);
 
 
-router.post(
+router.delete(
   '/appointments/delete/:id',
   adminController.deleteAppointment
 );

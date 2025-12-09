@@ -844,18 +844,20 @@ async function deleteAppointment(event, appointmentId) {
 
   try {
     const response = await fetch(`/admin/appointments/delete/${appointmentId}`, {
-      method: 'POST',
+      method: 'DELETE',  // <- Use DELETE now
       headers: {
         'Accept': 'application/json'
       },
-      credentials: 'same-origin' // <-- Add this line
+      credentials: 'same-origin' // ensures session cookies are sent
     });
 
     if (response.ok) {
       const row = button.closest('tr');
       row.remove();
+      showSuccessMessage('Appointment deleted successfully!');
     } else {
-      alert('Failed to delete appointment.');
+      const data = await response.json();
+      alert(data.message || 'Failed to delete appointment.');
       button.classList.remove('loading');
       button.disabled = false;
     }
@@ -866,6 +868,7 @@ async function deleteAppointment(event, appointmentId) {
     button.disabled = false;
   }
 }
+
 
 
 
