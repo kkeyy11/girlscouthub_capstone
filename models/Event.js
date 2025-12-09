@@ -5,11 +5,10 @@ const eventSchema = new mongoose.Schema({
   description: { type: String, required: true },
   date: { type: Date, required: true },
   time: { type: String, required: true },
+  endDate: { type: Date, required: true },    // ✅ new
+  endTime: { type: String, required: true },  // ✅ new
   location: { type: String, required: true },
-
-  // ✅ NEW
-  image: { type: String }, // stores filename only
-
+  image: { type: String },
   createdAt: { type: Date, default: Date.now }
 });
 

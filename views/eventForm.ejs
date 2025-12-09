@@ -97,6 +97,10 @@ main.container-fluid {
           <textarea class="form-control mb-3" name="description" id="description" placeholder="Description" rows="3" required></textarea>
           <input type="date" class="form-control mb-3" name="date" id="date" required>
           <input type="time" class="form-control mb-3" name="time" id="time" required>
+
+          <!-- ✅ End Date & Time -->
+<input type="date" class="form-control mb-3" name="endDate" id="endDate" required>
+<input type="time" class="form-control mb-3" name="endTime" id="endTime" required>
           <input class="form-control mb-3" name="location" id="location" placeholder="Location" required>
 
           <!-- ✅ Image upload -->
@@ -120,7 +124,7 @@ main.container-fluid {
           <small><%= event.date.toDateString() %> • <%= event.time %></small>
           <div class="mt-2 d-flex gap-2 flex-wrap">
             <button class="btn btn-sm btn-outline-primary"
-              onclick="editEvent('<%= event._id %>', '<%= event.title %>', '<%= event.description %>', '<%= event.date.toISOString().split('T')[0] %>', '<%= event.time %>', '<%= event.location %>')">
+              onclick="editEvent('<%= event._id %>', '<%= event.title %>', '<%= event.description %>', '<%= event.date.toISOString().split('T')[0] %>', '<%= event.time %>', '<%= event.endDate ? event.endDate.toISOString().split('T')[0] : '' %>', '<%= event.endTime || '' %>', '<%= event.location %>')">
               Edit
             </button>
             <form action="/admin/event/delete/<%= event._id %>" method="POST">
@@ -165,7 +169,7 @@ main.container-fluid {
             <small><%= event.date.toDateString() %> • <%= event.time %></small>
             <div class="mt-2 d-flex gap-2 flex-wrap">
               <button class="btn btn-sm btn-outline-primary"
-                onclick="editEvent('<%= event._id %>', '<%= event.title %>', '<%= event.description %>', '<%= event.date.toISOString().split('T')[0] %>', '<%= event.time %>', '<%= event.location %>')">
+                onclick="editEvent('<%= event._id %>', '<%= event.title %>', '<%= event.description %>', '<%= event.date.toISOString().split('T')[0] %>', '<%= event.time %>', '<%= event.endDate ? event.endDate.toISOString().split('T')[0] : '' %>', '<%= event.endTime || '' %>', '<%= event.location %>')">
                 Edit
               </button>
               <form action="/admin/event/delete/<%= event._id %>" method="POST">
@@ -192,7 +196,7 @@ document.getElementById('eventForm').addEventListener('submit', function(e) {
 });
 
 // Edit Event
-function editEvent(id, title, description, date, time, location) {
+function editEvent(id, title, description, date, time, endDate, endTime, location) {
   const form = document.getElementById('eventForm');
   form.action = `/admin/event/${id}`;
   document.getElementById('submitBtn').innerText = 'Update Event';
@@ -201,6 +205,8 @@ function editEvent(id, title, description, date, time, location) {
   description && (document.getElementById('description').value = description);
   date && (document.getElementById('date').value = date);
   time && (document.getElementById('time').value = time);
+  endDate && (document.getElementById('endDate').value = endDate); // ✅ new
+  endTime && (document.getElementById('endTime').value = endTime); // ✅ new
   location && (document.getElementById('location').value = location);
 }
 

@@ -12,56 +12,74 @@ const eventController = {
 
   // ✅ Create event
   createEvent: async (req, res) => {
-    try {
-      const { title, description, date, time, location } = req.body;
+  try {
+    const { title, description, date, time, endDate, endTime, location } = req.body;
 
-      const event = new Event({
-        title,
-        description,
-        date,
-        time,
-        location,
-        image: req.file ? req.file.filename : null
-      });
-
-      await event.save();
-      res.redirect('/admin/event');
-    } catch (error) {
-      console.error('Error creating event:', error);
-      req.flash('error', 'Failed to create event. Please check your input.');
-      res.redirect('/admin/event');
+    // ✅ Validation: end cannot be before start
+    const start = new Date(`${date}T${time}`);
+    const end = new Date(`${endDate}T${endTime}`);
+    if (end < start) {
+      req.flash('error', 'End date/time cannot be before start date/time.');
+      return res.redirect('/admin/event');
     }
-  },
+
+    const event = new Event({
+      title,
+      description,
+      date,
+      time,
+      endDate,
+      endTime,
+      location,
+      image: req.file ? req.file.filename : null
+    });
+
+    await event.save();
+    res.redirect('/admin/event');
+  } catch (error) {
+    console.error('Error creating event:', error);
+    req.flash('error', 'Failed to create event. Please check your input.');
+    res.redirect('/admin/event');
+  }
+},
 
   // ✅ Update event
   updateEvent: async (req, res) => {
-    try {
-      const { id } = req.params;
-      const event = await Event.findById(id);
+  try {
+    const { id } = req.params;
+    const { title, description, date, time, endDate, endTime, location } = req.body;
 
-      if (!event) {
-        req.flash('error', 'Event not found');
-        return res.redirect('/admin/event');
-      }
-
-      // Delete old image if new one uploaded
-      if (req.file && event.image) {
-        const oldImagePath = path.join('public/uploads/events', event.image);
-        if (fs.existsSync(oldImagePath)) fs.unlinkSync(oldImagePath);
-      }
-
-      await Event.findByIdAndUpdate(id, {
-        ...req.body,
-        image: req.file ? req.file.filename : event.image
-      });
-
-      res.redirect('/admin/event');
-    } catch (error) {
-      console.error('Error updating event:', error);
-      req.flash('error', 'Failed to update event');
-      res.redirect('/admin/event');
+    const start = new Date(`${date}T${time}`);
+    const end = new Date(`${endDate}T${endTime}`);
+    if (end < start) {
+      req.flash('error', 'End date/time cannot be before start date/time.');
+      return res.redirect('/admin/event');
     }
-  },
+
+    const event = await Event.findById(id);
+    if (!event) {
+      req.flash('error', 'Event not found');
+      return res.redirect('/admin/event');
+    }
+
+    // Delete old image if new uploaded
+    if (req.file && event.image) {
+      const oldImagePath = path.join('public/uploads/events', event.image);
+      if (fs.existsSync(oldImagePath)) fs.unlinkSync(oldImagePath);
+    }
+
+    await Event.findByIdAndUpdate(id, {
+      title, description, date, time, endDate, endTime, location,
+      image: req.file ? req.file.filename : event.image
+    });
+
+    res.redirect('/admin/event');
+  } catch (error) {
+    console.error('Error updating event:', error);
+    req.flash('error', 'Failed to update event');
+    res.redirect('/admin/event');
+  }
+},
 
   // ✅ Delete event
   deleteEvent: async (req, res) => {
