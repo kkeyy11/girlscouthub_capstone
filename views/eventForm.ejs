@@ -84,7 +84,7 @@ main.container-fluid {
 </style>
 
 <main class="container-fluid">
-  <div class="row g-4 justify-content-center">
+  <div class="row g-4 justify-content-start">
 
     <!-- ✅ LEFT: FORM -->
     <div class="col-xl-3 col-lg-4 col-md-6">
@@ -97,10 +97,8 @@ main.container-fluid {
           <textarea class="form-control mb-3" name="description" id="description" placeholder="Description" rows="3" required></textarea>
           <input type="date" class="form-control mb-3" name="date" id="date" required>
           <input type="time" class="form-control mb-3" name="time" id="time" required>
-
-          <!-- ✅ End Date & Time -->
-<input type="date" class="form-control mb-3" name="endDate" id="endDate" required>
-<input type="time" class="form-control mb-3" name="endTime" id="endTime" required>
+          <input type="date" class="form-control mb-3" name="endDate" id="endDate" required>
+          <input type="time" class="form-control mb-3" name="endTime" id="endTime" required>
           <input class="form-control mb-3" name="location" id="location" placeholder="Location" required>
 
           <!-- ✅ Image upload -->
@@ -111,7 +109,14 @@ main.container-fluid {
       </div>
     </div>
 
-    <!-- ✅ MIDDLE: FLASHCARDS -->
+    <!-- ✅ CENTER: CALENDAR -->
+    <div class="col-xl-4 col-lg-4 col-md-6">
+      <div class="card p-3">
+        <div id="calendar"></div>
+      </div>
+    </div>
+
+    <!-- ✅ RIGHT: FLASHCARDS -->
     <div class="col-xl-3 col-lg-4 col-md-6">
       <% events.slice(0,3).forEach(event => { %>
         <div class="card mb-3 p-3">
@@ -121,10 +126,21 @@ main.container-fluid {
             <img src="/images/placeholder.png" alt="No Image" class="img-fluid rounded mb-2">
           <% } %>
           <h5><%= event.title %></h5>
-          <small><%= event.date.toDateString() %> • <%= event.time %></small>
+          <small>
+            <%= event.date.toDateString() %> • <%= event.time %> - <%= event.endTime %>
+          </small>
           <div class="mt-2 d-flex gap-2 flex-wrap">
             <button class="btn btn-sm btn-outline-primary"
-              onclick="editEvent('<%= event._id %>', '<%= event.title %>', '<%= event.description %>', '<%= event.date.toISOString().split('T')[0] %>', '<%= event.time %>', '<%= event.endDate ? event.endDate.toISOString().split('T')[0] : '' %>', '<%= event.endTime || '' %>', '<%= event.location %>')">
+              onclick="editEvent(
+                '<%= event._id %>',
+                '<%= event.title %>',
+                '<%= event.description %>',
+                '<%= event.date.toISOString().split('T')[0] %>',
+                '<%= event.time %>',
+                '<%= event.endDate ? event.endDate.toISOString().split('T')[0] : '' %>',
+                '<%= event.endTime || '' %>',
+                '<%= event.location %>'
+              )">
               Edit
             </button>
             <form action="/admin/event/delete/<%= event._id %>" method="POST">
@@ -139,17 +155,10 @@ main.container-fluid {
       <% } %>
     </div>
 
-    <!-- ✅ RIGHT: CALENDAR -->
-    <div class="col-xl-3 col-lg-4 col-md-6">
-      <div class="card p-3">
-        <div id="calendar"></div>
-      </div>
-    </div>
-
   </div>
 </main>
 
-<!-- ✅ Modal for all events -->
+<!-- ✅ Modal for all events (flashcards) -->
 <div class="modal fade" id="allEventsModal" tabindex="-1" aria-labelledby="allEventsModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-scrollable">
     <div class="modal-content">
@@ -166,10 +175,21 @@ main.container-fluid {
               <img src="/images/placeholder.png" alt="No Image" class="img-fluid rounded mb-2">
             <% } %>
             <h5><%= event.title %></h5>
-            <small><%= event.date.toDateString() %> • <%= event.time %></small>
+            <small>
+              <%= event.date.toDateString() %> • <%= event.time %> - <%= event.endTime %>
+            </small>
             <div class="mt-2 d-flex gap-2 flex-wrap">
               <button class="btn btn-sm btn-outline-primary"
-                onclick="editEvent('<%= event._id %>', '<%= event.title %>', '<%= event.description %>', '<%= event.date.toISOString().split('T')[0] %>', '<%= event.time %>', '<%= event.endDate ? event.endDate.toISOString().split('T')[0] : '' %>', '<%= event.endTime || '' %>', '<%= event.location %>')">
+                onclick="editEvent(
+                  '<%= event._id %>',
+                  '<%= event.title %>',
+                  '<%= event.description %>',
+                  '<%= event.date.toISOString().split('T')[0] %>',
+                  '<%= event.time %>',
+                  '<%= event.endDate ? event.endDate.toISOString().split('T')[0] : '' %>',
+                  '<%= event.endTime || '' %>',
+                  '<%= event.location %>'
+                )">
                 Edit
               </button>
               <form action="/admin/event/delete/<%= event._id %>" method="POST">
@@ -205,8 +225,8 @@ function editEvent(id, title, description, date, time, endDate, endTime, locatio
   description && (document.getElementById('description').value = description);
   date && (document.getElementById('date').value = date);
   time && (document.getElementById('time').value = time);
-  endDate && (document.getElementById('endDate').value = endDate); // ✅ new
-  endTime && (document.getElementById('endTime').value = endTime); // ✅ new
+  endDate && (document.getElementById('endDate').value = endDate);
+  endTime && (document.getElementById('endTime').value = endTime);
   location && (document.getElementById('location').value = location);
 }
 
@@ -224,7 +244,11 @@ document.addEventListener('DOMContentLoaded', function () {
       },
       events: [
         <% events.forEach(e => { %>
-          { title: "<%= e.title %>", start: "<%= e.date.toISOString() %>" },
+          {
+            title: "<%= e.title %>",
+            start: "<%= e.date.toISOString() %>",
+            end: "<%= e.endDate ? e.endDate.toISOString() : e.date.toISOString() %>"
+          },
         <% }) %>
       ]
     });
@@ -234,3 +258,4 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 
 <%- include('./layouts/footer') %>
+  
