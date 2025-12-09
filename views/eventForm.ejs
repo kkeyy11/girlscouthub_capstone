@@ -191,6 +191,35 @@ textarea.form-control {
   --fc-highlight-color: rgba(16, 185, 129, 0.05);
 }
 
+/* Improved calendar toolbar layout and spacing */
+.fc .fc-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 0.5rem 0;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.fc .fc-toolbar-chunk {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: nowrap;
+}
+
+.fc .fc-button-group {
+  display: inline-flex;
+  gap: 0;
+}
+
+.fc .fc-button {
+  padding: 0.5rem 0.75rem !important;
+  font-size: 0.85rem !important;
+  white-space: nowrap;
+  border-radius: 6px !important;
+}
+
 .fc .fc-button-primary {
   background-color: var(--primary) !important;
   border-color: var(--primary) !important;
@@ -214,6 +243,14 @@ textarea.form-control {
   background-color: var(--primary-dark) !important;
   border-color: var(--primary-dark) !important;
   color: #ffffff !important;
+}
+
+.fc .fc-toolbar-title {
+  font-size: 1.5rem !important;
+  font-weight: 600 !important;
+  color: var(--text-dark) !important;
+  margin: 0 1rem !important;
+  white-space: nowrap;
 }
 
 .fc .fc-col-header-cell {
@@ -475,6 +512,28 @@ textarea.form-control {
   
   .form-card, .calendar-card, .events-card {
     padding: 1.5rem;
+  }
+
+  /* Improved mobile calendar toolbar */
+  .fc .fc-toolbar {
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: stretch;
+  }
+
+  .fc .fc-toolbar-chunk {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .fc .fc-toolbar-title {
+    font-size: 1.25rem !important;
+    margin: 0.5rem 0 !important;
+  }
+
+  .fc .fc-button {
+    padding: 0.4rem 0.6rem !important;
+    font-size: 0.75rem !important;
   }
 }
 </style>
