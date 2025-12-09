@@ -847,11 +847,11 @@ async function deleteAppointment(event, appointmentId) {
       method: 'POST',
       headers: {
         'Accept': 'application/json'
-      }
+      },
+      credentials: 'same-origin' // <-- Add this line
     });
 
     if (response.ok) {
-      // ✅ remove row instantly (no reload needed)
       const row = button.closest('tr');
       row.remove();
     } else {
@@ -866,6 +866,7 @@ async function deleteAppointment(event, appointmentId) {
     button.disabled = false;
   }
 }
+
 
 
 // Add success feedback
