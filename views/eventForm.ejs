@@ -180,11 +180,11 @@ textarea.form-control {
 
 .fc {
   --fc-border-color: var(--border);
-  --fc-button-text-color: var(--text-dark);
-  --fc-button-border-color: var(--border);
-  --fc-button-bg-color: var(--white);
-  --fc-button-hover-bg-color: var(--bg-light);
-  --fc-button-hover-border-color: var(--border);
+  --fc-button-text-color: #ffffff;
+  --fc-button-border-color: var(--primary);
+  --fc-button-bg-color: var(--primary);
+  --fc-button-hover-bg-color: var(--primary-dark);
+  --fc-button-hover-border-color: var(--primary-dark);
   --fc-event-bg-color: var(--primary);
   --fc-event-border-color: var(--primary-dark);
   --fc-event-text-color: var(--white);
@@ -192,21 +192,28 @@ textarea.form-control {
 }
 
 .fc .fc-button-primary {
-  background-color: var(--primary);
-  border-color: var(--primary);
-  color: var(--white);
+  background-color: var(--primary) !important;
+  border-color: var(--primary) !important;
+  color: #ffffff !important;
   font-weight: 500;
 }
 
-.fc .fc-button-primary:hover {
-  background-color: var(--primary-dark);
-  border-color: var(--primary-dark);
+.fc .fc-button-primary:not(:disabled):hover {
+  background-color: var(--primary-dark) !important;
+  border-color: var(--primary-dark) !important;
+  color: #ffffff !important;
 }
 
 .fc .fc-button-primary.fc-button-active {
-  background-color: var(--primary-dark);
-  border-color: var(--primary-dark);
-  color: var(--white);
+  background-color: var(--primary-dark) !important;
+  border-color: var(--primary-dark) !important;
+  color: #ffffff !important;
+}
+
+.fc .fc-button-primary:not(:disabled).fc-button-active {
+  background-color: var(--primary-dark) !important;
+  border-color: var(--primary-dark) !important;
+  color: #ffffff !important;
 }
 
 .fc .fc-col-header-cell {
