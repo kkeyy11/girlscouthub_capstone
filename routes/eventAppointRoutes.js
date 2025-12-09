@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const adminController = require('../controllers/adminController');
 const eventController = require('../controllers/eventController');
-const upload = require('../middlewares/upload');
+const upload = require('../middlewares/uploadEvent');
 
 // ✅ Appointments
 router.get('/appointments', adminController.getAllAppointments);

@@ -139,32 +139,34 @@ main.container-fluid {
 
     <!-- ✅ MIDDLE: FLASHCARDS -->
     <div class="col-xl-3 col-lg-4 col-md-6">
-      <% events.forEach(event => { %>
-        <div class="card mb-3 p-3">
-          <% if (event.image) { %>
-            <img src="/uploads/events/<%= event.image %>" class="img-fluid rounded mb-2">
-          <% } %>
-          <h5><%= event.title %></h5>
-          <small><%= event.date.toDateString() %> • <%= event.time %></small>
-
-          <div class="mt-2 d-flex gap-2 flex-wrap">
-            <button class="btn btn-sm btn-outline-primary"
-              onclick="editEvent('<%= event._id %>',
-                '<%= event.title %>',
-                '<%= event.description %>',
-                '<%= event.date.toISOString().split('T')[0] %>',
-                '<%= event.time %>',
-                '<%= event.location %>')">
-              Edit
-            </button>
-
-            <form action="/admin/event/delete/<%= event._id %>" method="POST">
-              <button class="btn btn-sm btn-outline-danger">Delete</button>
-            </form>
-          </div>
-        </div>
-      <% }) %>
+  <% events.forEach(event => { %>
+    <div class="card mb-3 p-3">
+      <% if (event.image) { %>
+        <img src="/uploads/events/<%= event.image %>" alt="<%= event.title %>" class="img-fluid rounded mb-2">
+      <% } else { %>
+        <img src="/images/placeholder.png" alt="No Image" class="img-fluid rounded mb-2">
+      <% } %>
+      <h5><%= event.title %></h5>
+      <small><%= event.date.toDateString() %> • <%= event.time %></small>
+      <div class="mt-2 d-flex gap-2 flex-wrap">
+        <button class="btn btn-sm btn-outline-primary"
+          onclick="editEvent('<%= event._id %>',
+            '<%= event.title %>',
+            '<%= event.description %>',
+            '<%= event.date.toISOString().split('T')[0] %>',
+            '<%= event.time %>',
+            '<%= event.location %>')">
+          Edit
+        </button>
+        <form action="/admin/event/delete/<%= event._id %>" method="POST">
+          <button class="btn btn-sm btn-outline-danger">Delete</button>
+        </form>
+      </div>
     </div>
+  <% }) %>
+</div>
+
+
 
     <!-- ✅ RIGHT: CALENDAR -->
     <div class="col-xl-3 col-lg-4 col-md-6">
