@@ -10,7 +10,7 @@ router.post('/appointments/update-status/:id/:status', adminController.updateApp
 
 // ✅ Events
 router.get('/event', eventController.getEventForm);
-router.post('/event', eventController.createEvent);
+router.post('/event', upload.single('image'), eventController.createEvent);
 router.post('/event/:id', upload.single('image'), eventController.updateEvent);
 router.post('/event/delete/:id', eventController.deleteEvent);
 

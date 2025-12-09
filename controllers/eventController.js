@@ -11,7 +11,8 @@ const eventController = {
   },
 
   // ✅ Create event
-  createEvent: async (req, res) => {
+ createEvent: async (req, res) => {
+  try {
     const { title, description, date, time, location } = req.body;
 
     const event = new Event({
@@ -20,12 +21,18 @@ const eventController = {
       date,
       time,
       location,
-      image: req.file ? req.file.filename : null
+      image: req.file ? req.file.filename : null // ✅ optional
     });
 
     await event.save();
     res.redirect('/admin/event');
-  },
+  } catch (error) {
+    console.error('Error creating event:', error);
+    req.flash('error', 'Failed to create event. Please check your input.');
+    res.redirect('/admin/event');
+  }
+},
+
 
   // ✅ Update event
   updateEvent: async (req, res) => {
