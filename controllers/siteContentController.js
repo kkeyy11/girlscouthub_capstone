@@ -42,6 +42,30 @@ exports.updateBanner = async (req, res) => {
   }
 };
 
+
+// ✅ Delete Banner Image
+exports.deleteBanner = async (req, res) => {
+  try {
+    const siteContent = await SiteContent.findOne();
+    if (!siteContent || !siteContent.bannerImage) {
+      return res.redirect('/admin/site-content');
+    }
+
+    const imgPath = path.join(__dirname, '..', 'public', 'uploads', siteContent.bannerImage);
+    if (fs.existsSync(imgPath)) fs.unlinkSync(imgPath);
+
+    siteContent.bannerImage = null;
+    await siteContent.save();
+
+    req.flash('success', 'Banner image removed.');
+    res.redirect('/admin/site-content');
+  } catch (err) {
+    console.error('❌ Error deleting banner:', err);
+    res.redirect('/admin/site-content');
+  }
+};
+
+
 // ✅ Add to Gallery
 exports.addGalleryImage = async (req, res) => {
   try {
@@ -63,25 +87,40 @@ exports.addGalleryImage = async (req, res) => {
   }
 };
 
-// ✅ Delete Gallery Image
+// ✅ Delete Gallery Image (SAFE VERSION)
 exports.deleteGalleryImage = async (req, res) => {
   try {
     const imageId = req.params.id;
 
-    let siteContent = await SiteContent.findOne();
-    if (!siteContent) return res.redirect('/admin/site-content');
-
-    const image = siteContent.gallery.id(imageId);
-    if (image) {
-      const imgPath = path.join(__dirname, '..', 'public', 'uploads', image.filename);
-      if (fs.existsSync(imgPath)) fs.unlinkSync(imgPath);
-      image.remove();
-      await siteContent.save();
+    const siteContent = await SiteContent.findOne();
+    if (!siteContent) {
+      req.flash('error', 'Site content not found.');
+      return res.redirect('/admin/site-content');
     }
 
+    const image = siteContent.gallery.id(imageId);
+    if (!image) {
+      req.flash('error', 'Image not found.');
+      return res.redirect('/admin/site-content');
+    }
+
+    // ✅ Safely delete image file
+    const imgPath = path.join(__dirname, '..', 'public', 'uploads', image.filename);
+    if (fs.existsSync(imgPath)) {
+      fs.unlink(imgPath, err => {
+        if (err) console.error('❌ Image file delete failed:', err);
+      });
+    }
+
+    // ✅ Proper subdocument removal (NO server crash)
+    siteContent.gallery.pull({ _id: imageId });
+    await siteContent.save();
+
+    req.flash('success', 'Gallery image deleted successfully.');
     res.redirect('/admin/site-content');
   } catch (err) {
     console.error('❌ Error deleting gallery image:', err);
-    res.status(500).send('Server error');
+    res.redirect('/admin/site-content');
   }
 };
+

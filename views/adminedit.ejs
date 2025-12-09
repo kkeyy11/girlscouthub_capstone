@@ -19,10 +19,33 @@
       </div>
       <div class="card-body text-center">
         <% if (siteContent && siteContent.bannerImage) { %>
+          
           <img src="/uploads/<%= siteContent.bannerImage %>" 
                class="img-fluid rounded mb-4 border" 
                style="max-height: 300px; object-fit: cover;" 
                alt="Banner">
+
+                <% if (siteContent && siteContent.bannerImage) { %>
+          <form action="/admin/site-content/banner?_method=DELETE" 
+      method="POST" 
+      onsubmit="return confirm('Delete banner image?')" 
+      class="mb-3">
+  <button type="submit" class="btn btn-outline-danger btn-sm">
+    <i class="fas fa-trash me-1"></i> Delete Banner
+  </button>
+</form>
+
+          <img src="/uploads/<%= siteContent.bannerImage %>" 
+               class="img-fluid rounded mb-4 border" 
+               style="max-height: 300px; object-fit: cover;" 
+               alt="Banner">
+        <% } else { %>
+          <p class="text-muted">No banner uploaded yet.</p>
+        <% } %>
+
+
+
+
         <% } else { %>
           <p class="text-muted">No banner uploaded yet.</p>
         <% } %>
