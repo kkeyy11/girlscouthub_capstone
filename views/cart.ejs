@@ -574,6 +574,55 @@ function closeReorderModal() {
       reorderModal.style.display = "flex";
     });
   });
+
+
+  document.querySelectorAll('.cancel-button').forEach(btn => {
+  btn.addEventListener('click', async e => {
+    e.preventDefault(); // prevent form submit
+    
+    const form = btn.closest('form');
+    const action = form.action;
+
+    try {
+      const res = await fetch(action, {
+        method: 'POST'
+      });
+      
+      if (res.ok) {
+        // Remove the cart item visually
+        const cartItem = btn.closest('.cart-item');
+        cartItem.remove();
+
+        // Update the total
+        let total = 0;
+        document.querySelectorAll('.cart-item').forEach(item => {
+          const priceEl = item.querySelector('.item-price');
+          const qtyEl = item.querySelector('.item-quantity');
+          const price = parseFloat(priceEl.textContent.replace(/[₱,]/g,''));
+          const qty = parseInt(qtyEl.textContent.replace('Qty: ',''));
+          total += price * qty;
+        });
+        document.querySelector('.total-amount').textContent = '₱' + total.toLocaleString();
+
+        // If cart is empty, show empty message
+        if (document.querySelectorAll('.cart-item').length === 0) {
+          document.querySelector('.cart-container').innerHTML = `
+            <div class="empty-cart">
+              <div class="empty-cart-icon">🛒</div>
+              <p class="empty-cart-message">Your cart is empty</p>
+              <a href="/products" class="nav-link">Browse Products</a>
+            </div>
+          `;
+        }
+      } else {
+        alert('Failed to remove item from cart.');
+      }
+    } catch(err) {
+      console.error(err);
+      alert('Error removing item from cart.');
+    }
+  });
+});
 </script>
 </body>
 </html>
