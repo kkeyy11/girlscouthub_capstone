@@ -1,66 +1,137 @@
 <%- include('./layouts/navbar') %>
 
-<main class="container my-4">
+<style>
+  .pos-wrapper {
+    max-width: 1200px;
+    margin: auto;
+  }
+
+  .cart-card {
+    max-width: 520px;
+    margin: auto;
+  }
+
+  .product-card {
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .product-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  }
+
+  .product-img {
+    height: 140px;
+    object-fit: contain;
+    padding: 10px;
+  }
+
+  .products-container {
+    max-width: 760px;
+    margin: auto;
+  }
+
+  .reservation-panel {
+    max-width: 360px;
+  }
+
+  .reservation-card {
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+
+  .reservation-card:hover {
+    background: #f8f9fa;
+  }
+</style>
+
+<main class="container my-4 pos-wrapper">
   <h3 class="text-center mb-4">Point of Sale</h3>
 
-  <!-- CART + Customer Name -->
-  <div class="card mx-auto mb-4" style="max-width:600px">
-    <div class="card-body">
-      <h5>Current Order</h5>
-      <input type="text"
-        class="form-control mb-2"
-        name="customerName"
-        placeholder="Customer Name (optional)"
-        id="customerName">
+  <div class="row justify-content-center">
+    <!-- LEFT / CENTER CONTENT -->
+    <div class="col-lg-8">
 
-      <ul id="cartList" class="list-group mb-3"></ul>
-      <h5 class="text-end">Total: ₱<span id="total">0</span></h5>
+      <!-- CART -->
+      <div class="card cart-card mb-4">
+        <div class="card-body">
+          <h5 class="mb-3">Current Order</h5>
 
-      <button class="btn btn-success w-100" onclick="openPaymentModal()">Proceed to Payment</button>
-    </div>
-  </div>
+          <input type="text"
+            class="form-control mb-3"
+            name="customerName"
+            placeholder="Customer Name (optional)"
+            id="customerName">
 
-  <div class="row">
-    <!-- PRODUCTS -->
-    <div class="col-md-8">
-      <div class="row">
-        <% products.forEach(p => { %>
-          <div class="col-md-4 mb-3">
-            <div class="card h-100"
-              data-bs-toggle="modal"
-              data-bs-target="#qtyModal"
-              onclick="selectProduct('<%= p._id %>','<%= p.name %>',<%= p.price %>,<%= p.quantity %>)">
-              <img src="<%= p.image %>" class="card-img-top">
-              <div class="card-body text-center">
-                <h6><%= p.name %></h6>
-                <small>₱<%= p.price %> | Stock: <%= p.quantity %></small>
+          <ul id="cartList" class="list-group mb-3"></ul>
+
+          <h5 class="text-end">Total: ₱<span id="total">0</span></h5>
+
+          <button class="btn btn-success w-100 mt-2" onclick="openPaymentModal()">
+            Proceed to Payment
+          </button>
+        </div>
+      </div>
+
+      <!-- PRODUCTS -->
+      <div class="products-container">
+        <div class="row">
+          <% products.forEach(p => { %>
+            <div class="col-md-4 col-sm-6 mb-3">
+              <div class="card h-100 product-card"
+                data-bs-toggle="modal"
+                data-bs-target="#qtyModal"
+                onclick="selectProduct('<%= p._id %>','<%= p.name %>',<%= p.price %>,<%= p.quantity %>)">
+
+                <img src="<%= p.image %>" class="card-img-top product-img">
+
+                <div class="card-body text-center">
+                  <h6 class="mb-1"><%= p.name %></h6>
+                  <small class="text-muted">
+                    ₱<%= p.price %> | Stock: <%= p.quantity %>
+                  </small>
+                </div>
               </div>
+            </div>
+          <% }) %>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT SIDE RESERVATIONS -->
+    <div class="col-lg-4 d-flex justify-content-center">
+      <div class="reservation-panel w-100">
+        <h5 class="mb-3">Approved Reservations</h5>
+
+        <% if(reservations.length === 0){ %>
+          <p class="text-muted">No approved reservations</p>
+        <% } %>
+
+        <% reservations.forEach(r => { %>
+          <div class="card mb-3 reservation-card"
+            onclick='loadReservation(<%- JSON.stringify(r) %>)'>
+            <div class="card-body">
+              <p class="mb-1 fw-bold">
+                <%= r.user 
+                  ? (r.user.firstName + ' ' + (r.user.middleName ? r.user.middleName + ' ' : '') + r.user.lastName)
+                  : "Customer" %>
+              </p>
+
+              <p class="mb-0">Total: ₱<%= r.total %></p>
+              <small>Status: <%= r.status %></small>
+
+              <ul class="mt-2 ps-3">
+                <% r.items.forEach(item => { %>
+                  <li style="font-size:0.85rem;">
+                    <%= item.name %> x<%= item.quantity %> – ₱<%= item.price %>
+                  </li>
+                <% }) %>
+              </ul>
             </div>
           </div>
         <% }) %>
       </div>
-    </div>
-
-    <!-- RESERVATIONS -->
-    <div class="col-md-4">
-      <h5>Approved Reservations</h5>
-      <% if(reservations.length === 0){ %>
-        <p class="text-muted">No approved reservations</p>
-      <% } %>
-      <% reservations.forEach(r => { %>
-        <div class="card mb-2" style="cursor:pointer;" onclick='loadReservation(<%- JSON.stringify(r) %>)'>
-          <div class="card-body">
-            <p class="mb-1"><strong><%= r.user ? (r.user.firstName + ' ' + (r.user.middleName ? r.user.middleName + ' ' : '') + r.user.lastName) : "Customer" %></strong></p>
-            <p class="mb-0">Total: ₱<%= r.total %></p>
-            <small>Status: <%= r.status %></small>
-            <ul class="mt-2">
-              <% r.items.forEach(item => { %>
-                <li style="font-size:0.85rem;"><%= item.name %> x<%= item.quantity %> - ₱<%= item.price %></li>
-              <% }) %>
-            </ul>
-          </div>
-        </div>
-      <% }) %>
     </div>
   </div>
 </main>
@@ -85,7 +156,7 @@
 </div>
 
 <!-- PAYMENT MODAL -->
-<div class="modal fade" id="paymentModal" tabindex="-1">
+<div class="modal fade" id="paymentModal">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
@@ -94,7 +165,7 @@
       </div>
       <div class="modal-body">
         <p>Total Due: ₱<span id="modalTotal">0</span></p>
-        <input type="number" id="cash" class="form-control mb-3" placeholder="Enter Cash" required>
+        <input type="number" id="cash" class="form-control" placeholder="Enter Cash">
       </div>
       <div class="modal-footer">
         <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -105,7 +176,7 @@
 </div>
 
 <!-- INSUFFICIENT CASH MODAL -->
-<div class="modal fade" id="cashModal" tabindex="-1">
+<div class="modal fade" id="cashModal">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-body text-center">
@@ -124,8 +195,8 @@ let reservationLoaded = false;
 let reservationId = null;
 
 function selectProduct(id, name, price, stock){
-  if(reservationLoaded) {
-    alert("You can only add one reservation at a time. Clear cart first to add products.");
+  if(reservationLoaded){
+    alert("Clear cart first to add products.");
     return;
   }
   selectedProduct = { id, name, price, stock };
@@ -135,7 +206,8 @@ function selectProduct(id, name, price, stock){
 
 function confirmQty(){
   const qty = Number(document.getElementById('qtyInput').value);
-  if(!qty || qty < 1 || qty > selectedProduct.stock) return alert("Invalid quantity");
+  if(!qty || qty < 1 || qty > selectedProduct.stock)
+    return alert("Invalid quantity");
 
   cart.push({
     id: selectedProduct.id,
@@ -162,9 +234,10 @@ function loadReservation(res){
     });
   });
 
-  document.getElementById('customerName').value = res.user?.firstName 
-    ? (res.user.firstName + ' ' + (res.user.middleName ? res.user.middleName + ' ' : '') + res.user.lastName) 
-    : '';
+  document.getElementById('customerName').value =
+    res.user?.firstName
+      ? res.user.firstName + ' ' + (res.user.middleName ? res.user.middleName + ' ' : '') + res.user.lastName
+      : '';
 
   renderCart();
 }
@@ -177,11 +250,14 @@ function renderCart(){
   cart.forEach((i, idx) => {
     total += i.price * i.qty;
     list.innerHTML += `
-      <li class="list-group-item d-flex justify-content-between">
+      <li class="list-group-item d-flex justify-content-between align-items-center">
         ${i.name} x${i.qty}
         <span>
           ₱${i.price * i.qty}
-          <button class="btn btn-sm btn-danger ms-2" onclick="cart.splice(${idx},1);renderCart(); reservationLoaded=false;">×</button>
+          <button class="btn btn-sm btn-danger ms-2"
+            onclick="cart.splice(${idx},1); renderCart(); reservationLoaded=false;">
+            ×
+          </button>
         </span>
       </li>`;
   });
@@ -190,42 +266,31 @@ function renderCart(){
   document.getElementById("modalTotal").innerText = total;
 }
 
-function validateCart(){
-  if(cart.length === 0){
-    alert("No items selected");
-    return false;
-  }
-  return true;
-}
-
 function openPaymentModal(){
-  if(!validateCart()) return;
-  const paymentModal = new bootstrap.Modal(document.getElementById('paymentModal'));
-  paymentModal.show();
+  if(cart.length === 0) return alert("No items selected");
+  new bootstrap.Modal(document.getElementById('paymentModal')).show();
 }
 
 function processPayment(){
   const cash = Number(document.getElementById('cash').value);
-  const total = cart.reduce((sum, i) => sum + i.price * i.qty, 0);
+  const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
 
   if(cash < total){
-    const cashModal = new bootstrap.Modal(document.getElementById('cashModal'));
-    cashModal.show();
+    new bootstrap.Modal(document.getElementById('cashModal')).show();
     return;
   }
 
-  // Prepare form data
   const form = document.createElement('form');
   form.method = 'POST';
   form.action = '/pos/pay';
-  
+
   form.innerHTML = `
     <input type="hidden" name="cash" value="${cash}">
     <input type="hidden" name="cart" value='${JSON.stringify(cart)}'>
     <input type="hidden" name="customerName" value="${document.getElementById('customerName').value}">
     <input type="hidden" name="reservationId" value="${reservationId || ''}">
   `;
-  
+
   document.body.appendChild(form);
   form.submit();
 }
