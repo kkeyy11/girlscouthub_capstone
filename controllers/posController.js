@@ -25,10 +25,9 @@ exports.processPayment = async (req, res) => {
   // Read cash and convert to number
   const cashRaw = req.body.cash;
   const cash = parseFloat(cashRaw);
-
   const total = invoiceData.total;
 
-  // If cash is invalid or less than total, show POS page
+  // Validate cash
   if (typeof cashRaw === 'undefined' || isNaN(cash) || cash < total) {
     return res.redirect("/pos");
   }

@@ -3,28 +3,9 @@
   <h3 class="mb-3">Payment</h3>
   <h5>Total Due: ₱<%= total %></h5>
 
-  <!-- Cash Input + Simplified Calculator -->
+  <!-- Cash Input Only -->
   <div class="mb-3" style="max-width:300px; margin:auto;">
-    <input type="number" id="cash" name="cash" class="form-control mb-2" placeholder="Enter Cash" required>
-
-    <div id="calculator" class="border rounded p-2">
-      <div class="d-grid gap-1" style="grid-template-columns: repeat(3, 1fr); display: grid;">
-        <button type="button" class="btn btn-secondary" onclick="appendCalc('7')">7</button>
-        <button type="button" class="btn btn-secondary" onclick="appendCalc('8')">8</button>
-        <button type="button" class="btn btn-secondary" onclick="appendCalc('9')">9</button>
-
-        <button type="button" class="btn btn-secondary" onclick="appendCalc('4')">4</button>
-        <button type="button" class="btn btn-secondary" onclick="appendCalc('5')">5</button>
-        <button type="button" class="btn btn-secondary" onclick="appendCalc('6')">6</button>
-
-        <button type="button" class="btn btn-secondary" onclick="appendCalc('1')">1</button>
-        <button type="button" class="btn btn-secondary" onclick="appendCalc('2')">2</button>
-        <button type="button" class="btn btn-secondary" onclick="appendCalc('3')">3</button>
-
-        <button type="button" class="btn btn-secondary" onclick="appendCalc('0')">0</button>
-        <button type="button" class="btn btn-secondary" onclick="clearCalc()">C</button>
-      </div>
-    </div>
+    <input type="number" id="cash" name="cash" class="form-control mb-2" placeholder="Enter Cash" required min="0" step="0.01">
   </div>
 
   <form method="POST" action="/pos/pay" onsubmit="return checkCash()">
@@ -51,30 +32,11 @@
 const totalAmount = <%= total %>;
 
 function checkCash(){
-  const cash = Number(document.getElementById('cash').value);
-  if(cash < totalAmount || isNaN(cash)){
+  const cash = parseFloat(document.getElementById('cash').value);
+  if(isNaN(cash) || cash < totalAmount){
     new bootstrap.Modal(document.getElementById('cashModal')).show();
     return false;
   }
   return true;
 }
-
-// Calculator functionality (numbers + clear only)
-let calcValue = '';
-const display = document.getElementById('cash');
-
-function appendCalc(val){
-  calcValue += val;
-  display.value = calcValue;
-}
-
-function clearCalc(){
-  calcValue = '';
-  display.value = '';
-}
-
-// Reset calculator if user types manually
-display.addEventListener('input', () => {
-  calcValue = display.value;
-});
 </script>
