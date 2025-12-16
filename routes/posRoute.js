@@ -3,7 +3,7 @@ const router = express.Router();
 const posController = require("../controllers/posController");
 
 // Walk-in POS
-router.get("/", posController.renderPOS);
+router.get("/pos", posController.renderPOS);
 
 // Reservation POS
 router.get("/reservation/:id", posController.loadReservationPOS);
