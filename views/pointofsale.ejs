@@ -11,16 +11,12 @@
         class="form-control mb-2"
         name="customerName"
         placeholder="Customer Name (optional)"
-        form="paymentForm">
+        id="customerName">
 
       <ul id="cartList" class="list-group mb-3"></ul>
       <h5 class="text-end">Total: ₱<span id="total">0</span></h5>
 
-      <form id="paymentForm" method="POST" action="/pos/payment" onsubmit="return validateCart()">
-        <input type="hidden" name="cart" id="cartInput">
-        <input type="hidden" name="reservationId" id="reservationId">
-        <button class="btn btn-success w-100">Proceed to Payment</button>
-      </form>
+      <button class="btn btn-success w-100" onclick="openPaymentModal()">Proceed to Payment</button>
     </div>
   </div>
 
@@ -88,10 +84,44 @@
   </div>
 </div>
 
+<!-- PAYMENT MODAL -->
+<div class="modal fade" id="paymentModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5>Payment</h5>
+        <button class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p>Total Due: ₱<span id="modalTotal">0</span></p>
+        <input type="number" id="cash" class="form-control mb-3" placeholder="Enter Cash" required>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button class="btn btn-primary w-100" onclick="processPayment()">PAY</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- INSUFFICIENT CASH MODAL -->
+<div class="modal fade" id="cashModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-body text-center">
+        <h5>Insufficient Payment</h5>
+        <p>Cash is less than total amount.</p>
+        <button class="btn btn-danger" data-bs-dismiss="modal">OK</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
 let cart = [];
 let selectedProduct = null;
 let reservationLoaded = false;
+let reservationId = null;
 
 function selectProduct(id, name, price, stock){
   if(reservationLoaded) {
@@ -121,6 +151,7 @@ function confirmQty(){
 function loadReservation(res){
   cart = [];
   reservationLoaded = true;
+  reservationId = res._id;
 
   res.items.forEach(i => {
     cart.push({
@@ -131,11 +162,10 @@ function loadReservation(res){
     });
   });
 
-  document.querySelector("input[name='customerName']").value = res.user?.firstName 
+  document.getElementById('customerName').value = res.user?.firstName 
     ? (res.user.firstName + ' ' + (res.user.middleName ? res.user.middleName + ' ' : '') + res.user.lastName) 
     : '';
 
-  document.getElementById("reservationId").value = res._id; // set reservation id
   renderCart();
 }
 
@@ -157,7 +187,7 @@ function renderCart(){
   });
 
   document.getElementById("total").innerText = total;
-  document.getElementById("cartInput").value = JSON.stringify(cart);
+  document.getElementById("modalTotal").innerText = total;
 }
 
 function validateCart(){
@@ -166,5 +196,37 @@ function validateCart(){
     return false;
   }
   return true;
+}
+
+function openPaymentModal(){
+  if(!validateCart()) return;
+  const paymentModal = new bootstrap.Modal(document.getElementById('paymentModal'));
+  paymentModal.show();
+}
+
+function processPayment(){
+  const cash = Number(document.getElementById('cash').value);
+  const total = cart.reduce((sum, i) => sum + i.price * i.qty, 0);
+
+  if(cash < total){
+    const cashModal = new bootstrap.Modal(document.getElementById('cashModal'));
+    cashModal.show();
+    return;
+  }
+
+  // Prepare form data
+  const form = document.createElement('form');
+  form.method = 'POST';
+  form.action = '/pos/pay';
+  
+  form.innerHTML = `
+    <input type="hidden" name="cash" value="${cash}">
+    <input type="hidden" name="cart" value='${JSON.stringify(cart)}'>
+    <input type="hidden" name="customerName" value="${document.getElementById('customerName').value}">
+    <input type="hidden" name="reservationId" value="${reservationId || ''}">
+  `;
+  
+  document.body.appendChild(form);
+  form.submit();
 }
 </script>
