@@ -56,23 +56,33 @@
 const express = require('express');
 const router = express.Router();
 const productController = require('../controllers/productController');
+
+
+
+
 const upload = require('../middlewares/upload'); // Adjust path as needed
 
-// Add product
 router.post('/products/add', upload.single('image'), productController.postAddProduct);
 
-// Product list & forms
+
+
+
+
+// PRODUCT ROUTES
 router.get('/products', productController.getProductList);
+
 router.get('/add', productController.getAddProduct);
+//router.post('/add', productController.postAddProduct); // This handles form submission
+
 router.get('/manage-products', productController.getManageProducts);
 router.post('/delete-product/:id', productController.deleteProduct);
 
-// ✅ Edit product (fixed)
 router.get('/edit-product/:id', productController.getEditProductForm);
-router.post('/edit-product/:id', upload.single('image'), productController.postEditProduct);
+router.post('/edit-product/:id', productController.postEditProduct);
 
-// Stock and special routes
 router.post('/add-stock/:id', productController.addStock);
+
+// SPECIAL ROUTES
 router.get('/low-stock', productController.lowStock);
 router.post('/cancel-item/:id', productController.cancelItem);
 
