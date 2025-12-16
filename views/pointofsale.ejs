@@ -1,63 +1,120 @@
 <%- include('./layouts/navbar') %>
-<main class="container">
-<div class="text-center mb-4">
-<h3>Point of Sale</h3>
-</div>
+<main class="container text-center my-4">
 
+  <h3 class="mb-4">Point of Sale</h3>
 
-<!-- CART -->
-<div class="card mx-auto mb-4" style="max-width:600px">
-<div class="card-body">
-<h5 class="card-title">Current Order</h5>
-<ul id="cartList" class="list-group mb-3"></ul>
-<h5 class="text-end">Total: ₱<span id="total">0</span></h5>
-<form method="POST" action="/pos/payment" onsubmit="return validateCart()">
-<input type="hidden" name="cart" id="cartInput">
-<button class="btn btn-success w-100">Proceed to Payment</button>
-</form>
-</div>
-</div>
+  <!-- CART -->
+  <div class="card mx-auto mb-5" style="max-width:600px">
+    <div class="card-body">
+      <h5 class="card-title">Current Order</h5>
+      <ul id="cartList" class="list-group mb-3"></ul>
+      <h5 class="text-end">Total: ₱<span id="total">0</span></h5>
+      <form method="POST" action="/pos/payment" onsubmit="return validateCart()">
+        <input type="hidden" name="cart" id="cartInput">
+        <button type="submit" class="btn btn-success w-100">Proceed to Payment</button>
+      </form>
+    </div>
+  </div>
 
+  <!-- PRODUCTS -->
+  <div class="row justify-content-center">
+    <% products.forEach(p => { %>
+      <div class="col-md-3 mb-4">
+        <div class="card h-100" data-bs-toggle="modal" data-bs-target="#qtyModal"
+             onclick="selectProduct('<%= p._id %>','<%= p.name %>',<%= p.price %>,<%= p.quantity %>)">
+          <img src="<%= p.image %>" class="card-img-top">
+          <div class="card-body text-center">
+            <h6><%= p.name %></h6>
+            <small>₱<%= p.price %> | Stock: <%= p.quantity %></small>
+          </div>
+        </div>
+      </div>
+    <% }) %>
+  </div>
 
-<!-- PRODUCTS -->
-<div class="row justify-content-center">
-<% products.forEach(p => { %>
-<div class="col-md-3 mb-4">
-<div class="card h-100" data-bs-toggle="modal" data-bs-target="#qtyModal" onclick="selectProduct('<%= p._id %>','<%= p.name %>',<%= p.price %>,<%= p.quantity %>)">
-<img src="<%= p.image %>" class="card-img-top">
-<div class="card-body text-center">
-<h6><%= p.name %></h6>
-<small>₱<%= p.price %> | Stock: <%= p.quantity %></small>
-</div>
-</div>
-</div>
-<% }) %>
-</div>
 </main>
-
 
 <!-- QUANTITY MODAL -->
 <div class="modal fade" id="qtyModal" tabindex="-1">
-<div class="modal-dialog modal-dialog-centered">
-<div class="modal-content">
-<div class="modal-header"><h5>Select Quantity</h5></div>
-<div class="modal-body">
-<input type="number" id="qtyInput" class="form-control" min="1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5>Select Quantity</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <input type="number" id="qtyInput" class="form-control" min="1">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" onclick="confirmQty()">Add</button>
+      </div>
+    </div>
+  </div>
 </div>
-<div class="modal-footer">
-<button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-<button class="btn btn-primary" onclick="confirmQty()">Add</button>
-</div>
-</div>
-</div>
-</div>
-
 
 <script>
 let cart = [];
-let selectedProduct = {};
+let selectedProduct = null;
 
+function selectProduct(id, name, price, stock) {
+  selectedProduct = { id, name, price, stock };
+  const qtyInput = document.getElementById('qtyInput');
+  qtyInput.value = '';
+  qtyInput.max = stock;
+}
 
-function selectProduct(id,name,price,stock){
-selectedProduct = {id,name,price,stock};
+function confirmQty() {
+  const qtyInput = document.getElementById('qtyInput');
+  const qty = Number(qtyInput.value);
+
+  if (!selectedProduct) {
+    alert('No product selected');
+    return;
+  }
+
+  if (!qty || qty < 1 || qty > selectedProduct.stock) {
+    alert('Invalid quantity');
+    return;
+  }
+
+  cart.push({
+    id: selectedProduct.id,
+    name: selectedProduct.name,
+    price: selectedProduct.price,
+    qty
+  });
+
+  renderCart();
+
+  const modalEl = document.getElementById('qtyModal');
+  const modal = bootstrap.Modal.getInstance(modalEl);
+  modal.hide();
+}
+
+function renderCart() {
+  const list = document.getElementById('cartList');
+  list.innerHTML = '';
+  let total = 0;
+
+  cart.forEach(item => {
+    total += item.price * item.qty;
+    list.innerHTML += `
+      <li class="list-group-item d-flex justify-content-between">
+        ${item.name} x${item.qty} <span>₱${item.price * item.qty}</span>
+      </li>
+    `;
+  });
+
+  document.getElementById('total').innerText = total;
+  document.getElementById('cartInput').value = JSON.stringify(cart);
+}
+
+function validateCart() {
+  if (cart.length === 0) {
+    alert('No products selected');
+    return false;
+  }
+  return true;
+}
 </script>
