@@ -78,6 +78,7 @@ function confirmQty() {
     return;
   }
 
+  // Add to cart
   cart.push({
     id: selectedProduct.id,
     name: selectedProduct.name,
@@ -92,16 +93,27 @@ function confirmQty() {
   modal.hide();
 }
 
+function removeFromCart(index) {
+  cart.splice(index, 1);
+  renderCart();
+}
+
 function renderCart() {
   const list = document.getElementById('cartList');
   list.innerHTML = '';
   let total = 0;
 
-  cart.forEach(item => {
+  cart.forEach((item, index) => {
     total += item.price * item.qty;
     list.innerHTML += `
-      <li class="list-group-item d-flex justify-content-between">
-        ${item.name} x${item.qty} <span>₱${item.price * item.qty}</span>
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        ${item.name} x${item.qty} 
+        <span>
+          ₱${item.price * item.qty} 
+          <button type="button" class="btn btn-sm btn-danger ms-2" onclick="removeFromCart(${index})">
+            &times;
+          </button>
+        </span>
       </li>
     `;
   });
