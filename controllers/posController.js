@@ -22,12 +22,14 @@ exports.toPayment = (req, res) => {
 };
 
 exports.processPayment = async (req, res) => {
-  // Ensure cash is a valid number
-  const cash = parseFloat(req.body.cash);
+  // Read cash and convert to number
+  const cashRaw = req.body.cash;
+  const cash = parseFloat(cashRaw);
+
   const total = invoiceData.total;
 
-  if (isNaN(cash) || cash < total) {
-    // Optional: you can show an error message instead of redirect
+  // If cash is invalid or less than total, show POS page
+  if (typeof cashRaw === 'undefined' || isNaN(cash) || cash < total) {
     return res.redirect("/pos");
   }
 
@@ -45,9 +47,10 @@ exports.processPayment = async (req, res) => {
     change: cash - total
   };
 
-  // Clear cart after payment
+  // Clear cart for next transaction
   cart = [];
 
+  // Redirect to payment summary
   res.redirect("/pos/summary");
 };
 
