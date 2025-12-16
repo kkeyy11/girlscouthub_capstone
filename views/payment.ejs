@@ -1,51 +1,99 @@
 <%- include('./layouts/navbar') %>
 <main class="container text-center">
-<h3 class="mb-3">Payment</h3>
-<h5>Total Due: ₱<%= total %></h5>
+  <h3 class="mb-3">Payment</h3>
+  <h5>Total Due: ₱<%= total %></h5>
 
+  <!-- Cash Input + Calculator -->
+  <div class="mb-3" style="max-width:300px; margin:auto;">
+    <input type="number" id="cash" name="cash" class="form-control mb-2" placeholder="Enter Cash" required>
 
-<form method="POST" action="/pos/pay" onsubmit="return checkCash()">
-<input type="number" id="cash" name="cash" class="form-control mb-3" placeholder="Enter Cash" required>
-<button class="btn btn-primary w-100">PAY</button>
-</form>
+    <div id="calculator" class="border rounded p-2">
+      <div id="calc-display" class="form-control mb-2 text-end">0</div>
+      <div class="d-grid gap-1" style="grid-template-columns: repeat(4, 1fr); display: grid;">
+        <button type="button" class="btn btn-secondary" onclick="appendCalc('7')">7</button>
+        <button type="button" class="btn btn-secondary" onclick="appendCalc('8')">8</button>
+        <button type="button" class="btn btn-secondary" onclick="appendCalc('9')">9</button>
+        <button type="button" class="btn btn-danger" onclick="clearCalc()">C</button>
 
+        <button type="button" class="btn btn-secondary" onclick="appendCalc('4')">4</button>
+        <button type="button" class="btn btn-secondary" onclick="appendCalc('5')">5</button>
+        <button type="button" class="btn btn-secondary" onclick="appendCalc('6')">6</button>
+        <button type="button" class="btn btn-secondary" onclick="appendCalc('+')">+</button>
 
-<button onclick="history.back()" class="btn btn-link mt-3">← Back</button>
+        <button type="button" class="btn btn-secondary" onclick="appendCalc('1')">1</button>
+        <button type="button" class="btn btn-secondary" onclick="appendCalc('2')">2</button>
+        <button type="button" class="btn btn-secondary" onclick="appendCalc('3')">3</button>
+        <button type="button" class="btn btn-secondary" onclick="appendCalc('-')">-</button>
+
+        <button type="button" class="btn btn-secondary" onclick="appendCalc('0')">0</button>
+        <button type="button" class="btn btn-secondary" onclick="appendCalc('.')">.</button>
+        <button type="button" class="btn btn-success" onclick="calcResult()">=</button>
+        <button type="button" class="btn btn-secondary" onclick="appendCalc('*')">*</button>
+      </div>
+    </div>
+  </div>
+
+  <form method="POST" action="/pos/pay" onsubmit="return checkCash()">
+    <button class="btn btn-primary w-100">PAY</button>
+  </form>
+
+  <button onclick="history.back()" class="btn btn-link mt-3">← Back</button>
 </main>
-
 
 <!-- INSUFFICIENT MODAL -->
 <div class="modal fade" id="cashModal" tabindex="-1">
-<div class="modal-dialog modal-dialog-centered">
-<div class="modal-content">
-<div class="modal-body text-center">
-<h5>Insufficient Payment</h5>
-<p>Cash is less than total amount.</p>
-<button class="btn btn-danger" data-bs-dismiss="modal">OK</button>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-body text-center">
+        <h5>Insufficient Payment</h5>
+        <p>Cash is less than total amount.</p>
+        <button class="btn btn-danger" data-bs-dismiss="modal">OK</button>
+      </div>
+    </div>
+  </div>
 </div>
-</div>
-</div>
-</div>
-
 
 <script>
+const totalAmount = <%= total %>;
+
 function checkCash(){
-const cash = Number(document.getElementById('cash').value);
-const total = <%= total %>;
-if(cash < total){
-new bootstrap.Modal(document.getElementById('cashModal')).show();
-return false;
+  const cash = Number(document.getElementById('cash').value);
+  if(cash < totalAmount){
+    new bootstrap.Modal(document.getElementById('cashModal')).show();
+    return false;
+  }
+  return true;
 }
-return true;
+
+// Calculator functionality
+let calcValue = '';
+const display = document.getElementById('calc-display');
+
+function appendCalc(val){
+  calcValue += val;
+  display.innerText = calcValue;
 }
+
+function clearCalc(){
+  calcValue = '';
+  display.innerText = '0';
+}
+
+function calcResult(){
+  try{
+    const result = eval(calcValue); // simple eval for basic arithmetic
+    document.getElementById('cash').value = result.toFixed(2);
+    calcValue = '';
+    display.innerText = '0';
+  } catch(e){
+    alert('Invalid calculation');
+  }
+}
+
+// Allow keyboard input to work normally
+document.getElementById('cash').addEventListener('input', () => {
+  // Reset calculator display if user types manually
+  calcValue = '';
+  display.innerText = '0';
+});
 </script>
-```ejs
-<%- include('./layouts/navbar') %>
-<main class="container">
-<h3>Payment</h3>
-<h5>Total Due: ₱<%= total %></h5>
-<form method="POST" action="/pos/pay">
-<input type="number" name="cash" class="form-control mb-3" placeholder="Enter Cash" required>
-<button class="btn btn-primary w-100">PAY</button>
-</form>
-</main>

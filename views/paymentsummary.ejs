@@ -1,47 +1,68 @@
 <%- include('./layouts/navbar') %>
 <main class="container text-center">
-<div id="invoice" class="border p-4 mx-auto" style="max-width:400px">
-<h4>Payment Summary</h4>
-<p><strong>Invoice:</strong> <%= invoiceData.invoiceNo %></p>
-<hr>
-<p>Total: ₱<%= invoiceData.total %></p>
-<p>Cash: ₱<%= invoiceData.cash %></p>
-<p><strong>Change: ₱<%= invoiceData.change %></strong></p>
-</div>
+  <div id="invoice" class="border p-4 mx-auto" style="max-width:400px">
+    <h4>Payment Summary</h4>
+    <p><strong>Invoice:</strong> <%= invoiceData.invoiceNo %></p>
+    <hr>
+    <p>Total: ₱<%= invoiceData.total %></p>
+    <p>Cash: ₱<%= invoiceData.cash %></p>
+    <p><strong>Change: ₱<%= invoiceData.change %></strong></p>
+  </div>
 
+  <!-- Stock Update -->
+  <div class="border p-3 mt-3" style="max-width:500px; margin:auto;">
+    <h5>Stock Update</h5>
+    <ul class="list-group">
+      <% invoiceData.cart.forEach(item => { 
+          const product = updatedProducts.find(p => p._id.toString() === item.id);
+          const before = (product ? product.quantity + item.qty : item.qty); // before transaction
+          const after = (product ? product.quantity : 0); // after transaction
+      %>
+        <li class="list-group-item d-flex justify-content-between">
+          <%= item.name %>
+          <span>Before: <%= before %>, After: <%= after %></span>
+        </li>
+      <% }) %>
+    </ul>
+  </div>
 
-<button onclick="printInvoice()" class="btn btn-success mt-3">Print Invoice</button>
-<br>
-<button onclick="history.back()" class="btn btn-link mt-2">← Back</button>
+  <div class="mt-3">
+    <button onclick="printInvoice()" class="btn btn-success me-2">Print Invoice</button>
+    <button onclick="exportPDF()" class="btn btn-primary">Export PDF</button>
+    <br><br>
+    <button onclick="history.back()" class="btn btn-link mt-2">← Back</button>
+  </div>
 </main>
 
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
 function printInvoice(){
-const printContent = document.getElementById('invoice').innerHTML;
-const win = window.open('','');
-win.document.write(`<html><body>${printContent}</body></html>`);
-win.print();
-win.close();
+  const printContent = document.getElementById('invoice').innerHTML;
+  const win = window.open('','');
+  win.document.write(`<html><body>${printContent}</body></html>`);
+  win.print();
+  win.close();
+}
+
+function exportPDF(){
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  const invoiceEl = document.getElementById('invoice').cloneNode(true);
+  const stockEl = document.querySelector('.border.p-3').cloneNode(true);
+
+  // Create temporary container to extract text
+  const container = document.createElement('div');
+  container.appendChild(invoiceEl);
+  container.appendChild(stockEl);
+
+  const lines = container.innerText.split('\n');
+  let y = 10;
+  lines.forEach(line => {
+    doc.text(10, y, line);
+    y += 7;
+  });
+
+  doc.save('<%= invoiceData.invoiceNo %>.pdf');
 }
 </script>
-```ejs
-<%- include('./layouts/navbar') %>
-<main class="container">
-<h3>Payment Summary</h3>
-<p><strong>Invoice:</strong> <%= invoiceData.invoiceNo %></p>
-<p>Total: ₱<%= invoiceData.total %></p>
-<p>Cash: ₱<%= invoiceData.cash %></p>
-<p>Change: ₱<%= invoiceData.change %></p>
-
-
-<h5>Inventory Update</h5>
-<ul>
-<% updatedProducts.forEach(p => { %>
-<li><%= p.name %> – Remaining: <%= p.quantity %></li>
-<% }) %>
-</ul>
-
-
-<button onclick="window.print()" class="btn btn-success">Print Invoice</button>
-</main>
