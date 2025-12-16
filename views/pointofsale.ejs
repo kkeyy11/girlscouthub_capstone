@@ -1,27 +1,52 @@
 <%- include('./layouts/navbar') %>
-<main class="container text-center">
-<h3 class="mb-3">Payment</h3>
-<h5>Total Due: ₱<%= total %></h5>
+<main class="container">
+<div class="text-center mb-4">
+<h3>Point of Sale</h3>
+</div>
 
 
-<form method="POST" action="/pos/pay" onsubmit="return checkCash()">
-<input type="number" id="cash" name="cash" class="form-control mb-3" placeholder="Enter Cash" required>
-<button class="btn btn-primary w-100">PAY</button>
+<!-- CART -->
+<div class="card mx-auto mb-4" style="max-width:600px">
+<div class="card-body">
+<h5 class="card-title">Current Order</h5>
+<ul id="cartList" class="list-group mb-3"></ul>
+<h5 class="text-end">Total: ₱<span id="total">0</span></h5>
+<form method="POST" action="/pos/payment" onsubmit="return validateCart()">
+<input type="hidden" name="cart" id="cartInput">
+<button class="btn btn-success w-100">Proceed to Payment</button>
 </form>
+</div>
+</div>
 
 
-<button onclick="history.back()" class="btn btn-link mt-3">← Back</button>
+<!-- PRODUCTS -->
+<div class="row justify-content-center">
+<% products.forEach(p => { %>
+<div class="col-md-3 mb-4">
+<div class="card h-100" data-bs-toggle="modal" data-bs-target="#qtyModal" onclick="selectProduct('<%= p._id %>','<%= p.name %>',<%= p.price %>,<%= p.quantity %>)">
+<img src="<%= p.image %>" class="card-img-top">
+<div class="card-body text-center">
+<h6><%= p.name %></h6>
+<small>₱<%= p.price %> | Stock: <%= p.quantity %></small>
+</div>
+</div>
+</div>
+<% }) %>
+</div>
 </main>
 
 
-<!-- INSUFFICIENT MODAL -->
-<div class="modal fade" id="cashModal" tabindex="-1">
+<!-- QUANTITY MODAL -->
+<div class="modal fade" id="qtyModal" tabindex="-1">
 <div class="modal-dialog modal-dialog-centered">
 <div class="modal-content">
-<div class="modal-body text-center">
-<h5>Insufficient Payment</h5>
-<p>Cash is less than total amount.</p>
-<button class="btn btn-danger" data-bs-dismiss="modal">OK</button>
+<div class="modal-header"><h5>Select Quantity</h5></div>
+<div class="modal-body">
+<input type="number" id="qtyInput" class="form-control" min="1">
+</div>
+<div class="modal-footer">
+<button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+<button class="btn btn-primary" onclick="confirmQty()">Add</button>
 </div>
 </div>
 </div>
@@ -29,23 +54,10 @@
 
 
 <script>
-function checkCash(){
-const cash = Number(document.getElementById('cash').value);
-const total = <%= total %>;
-if(cash < total){
-new bootstrap.Modal(document.getElementById('cashModal')).show();
-return false;
-}
-return true;
-}
+let cart = [];
+let selectedProduct = {};
+
+
+function selectProduct(id,name,price,stock){
+selectedProduct = {id,name,price,stock};
 </script>
-```ejs
-<%- include('./layouts/navbar') %>
-<main class="container">
-<h3>Payment</h3>
-<h5>Total Due: ₱<%= total %></h5>
-<form method="POST" action="/pos/pay">
-<input type="number" name="cash" class="form-control mb-3" placeholder="Enter Cash" required>
-<button class="btn btn-primary w-100">PAY</button>
-</form>
-</main>
