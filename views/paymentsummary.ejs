@@ -4,7 +4,11 @@
   <div id="invoice" class="border p-4 mx-auto" style="max-width:400px">
     <h4>Payment Summary</h4>
     <p><strong>Invoice:</strong> <%= invoiceData.invoiceNo %></p>
-    <p><strong>Customer:</strong> <%= invoiceData.customerName %></p>
+    
+    <% if(invoiceData.customerName && invoiceData.customerName.trim() !== '') { %>
+      <p><strong>Customer:</strong> <%= invoiceData.customerName %></p>
+    <% } %>
+    
     <hr>
 
     <!-- Ordered Items -->
@@ -62,8 +66,6 @@ function printInvoice(){
 function exportPDF(){
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
-
-  // Include both invoice and stock update
   const invoiceEl = document.getElementById('invoice').cloneNode(true);
   const stockEl = document.querySelector('.border.p-3').cloneNode(true);
 

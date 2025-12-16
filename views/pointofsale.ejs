@@ -53,10 +53,15 @@
       <% reservations.forEach(r => { %>
         <div class="card mb-2" style="cursor:pointer;" onclick='loadReservation(<%- JSON.stringify(r) %>)'>
           <div class="card-body">
-            <p class="mb-1"><strong><%= r.user ? (r.user.firstName + ' ' + (r.user.middleName ? r.user.middleName + ' ' : '') + r.user.lastName) : "Customer" %>
-</strong></p>
+            <p class="mb-1"><strong><%= r.user ? (r.user.firstName + ' ' + (r.user.middleName ? r.user.middleName + ' ' : '') + r.user.lastName) : "Customer" %></strong></p>
             <p class="mb-0">Total: ₱<%= r.total %></p>
             <small>Status: <%= r.status %></small>
+            <!-- Items List -->
+            <ul class="mt-2">
+              <% r.items.forEach(item => { %>
+                <li style="font-size:0.85rem;"><%= item.name %> x<%= item.quantity %> - ₱<%= item.price %></li>
+              <% }) %>
+            </ul>
           </div>
         </div>
       <% }) %>
@@ -86,8 +91,13 @@
 <script>
 let cart = [];
 let selectedProduct = null;
+let reservationLoaded = false;
 
 function selectProduct(id, name, price, stock){
+  if(reservationLoaded) {
+    alert("You can only add one reservation at a time. Clear cart first to add products.");
+    return;
+  }
   selectedProduct = { id, name, price, stock };
   document.getElementById('qtyInput').value = '';
   document.getElementById('qtyInput').max = stock;
@@ -109,7 +119,9 @@ function confirmQty(){
 }
 
 function loadReservation(res){
-  cart = [];
+  cart = []; // clear cart to allow only this reservation
+  reservationLoaded = true;
+
   res.items.forEach(i => {
     cart.push({
       id: i.productId,
@@ -120,7 +132,9 @@ function loadReservation(res){
   });
 
   // Auto-fill customer name from reservation
-  document.querySelector("input[name='customerName']").value = res.user?.name || res.user?.username || "";
+  document.querySelector("input[name='customerName']").value = res.user?.firstName 
+    ? (res.user.firstName + ' ' + (res.user.middleName ? res.user.middleName + ' ' : '') + res.user.lastName) 
+    : '';
 
   renderCart();
 }
@@ -137,7 +151,7 @@ function renderCart(){
         ${i.name} x${i.qty}
         <span>
           ₱${i.price * i.qty}
-          <button class="btn btn-sm btn-danger ms-2" onclick="cart.splice(${idx},1);renderCart()">×</button>
+          <button class="btn btn-sm btn-danger ms-2" onclick="cart.splice(${idx},1);renderCart(); reservationLoaded=false;">×</button>
         </span>
       </li>`;
   });
