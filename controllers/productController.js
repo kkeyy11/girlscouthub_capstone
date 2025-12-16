@@ -1,11 +1,28 @@
 const Product = require('../models/Product');
 
+// Get list of products
+exports.getProductList = async (req, res) => {
+  try {
+    const products = await Product.find().sort({ createdAt: -1 });
+    res.render('manageProducts', { products });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error fetching products');
+  }
+};
+
+// Get add product form
 exports.getAddProduct = (req, res) => {
   res.render('addProduct');
 };
+
+// Add new product
 exports.postAddProduct = async (req, res) => {
   try {
-    const {
+    const { name, category, subcategory, variant, description, quantity, price, supplier } = req.body;
+    const image = req.file ? `/uploads/${req.file.filename}` : '';
+
+    const newProduct = new Product({
       name,
       category,
       subcategory,
@@ -14,151 +31,109 @@ exports.postAddProduct = async (req, res) => {
       quantity,
       price,
       supplier,
-      dateAcquired
-    } = req.body;
-
-    // Get image file path from multer
-    const imagePath = req.file ? "/uploads/" + req.file.filename : null;
-
-    const product = new Product({
-      name,
-      category,
-      subcategory: subcategory || null,
-      variant: variant || null,
-      description,
-      quantity,
-      price,
-      supplier,
-      dateAcquired,
-      image: imagePath // Save image path to MongoDB
+      image,
+      dateAcquired: new Date()
     });
 
-    await product.save();
-    res.redirect('/manage-products'); // Redirect to the product add form or list
-  } catch (error) {
-    console.error('Error saving product:', error);
-    res.status(500).send('Failed to save product');
+    await newProduct.save();
+    res.redirect('/manage-products');
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Failed to add product');
   }
 };
 
-
-  
-  // exports.addProduct = async (req, res) => {
-  //   const { name, category, description, quantity, price, supplier, dateAcquired } = req.body;
-  //   const image = req.file ? '/uploads/' + req.file.filename : ''; // path to use in src
-  
-  //   const product = new Product({
-  //     name,
-  //     category,
-  //     description,
-  //     quantity,
-  //     price,
-  //     supplier,
-  //     dateAcquired,
-  //     image
-  //   });
-  
-  //   await product.save();
-  //   res.redirect('/products/add');
-  // };
-  
-  
-
-exports.getProductList = async (req, res) => {
-  const products = await Product.find();
-  res.render('productList', { products });
+// Get edit product form
+exports.getEditProductForm = async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id);
+    if (!product) return res.status(404).send('Product not found');
+    res.render('editProduct', { product });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error fetching product');
+  }
 };
 
-// Modify existing getProductList
-exports.getProductList = async (req, res) => {
-    const products = await Product.find();
-    res.render('productList', { products });
-  };
-  
+// ✅ Post edit product (FIXED)
+exports.postEditProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, price, quantity, category, subcategory, description, variant } = req.body;
 
-  exports.getManageProducts = async (req, res) => {
-    const products = await Product.find();
-    res.render('manageProducts', { products });
-  };
-  
-  exports.deleteProduct = async (req, res) => {
-    const id = req.params.id;
-    await Product.findByIdAndDelete(id);
+    const updateData = {
+      name,
+      price,
+      quantity,
+      category,
+      subcategory,
+      description,
+      variant
+    };
+
+    // If a new image is uploaded, update it
+    if (req.file) {
+      updateData.image = `/uploads/${req.file.filename}`;
+    }
+
+    await Product.findByIdAndUpdate(id, updateData);
+
     res.redirect('/manage-products');
-  };
-  
+  } catch (err) {
+    console.error('Edit product error:', err);
+    res.status(500).send('Failed to update product');
+  }
+};
 
-
-  // Show edit form
-exports.getEditProductForm = async (req, res) => {
-    const product = await Product.findById(req.params.id);
-    res.render('editProduct', { product });
-  };
-  
-  // Handle update
-  exports.postEditProduct = async (req, res) => {
-    const { name, price, quantity } = req.body;
-    await Product.findByIdAndUpdate(req.params.id, { name, price, quantity });
+// Delete product
+exports.deleteProduct = async (req, res) => {
+  try {
+    await Product.findByIdAndDelete(req.params.id);
     res.redirect('/manage-products');
-  };
-  
-  // Handle stock addition
-  exports.addStock = async (req, res) => {
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Failed to delete product');
+  }
+};
+
+// Add stock
+exports.addStock = async (req, res) => {
+  try {
     const { addQty } = req.body;
-    await Product.findByIdAndUpdate(req.params.id, {
-      $inc: { quantity: parseInt(addQty) }
-    });
+    const product = await Product.findById(req.params.id);
+    if (!product) return res.status(404).send('Product not found');
+
+    product.quantity += parseInt(addQty);
+    await product.save();
     res.redirect('/manage-products');
-  };
-  
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Failed to add stock');
+  }
+};
 
-  // Get low-stock products
+// Low stock
 exports.lowStock = async (req, res) => {
-    try {
-      // Find products with quantity less than 5
-      const lowStockProducts = await Product.find({ quantity: { $lt: 5 } });
-  
-      // Render the low-stock page with the products
-      res.render('lowStock', { products: lowStockProducts });
-    } catch (err) {
-      console.log(err);
-      res.status(500).send('Server Error');
-    }
-  };
-  
+  try {
+    const products = await Product.find({ quantity: { $lt: 10, $gt: 0 } });
+    res.render('lowStock', { products });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error fetching low stock products');
+  }
+};
 
-  // Cancel (remove) item from the cart
+// Cancel item (special)
 exports.cancelItem = async (req, res) => {
-    try {
-      const itemId = req.params.id;
-  
-      // Assuming you're storing the cart in the session
-      const cart = req.session.cart;
-  
-      // Remove the item with the given ID
-      const updatedCart = cart.filter(item => item._id !== itemId);
-  
-      // Save the updated cart back to the session
-      req.session.cart = updatedCart;
-  
-      // Redirect back to the cart page with the updated cart
-      res.redirect('/cart');
-    } catch (err) {
-      console.log(err);
-      res.status(500).send('Server Error');
-    }
-  };
-  
+  try {
+    const product = await Product.findById(req.params.id);
+    if (!product) return res.status(404).send('Product not found');
 
-  exports.removeReservation = async (req, res) => {
-    const reservationId = req.params.id;
-    
-    try {
-      // Find the reservation by ID and delete it
-      await Reservation.findByIdAndDelete(reservationId);
-      res.redirect('/reservations'); // Redirect back to the reservations page
-    } catch (err) {
-      console.error(err);
-      res.status(500).send("Error occurred while removing the reservation.");
-    }
-  };
+    product.quantity = 0;
+    await product.save();
+    res.redirect('/manage-products');
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Failed to cancel item');
+  }
+};

@@ -380,9 +380,10 @@
           Changes will be reflected immediately in your inventory system.
         </div>
         
+        <!-- ✅ Image Upload Functionality -->
         <div class="product-image">
           <% if (product.image) { %>
-            <img src="<%= product.image %>" alt="<%= product.name %>">
+            <img id="preview-image" src="<%= product.image %>" alt="<%= product.name %>">
           <% } else { %>
             <div class="product-image-placeholder">
               <i class="fas fa-box"></i>
@@ -391,10 +392,11 @@
           <label for="image-upload" class="image-upload-btn">
             <i class="fas fa-camera"></i>
           </label>
-          <input type="file" id="image-upload" style="display: none;">
+          <input type="file" id="image-upload" name="image" accept="image/*" style="display:none;">
         </div>
         
-        <form action="/edit-product/<%= product._id %>" method="POST">
+        <!-- ✅ Add enctype="multipart/form-data" -->
+        <form action="/edit-product/<%= product._id %>" method="POST" enctype="multipart/form-data">
           <div class="form-group">
             <label for="name" class="form-label">Product Name</label>
             <input type="text" id="name" name="name" class="form-control" value="<%= product.name %>" placeholder="Enter product name" required>
@@ -421,32 +423,21 @@
           </div>
           
           <div class="form-row">
-  <div class="form-col form-col-md-6">
-    <div class="form-group">
-      <label for="category" class="form-label">Category</label>
-      <select id="category" name="category" class="form-control">
-        <option value="">-- Select Category --</option>
-      
-        <option value="Badges" <%= product.category === 'Badges' && product.subcategory === 'TWINKLER BADGES' ? 'selected' : '' %>>TWINKLER BADGES</option>
-        <option value="Badges" <%= product.category === 'Badges' && product.subcategory === 'STAR BADGES' ? 'selected' : '' %>>STAR BADGES</option>
-        <option value="Badges" <%= product.category === 'Badges' && product.subcategory === 'JUNIOR BADGES' ? 'selected' : '' %>>JUNIOR BADGES</option>
-        <option value="Badges" <%= product.category === 'Badges' && product.subcategory === 'SENIOR BADGES' ? 'selected' : '' %>>SENIOR BADGES</option>
-        <option value="Badges" <%= product.category === 'Badges' && product.subcategory === 'CADET BADGES' ? 'selected' : '' %>>CADET BADGES</option>
-        <option value="Badges" <%= product.category === 'Badges' && product.subcategory === 'SPECIAL BADGES' ? 'selected' : '' %>>SPECIAL BADGES</option>
-      </select>
-    </div>
-  </div>
-</div>
-
-            
-            <!-- <div class="form-col form-col-md-6">
+            <div class="form-col form-col-md-6">
               <div class="form-group">
-                <label for="sku" class="form-label">SKU</label>
-                <input type="text" id="sku" name="sku" class="form-control" value="<%= product.sku || '' %>" placeholder="SKU-12345">
+                <label for="category" class="form-label">Category</label>
+                <select id="category" name="category" class="form-control">
+                  <option value="">-- Select Category --</option>
+                  <option value="Badges" <%= product.category === 'Badges' && product.subcategory === 'TWINKLER BADGES' ? 'selected' : '' %>>TWINKLER BADGES</option>
+                  <option value="Badges" <%= product.category === 'Badges' && product.subcategory === 'STAR BADGES' ? 'selected' : '' %>>STAR BADGES</option>
+                  <option value="Badges" <%= product.category === 'Badges' && product.subcategory === 'JUNIOR BADGES' ? 'selected' : '' %>>JUNIOR BADGES</option>
+                  <option value="Badges" <%= product.category === 'Badges' && product.subcategory === 'SENIOR BADGES' ? 'selected' : '' %>>SENIOR BADGES</option>
+                  <option value="Badges" <%= product.category === 'Badges' && product.subcategory === 'CADET BADGES' ? 'selected' : '' %>>CADET BADGES</option>
+                  <option value="Badges" <%= product.category === 'Badges' && product.subcategory === 'SPECIAL BADGES' ? 'selected' : '' %>>SPECIAL BADGES</option>
+                </select>
               </div>
             </div>
-          </div> -->
-          
+          </div>
           
           <div class="form-actions">
             <a href="/manage-products" class="btn btn-outline">
@@ -466,5 +457,21 @@
       </div>
     </div>
   </div>
+
+  <script>
+    // ✅ Preview image when uploading
+    const imageInput = document.getElementById('image-upload');
+    const previewImage = document.getElementById('preview-image');
+
+    imageInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (previewImage) previewImage.src = reader.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  </script>
 </body>
 </html>
