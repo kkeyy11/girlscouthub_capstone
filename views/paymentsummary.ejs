@@ -1,4 +1,32 @@
 <%- include('./layouts/navbar') %>
+<main class="container text-center">
+<div id="invoice" class="border p-4 mx-auto" style="max-width:400px">
+<h4>Payment Summary</h4>
+<p><strong>Invoice:</strong> <%= invoiceData.invoiceNo %></p>
+<hr>
+<p>Total: ₱<%= invoiceData.total %></p>
+<p>Cash: ₱<%= invoiceData.cash %></p>
+<p><strong>Change: ₱<%= invoiceData.change %></strong></p>
+</div>
+
+
+<button onclick="printInvoice()" class="btn btn-success mt-3">Print Invoice</button>
+<br>
+<button onclick="history.back()" class="btn btn-link mt-2">← Back</button>
+</main>
+
+
+<script>
+function printInvoice(){
+const printContent = document.getElementById('invoice').innerHTML;
+const win = window.open('','');
+win.document.write(`<html><body>${printContent}</body></html>`);
+win.print();
+win.close();
+}
+</script>
+```ejs
+<%- include('./layouts/navbar') %>
 <main class="container">
 <h3>Payment Summary</h3>
 <p><strong>Invoice:</strong> <%= invoiceData.invoiceNo %></p>

@@ -1,4 +1,46 @@
 <%- include('./layouts/navbar') %>
+<main class="container text-center">
+<h3 class="mb-3">Payment</h3>
+<h5>Total Due: ₱<%= total %></h5>
+
+
+<form method="POST" action="/pos/pay" onsubmit="return checkCash()">
+<input type="number" id="cash" name="cash" class="form-control mb-3" placeholder="Enter Cash" required>
+<button class="btn btn-primary w-100">PAY</button>
+</form>
+
+
+<button onclick="history.back()" class="btn btn-link mt-3">← Back</button>
+</main>
+
+
+<!-- INSUFFICIENT MODAL -->
+<div class="modal fade" id="cashModal" tabindex="-1">
+<div class="modal-dialog modal-dialog-centered">
+<div class="modal-content">
+<div class="modal-body text-center">
+<h5>Insufficient Payment</h5>
+<p>Cash is less than total amount.</p>
+<button class="btn btn-danger" data-bs-dismiss="modal">OK</button>
+</div>
+</div>
+</div>
+</div>
+
+
+<script>
+function checkCash(){
+const cash = Number(document.getElementById('cash').value);
+const total = <%= total %>;
+if(cash < total){
+new bootstrap.Modal(document.getElementById('cashModal')).show();
+return false;
+}
+return true;
+}
+</script>
+```ejs
+<%- include('./layouts/navbar') %>
 <main class="container">
 <h3>Payment</h3>
 <h5>Total Due: ₱<%= total %></h5>

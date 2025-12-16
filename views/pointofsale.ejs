@@ -1,54 +1,51 @@
 <%- include('./layouts/navbar') %>
-<main class="container-fluid">
-<div class="row">
-<div class="col-md-4">
-<h4>Current Order</h4>
-<ul id="cartList" class="list-group mb-3"></ul>
-<h5>Total: ₱<span id="total">0</span></h5>
-<form method="POST" action="/pos/payment">
-<input type="hidden" name="cart" id="cartInput">
-<button class="btn btn-success w-100">Proceed to Payment</button>
+<main class="container text-center">
+<h3 class="mb-3">Payment</h3>
+<h5>Total Due: ₱<%= total %></h5>
+
+
+<form method="POST" action="/pos/pay" onsubmit="return checkCash()">
+<input type="number" id="cash" name="cash" class="form-control mb-3" placeholder="Enter Cash" required>
+<button class="btn btn-primary w-100">PAY</button>
 </form>
-</div>
 
 
-<div class="col-md-8">
-<h4>Products</h4>
-<div class="row">
-<% products.forEach(p => { %>
-<div class="col-md-3 mb-3">
-<div class="card h-100" onclick="addToCart('<%= p._id %>','<%= p.name %>',<%= p.price %>)">
-<img src="<%= p.image %>" class="card-img-top">
-<div class="card-body">
-<h6><%= p.name %></h6>
-<small>₱<%= p.price %></small>
-</div>
-</div>
-</div>
-<% }) %>
-</div>
-</div>
-</div>
+<button onclick="history.back()" class="btn btn-link mt-3">← Back</button>
 </main>
 
 
+<!-- INSUFFICIENT MODAL -->
+<div class="modal fade" id="cashModal" tabindex="-1">
+<div class="modal-dialog modal-dialog-centered">
+<div class="modal-content">
+<div class="modal-body text-center">
+<h5>Insufficient Payment</h5>
+<p>Cash is less than total amount.</p>
+<button class="btn btn-danger" data-bs-dismiss="modal">OK</button>
+</div>
+</div>
+</div>
+</div>
+
+
 <script>
-let cart = [];
-function addToCart(id,name,price){
-const qty = prompt('Enter quantity');
-if(!qty) return;
-cart.push({id,name,price,qty:Number(qty)});
-renderCart();
+function checkCash(){
+const cash = Number(document.getElementById('cash').value);
+const total = <%= total %>;
+if(cash < total){
+new bootstrap.Modal(document.getElementById('cashModal')).show();
+return false;
 }
-function renderCart(){
-const list = document.getElementById('cartList');
-list.innerHTML='';
-let total=0;
-cart.forEach(i=>{
-total+=i.price*i.qty;
-list.innerHTML+=`<li class="list-group-item">${i.name} x${i.qty}</li>`;
-});
-document.getElementById('total').innerText=total;
-document.getElementById('cartInput').value=JSON.stringify(cart);
+return true;
 }
 </script>
+```ejs
+<%- include('./layouts/navbar') %>
+<main class="container">
+<h3>Payment</h3>
+<h5>Total Due: ₱<%= total %></h5>
+<form method="POST" action="/pos/pay">
+<input type="number" name="cash" class="form-control mb-3" placeholder="Enter Cash" required>
+<button class="btn btn-primary w-100">PAY</button>
+</form>
+</main>
