@@ -80,6 +80,8 @@ app.use('/', require('./routes/troop.route'));
 app.use('/', require('./routes/review.route'));
 app.use("/", require("./routes/testMail"));
 app.use("/", require("./routes/inventoryRoutes"));
+app.use('/', require('./routes/posRoute'));
+
 app.use('/', siteContentRoutes);
 
 app.use(

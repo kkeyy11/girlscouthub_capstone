@@ -1,0 +1,19 @@
+<%- include('./layouts/navbar') %>
+<main class="container">
+<h3>Payment Summary</h3>
+<p><strong>Invoice:</strong> <%= invoiceData.invoiceNo %></p>
+<p>Total: ₱<%= invoiceData.total %></p>
+<p>Cash: ₱<%= invoiceData.cash %></p>
+<p>Change: ₱<%= invoiceData.change %></p>
+
+
+<h5>Inventory Update</h5>
+<ul>
+<% updatedProducts.forEach(p => { %>
+<li><%= p.name %> – Remaining: <%= p.quantity %></li>
+<% }) %>
+</ul>
+
+
+<button onclick="window.print()" class="btn btn-success">Print Invoice</button>
+</main>

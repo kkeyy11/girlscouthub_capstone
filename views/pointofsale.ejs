@@ -1,0 +1,54 @@
+<%- include('./layouts/navbar') %>
+<main class="container-fluid">
+<div class="row">
+<div class="col-md-4">
+<h4>Current Order</h4>
+<ul id="cartList" class="list-group mb-3"></ul>
+<h5>Total: ₱<span id="total">0</span></h5>
+<form method="POST" action="/pos/payment">
+<input type="hidden" name="cart" id="cartInput">
+<button class="btn btn-success w-100">Proceed to Payment</button>
+</form>
+</div>
+
+
+<div class="col-md-8">
+<h4>Products</h4>
+<div class="row">
+<% products.forEach(p => { %>
+<div class="col-md-3 mb-3">
+<div class="card h-100" onclick="addToCart('<%= p._id %>','<%= p.name %>',<%= p.price %>)">
+<img src="<%= p.image %>" class="card-img-top">
+<div class="card-body">
+<h6><%= p.name %></h6>
+<small>₱<%= p.price %></small>
+</div>
+</div>
+</div>
+<% }) %>
+</div>
+</div>
+</div>
+</main>
+
+
+<script>
+let cart = [];
+function addToCart(id,name,price){
+const qty = prompt('Enter quantity');
+if(!qty) return;
+cart.push({id,name,price,qty:Number(qty)});
+renderCart();
+}
+function renderCart(){
+const list = document.getElementById('cartList');
+list.innerHTML='';
+let total=0;
+cart.forEach(i=>{
+total+=i.price*i.qty;
+list.innerHTML+=`<li class="list-group-item">${i.name} x${i.qty}</li>`;
+});
+document.getElementById('total').innerText=total;
+document.getElementById('cartInput').value=JSON.stringify(cart);
+}
+</script>

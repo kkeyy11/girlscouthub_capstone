@@ -1,0 +1,9 @@
+<%- include('./layouts/navbar') %>
+<main class="container">
+<h3>Payment</h3>
+<h5>Total Due: ₱<%= total %></h5>
+<form method="POST" action="/pos/pay">
+<input type="number" name="cash" class="form-control mb-3" placeholder="Enter Cash" required>
+<button class="btn btn-primary w-100">PAY</button>
+</form>
+</main>
