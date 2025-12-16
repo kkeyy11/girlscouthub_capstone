@@ -4,6 +4,19 @@
     <h4>Payment Summary</h4>
     <p><strong>Invoice:</strong> <%= invoiceData.invoiceNo %></p>
     <hr>
+
+    <!-- Ordered Items -->
+    <h5>Ordered Items</h5>
+    <ul class="list-group mb-3">
+      <% invoiceData.cart.forEach(item => { %>
+        <li class="list-group-item d-flex justify-content-between">
+          <%= item.name %> x<%= item.qty %>
+          <span>₱<%= item.price * item.qty %></span>
+        </li>
+      <% }) %>
+    </ul>
+
+    <!-- Totals -->
     <p>Total: ₱<%= invoiceData.total %></p>
     <p>Cash: ₱<%= invoiceData.cash %></p>
     <p><strong>Change: ₱<%= invoiceData.change %></strong></p>
@@ -48,10 +61,10 @@ function exportPDF(){
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
 
+  // Include both invoice and stock update
   const invoiceEl = document.getElementById('invoice').cloneNode(true);
   const stockEl = document.querySelector('.border.p-3').cloneNode(true);
 
-  // Create temporary container to extract text
   const container = document.createElement('div');
   container.appendChild(invoiceEl);
   container.appendChild(stockEl);
