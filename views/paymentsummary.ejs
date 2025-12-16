@@ -1,8 +1,10 @@
 <%- include('./layouts/navbar') %>
+
 <main class="container text-center">
   <div id="invoice" class="border p-4 mx-auto" style="max-width:400px">
     <h4>Payment Summary</h4>
     <p><strong>Invoice:</strong> <%= invoiceData.invoiceNo %></p>
+    <p><strong>Customer:</strong> <%= invoiceData.customerName %></p>
     <hr>
 
     <!-- Ordered Items -->
@@ -28,8 +30,8 @@
     <ul class="list-group">
       <% invoiceData.cart.forEach(item => { 
           const product = updatedProducts.find(p => p._id.toString() === item.id);
-          const before = (product ? product.quantity + item.qty : item.qty); // before transaction
-          const after = (product ? product.quantity : 0); // after transaction
+          const before = (product ? product.quantity + item.qty : item.qty);
+          const after = (product ? product.quantity : 0);
       %>
         <li class="list-group-item d-flex justify-content-between">
           <%= item.name %>

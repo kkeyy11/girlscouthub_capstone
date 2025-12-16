@@ -1,53 +1,88 @@
 <%- include('./layouts/navbar') %>
-<main class="container text-center my-4">
 
-  <h3 class="mb-4">Point of Sale</h3>
+<main class="container my-4">
+  <h3 class="text-center mb-4">Point of Sale</h3>
 
   <!-- CART -->
-  <div class="card mx-auto mb-5" style="max-width:600px">
+  <div class="card mx-auto mb-4" style="max-width:600px">
     <div class="card-body">
-      <h5 class="card-title">Current Order</h5>
+      <h5>Current Order</h5>
+
+      <input type="text"
+        class="form-control mb-2"
+        name="customerName"
+        placeholder="Customer Name (optional)"
+        form="paymentForm">
+
       <ul id="cartList" class="list-group mb-3"></ul>
       <h5 class="text-end">Total: ₱<span id="total">0</span></h5>
-      <form method="POST" action="/pos/payment" onsubmit="return validateCart()">
+
+      <form id="paymentForm" method="POST" action="/pos/payment" onsubmit="return validateCart()">
         <input type="hidden" name="cart" id="cartInput">
-        <button type="submit" class="btn btn-success w-100">Proceed to Payment</button>
+        <button class="btn btn-success w-100">Proceed to Payment</button>
       </form>
     </div>
   </div>
 
-  <!-- PRODUCTS -->
-  <div class="row justify-content-center">
-    <% products.forEach(p => { %>
-      <div class="col-md-3 mb-4">
-        <div class="card h-100" data-bs-toggle="modal" data-bs-target="#qtyModal"
-             onclick="selectProduct('<%= p._id %>','<%= p.name %>',<%= p.price %>,<%= p.quantity %>)">
-          <img src="<%= p.image %>" class="card-img-top">
-          <div class="card-body text-center">
-            <h6><%= p.name %></h6>
-            <small>₱<%= p.price %> | Stock: <%= p.quantity %></small>
+  <div class="row">
+    <!-- PRODUCTS -->
+    <div class="col-md-8">
+      <div class="row">
+        <% products.forEach(p => { %>
+          <div class="col-md-4 mb-3">
+            <div class="card h-100"
+              data-bs-toggle="modal"
+              data-bs-target="#qtyModal"
+              onclick="selectProduct('<%= p._id %>','<%= p.name %>',<%= p.price %>,<%= p.quantity %>)">
+              <img src="<%= p.image %>" class="card-img-top">
+              <div class="card-body text-center">
+                <h6><%= p.name %></h6>
+                <small>₱<%= p.price %> | Stock: <%= p.quantity %></small>
+              </div>
+            </div>
           </div>
+        <% }) %>
+      </div>
+    </div>
+
+    <!-- RESERVATIONS -->
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-body">
+          <h5>Reservations</h5>
+
+          <% if(reservations.length === 0){ %>
+            <p class="text-muted">No pending reservations</p>
+          <% } %>
+
+          <% reservations.forEach(r => { %>
+            <button type="button"
+              class="list-group-item list-group-item-action mb-2"
+              onclick='loadReservation(<%- JSON.stringify(r) %>)'>
+              <strong><%= r.user?.name || "Customer" %></strong><br>
+              ₱<%= r.total %>
+            </button>
+          <% }) %>
         </div>
       </div>
-    <% }) %>
+    </div>
   </div>
-
 </main>
 
 <!-- QUANTITY MODAL -->
-<div class="modal fade" id="qtyModal" tabindex="-1">
+<div class="modal fade" id="qtyModal">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
         <h5>Select Quantity</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        <button class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body">
         <input type="number" id="qtyInput" class="form-control" min="1">
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-primary" onclick="confirmQty()">Add</button>
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button class="btn btn-primary" onclick="confirmQty()">Add</button>
       </div>
     </div>
   </div>
@@ -57,28 +92,16 @@
 let cart = [];
 let selectedProduct = null;
 
-function selectProduct(id, name, price, stock) {
+function selectProduct(id, name, price, stock){
   selectedProduct = { id, name, price, stock };
-  const qtyInput = document.getElementById('qtyInput');
-  qtyInput.value = '';
-  qtyInput.max = stock;
+  document.getElementById('qtyInput').value = '';
+  document.getElementById('qtyInput').max = stock;
 }
 
-function confirmQty() {
-  const qtyInput = document.getElementById('qtyInput');
-  const qty = Number(qtyInput.value);
+function confirmQty(){
+  const qty = Number(document.getElementById('qtyInput').value);
+  if(!qty || qty < 1 || qty > selectedProduct.stock) return alert("Invalid quantity");
 
-  if (!selectedProduct) {
-    alert('No product selected');
-    return;
-  }
-
-  if (!qty || qty < 1 || qty > selectedProduct.stock) {
-    alert('Invalid quantity');
-    return;
-  }
-
-  // Add to cart
   cart.push({
     id: selectedProduct.id,
     name: selectedProduct.name,
@@ -87,44 +110,46 @@ function confirmQty() {
   });
 
   renderCart();
-
-  const modalEl = document.getElementById('qtyModal');
-  const modal = bootstrap.Modal.getInstance(modalEl);
-  modal.hide();
+  bootstrap.Modal.getInstance(document.getElementById('qtyModal')).hide();
 }
 
-function removeFromCart(index) {
-  cart.splice(index, 1);
+function loadReservation(res){
+  cart = [];
+  res.items.forEach(i => {
+    cart.push({
+      id: i.productId,
+      name: i.name,
+      price: i.price,
+      qty: i.quantity
+    });
+  });
   renderCart();
 }
 
-function renderCart() {
-  const list = document.getElementById('cartList');
-  list.innerHTML = '';
+function renderCart(){
   let total = 0;
+  const list = document.getElementById("cartList");
+  list.innerHTML = "";
 
-  cart.forEach((item, index) => {
-    total += item.price * item.qty;
+  cart.forEach((i, idx) => {
+    total += i.price * i.qty;
     list.innerHTML += `
-      <li class="list-group-item d-flex justify-content-between align-items-center">
-        ${item.name} x${item.qty} 
+      <li class="list-group-item d-flex justify-content-between">
+        ${i.name} x${i.qty}
         <span>
-          ₱${item.price * item.qty} 
-          <button type="button" class="btn btn-sm btn-danger ms-2" onclick="removeFromCart(${index})">
-            &times;
-          </button>
+          ₱${i.price * i.qty}
+          <button class="btn btn-sm btn-danger ms-2" onclick="cart.splice(${idx},1);renderCart()">×</button>
         </span>
-      </li>
-    `;
+      </li>`;
   });
 
-  document.getElementById('total').innerText = total;
-  document.getElementById('cartInput').value = JSON.stringify(cart);
+  document.getElementById("total").innerText = total;
+  document.getElementById("cartInput").value = JSON.stringify(cart);
 }
 
-function validateCart() {
-  if (cart.length === 0) {
-    alert('No products selected');
+function validateCart(){
+  if(cart.length === 0){
+    alert("No items selected");
     return false;
   }
   return true;

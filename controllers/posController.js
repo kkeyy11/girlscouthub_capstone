@@ -1,19 +1,31 @@
 const Product = require("../models/Product");
+const Reservation = require("../models/Reservation");
 
 let cart = [];
 let invoiceData = {};
+let customerName = "";
 
 exports.renderPOS = async (req, res) => {
   const products = await Product.find();
-  res.render("pointofsale", { user: req.user, products, cart });
+  const reservations = await Reservation.find({ status: "Pending" })
+    .populate("user");
+
+  res.render("pointofsale", {
+    user: req.user,
+    products,
+    reservations,
+    cart
+  });
 };
 
 exports.toPayment = (req, res) => {
   try {
     cart = JSON.parse(req.body.cart) || [];
-  } catch (e) {
+  } catch {
     cart = [];
   }
+
+  customerName = req.body.customerName || "Walk-in";
 
   const total = cart.reduce((sum, i) => sum + i.price * i.qty, 0);
   invoiceData.total = total;
@@ -22,38 +34,40 @@ exports.toPayment = (req, res) => {
 };
 
 exports.processPayment = async (req, res) => {
-  // Read cash and convert to number
-  const cashRaw = req.body.cash;
-  const cash = parseFloat(cashRaw);
+  const cash = parseFloat(req.body.cash);
   const total = invoiceData.total;
 
-  // Validate cash
-  if (typeof cashRaw === 'undefined' || isNaN(cash) || cash < total) {
+  if (isNaN(cash) || cash < total) {
     return res.redirect("/pos");
   }
 
-  // Deduct stock
+  // deduct stocks
   for (let item of cart) {
-    await Product.findByIdAndUpdate(item.id, { $inc: { quantity: -item.qty } });
+    await Product.findByIdAndUpdate(item.id, {
+      $inc: { quantity: -item.qty }
+    });
   }
 
-  // Prepare invoice data
   invoiceData = {
     invoiceNo: "INV-" + Date.now(),
+    customerName,
     cart,
     total,
     cash,
     change: cash - total
   };
 
-  // Clear cart for next transaction
   cart = [];
+  customerName = "";
 
-  // Redirect to payment summary
   res.redirect("/pos/summary");
 };
 
 exports.paymentSummary = async (req, res) => {
   const updatedProducts = await Product.find();
-  res.render("paymentsummary", { user: req.user, invoiceData, updatedProducts });
+  res.render("paymentsummary", {
+    user: req.user,
+    invoiceData,
+    updatedProducts
+  });
 };
