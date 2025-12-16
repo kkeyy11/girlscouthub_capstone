@@ -2,11 +2,19 @@ const express = require("express");
 const router = express.Router();
 const posController = require("../controllers/posController");
 
+// Walk-in POS
+router.get("/", posController.renderPOS);
 
-router.get("/pos", posController.renderPOS);
-router.post("/pos/payment", posController.toPayment);
-router.post("/pos/pay", posController.processPayment);
-router.get("/pos/summary", posController.paymentSummary);
+// Reservation POS
+router.get("/reservation/:id", posController.loadReservationPOS);
 
+// Proceed to payment
+router.post("/payment", posController.toPayment);
+
+// Process payment
+router.post("/pay", posController.processPayment);
+
+// Payment summary
+router.get("/summary", posController.paymentSummary);
 
 module.exports = router;
