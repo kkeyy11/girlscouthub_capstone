@@ -1,9 +1,8 @@
 const mongoose = require('mongoose');
 
 const reservationSchema = new mongoose.Schema({
-  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // Reference user
+  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   contact: String,
-
   items: [
     {
       productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
@@ -13,16 +12,14 @@ const reservationSchema = new mongoose.Schema({
       price: Number
     }
   ],
-
   total: Number,
   downpayment: Number,
-  proofOfPayment: String, 
-
+  proofOfPayment: String,
   status: {
     type: String,
+    enum: ['Pending', 'Approved', 'Completed'],
     default: 'Pending'
   },
-
   date: {
     type: Date,
     default: Date.now

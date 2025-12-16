@@ -4,10 +4,11 @@ const Reservation = require("../models/Reservation");
 let cart = [];
 let invoiceData = {};
 let customerName = "";
+let reservationId = null; // Track if the cart came from a reservation
 
 exports.renderPOS = async (req, res) => {
   const products = await Product.find();
-  const reservations = await Reservation.find({ status: "Pending" })
+  const reservations = await Reservation.find({ status: "Approved" })
     .populate("user");
 
   res.render("pointofsale", {
@@ -25,7 +26,9 @@ exports.toPayment = (req, res) => {
     cart = [];
   }
 
-  customerName = req.body.customerName || "Walk-in";
+  customerName = req.body.customerName || "";
+
+  reservationId = req.body.reservationId || null; // capture reservation ID if exists
 
   const total = cart.reduce((sum, i) => sum + i.price * i.qty, 0);
   invoiceData.total = total;
@@ -41,11 +44,17 @@ exports.processPayment = async (req, res) => {
     return res.redirect("/pos");
   }
 
-  // deduct stocks
+  // Deduct stocks
   for (let item of cart) {
     await Product.findByIdAndUpdate(item.id, {
       $inc: { quantity: -item.qty }
     });
+  }
+
+  // Update reservation status if applicable
+  if(reservationId) {
+    await Reservation.findByIdAndUpdate(reservationId, { status: 'Completed' });
+    reservationId = null; // reset
   }
 
   invoiceData = {
