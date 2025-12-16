@@ -11,6 +11,18 @@ exports.getProductList = async (req, res) => {
   }
 };
 
+// Get manage products page
+exports.getManageProducts = async (req, res) => {
+  try {
+    const products = await Product.find().sort({ createdAt: -1 });
+    res.render('manageProducts', { products });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error fetching products');
+  }
+};
+
+
 // Get add product form
 exports.getAddProduct = (req, res) => {
   res.render('addProduct');
