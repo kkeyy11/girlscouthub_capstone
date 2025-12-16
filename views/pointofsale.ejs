@@ -3,11 +3,10 @@
 <main class="container my-4">
   <h3 class="text-center mb-4">Point of Sale</h3>
 
-  <!-- CART -->
+  <!-- CART + Customer Name -->
   <div class="card mx-auto mb-4" style="max-width:600px">
     <div class="card-body">
       <h5>Current Order</h5>
-
       <input type="text"
         class="form-control mb-2"
         name="customerName"
@@ -47,24 +46,20 @@
 
     <!-- RESERVATIONS -->
     <div class="col-md-4">
-      <div class="card">
-        <div class="card-body">
-          <h5>Reservations</h5>
-
-          <% if(reservations.length === 0){ %>
-            <p class="text-muted">No pending reservations</p>
-          <% } %>
-
-          <% reservations.forEach(r => { %>
-            <button type="button"
-              class="list-group-item list-group-item-action mb-2"
-              onclick='loadReservation(<%- JSON.stringify(r) %>)'>
-              <strong><%= r.user?.name || "Customer" %></strong><br>
-              ₱<%= r.total %>
-            </button>
-          <% }) %>
+      <h5>Reservations</h5>
+      <% if(reservations.length === 0){ %>
+        <p class="text-muted">No pending reservations</p>
+      <% } %>
+      <% reservations.forEach(r => { %>
+        <div class="card mb-2" style="cursor:pointer;" onclick='loadReservation(<%- JSON.stringify(r) %>)'>
+          <div class="card-body">
+            <p class="mb-1"><strong><%= r.user ? (r.user.firstName + ' ' + (r.user.middleName ? r.user.middleName + ' ' : '') + r.user.lastName) : "Customer" %>
+</strong></p>
+            <p class="mb-0">Total: ₱<%= r.total %></p>
+            <small>Status: <%= r.status %></small>
+          </div>
         </div>
-      </div>
+      <% }) %>
     </div>
   </div>
 </main>
@@ -123,6 +118,10 @@ function loadReservation(res){
       qty: i.quantity
     });
   });
+
+  // Auto-fill customer name from reservation
+  document.querySelector("input[name='customerName']").value = res.user?.name || res.user?.username || "";
+
   renderCart();
 }
 
